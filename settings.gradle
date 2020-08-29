@@ -1,1 +1,3 @@
 rootProject.name = 'sudoscan'
+
+include 'core', 'app-desktop'

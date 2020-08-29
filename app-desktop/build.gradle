@@ -1,0 +1,15 @@
+plugins {
+    id "application"
+}
+
+dependencies {
+
+    implementation project(":core")
+
+    implementation "org.openpnp:opencv:4.3.0-2"
+}
+
+application {
+    // Define the main class for the application.
+    mainClassName = "com.github.pintowar.sudoscan.viewer.SudokuCameraKt"
+}
