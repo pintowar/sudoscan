@@ -1,121 +1,111 @@
 package com.github.pintowar.sudoscan.core
 
-import nu.pattern.OpenCV
+import org.bytedeco.javacv.Java2DFrameUtils
+import org.bytedeco.opencv.global.opencv_core.*
+import org.bytedeco.opencv.global.opencv_highgui.destroyAllWindows
+import org.bytedeco.opencv.global.opencv_imgcodecs
+import org.bytedeco.opencv.global.opencv_imgproc
+import org.bytedeco.opencv.opencv_core.Mat
+import org.bytedeco.opencv.opencv_core.MatVector
+import org.bytedeco.opencv.opencv_core.Scalar
+import org.bytedeco.opencv.opencv_core.Size
 import org.datavec.image.loader.NativeImageLoader
 import org.nd4j.linalg.api.ndarray.INDArray
-import org.opencv.core.*
-import org.opencv.highgui.HighGui
-import org.opencv.imgcodecs.Imgcodecs
-import org.opencv.imgproc.Imgproc
 import java.awt.image.BufferedImage
-import java.awt.image.DataBufferByte
 
 object OpenCvWrapper {
 
-    init {
-        OpenCV.loadShared()
-    }
+    fun imread(path: String, flag: Int = opencv_imgcodecs.IMREAD_GRAYSCALE) = opencv_imgcodecs.imread(path, flag)
 
-    fun imread(path: String, flag: Int = Imgcodecs.IMREAD_GRAYSCALE) = Imgcodecs.imread(path, flag)
+    fun toMat(img: BufferedImage) = Java2DFrameUtils.toMat(img)
 
-    fun toMat(img: BufferedImage): Mat {
-        val data = (img.raster.dataBuffer as DataBufferByte).data
-        val mat = Mat(img.height, img.width, CvType.CV_8UC3)
-        mat.put(0, 0, data)
-        return mat
-    }
+    fun toImage(mat: Mat) = Java2DFrameUtils.toBufferedImage(mat)
 
-    fun toImage(mat: Mat, type: Int = BufferedImage.TYPE_3BYTE_BGR): BufferedImage {
-        val bytes = ByteArray(mat.rows() * mat.cols() * mat.elemSize().toInt())
-        mat.get(0, 0, bytes)
-        val image = BufferedImage(mat.cols(), mat.rows(), type)
-        image.raster.setDataElements(0, 0, mat.cols(), mat.rows(), bytes)
-        return image
-    }
+    fun toFrame(mat: Mat) = Java2DFrameUtils.toFrame(mat)
 
     fun toNdArray(mat: Mat): INDArray {
-        return NativeImageLoader(mat.height().toLong(), mat.width().toLong()).asMatrix(mat)
-                .reshape(mat.height().toLong(), mat.width().toLong(), mat.elemSize())
+        return NativeImageLoader(mat.arrayHeight().toLong(), mat.arrayWidth().toLong()).asMatrix(mat)
+                .reshape(mat.arrayHeight().toLong(), mat.arrayWidth().toLong(), mat.elemSize())
     }
 
-    fun zeros(width: Double, height: Double, type: Int = CvType.CV_8U) = Mat.zeros(Size(width, height), type)
+    fun zeros(width: Int, height: Int, type: Int = CV_8U) = Mat.zeros(Size(width, height), type).asMat()
 
     fun cvtColor(src: Mat, code: Int): Mat {
         val dst = Mat()
-        Imgproc.cvtColor(src, dst, code)
+        opencv_imgproc.cvtColor(src, dst, code)
         return dst
     }
 
-    fun gaussianBlur(src: Mat, ksize: Pair<Double, Double>, sigmaX: Double): Mat {
+    fun gaussianBlur(src: Mat, ksize: Pair<Int, Int>, sigmaX: Double): Mat {
         val dst = Mat()
-        Imgproc.GaussianBlur(src, dst, Size(ksize.first, ksize.second), sigmaX)
+        opencv_imgproc.GaussianBlur(src, dst, Size(ksize.first, ksize.second), sigmaX)
         return dst
     }
 
     fun adaptiveThreshold(src: Mat, maxValue: Double, adaptiveMethod: Int, thresholdType: Int, blockSize: Int, C: Double): Mat {
         val dst = Mat()
-        Imgproc.adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, blockSize, C)
+        opencv_imgproc.adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, blockSize, C)
         return dst
     }
 
     fun bitwiseNot(src: Mat): Mat {
         val dst = Mat()
-        Core.bitwise_not(src, dst)
+        bitwise_not(src, dst)
         return dst
     }
 
     fun bitwiseAnd(src1: Mat, src2: Mat): Mat {
         val dst = Mat()
-        Core.bitwise_and(src1, src2, dst)
+        bitwise_and(src1, src2, dst)
         return dst
     }
 
-    fun getStructuringElement(shape: Int, ksize: Pair<Double, Double>): Mat {
-        return Imgproc.getStructuringElement(shape, Size(ksize.first, ksize.second))
+    fun getStructuringElement(shape: Int, ksize: Pair<Int, Int>): Mat {
+        return opencv_imgproc.getStructuringElement(shape, Size(ksize.first, ksize.second))
     }
 
     fun dilate(src: Mat, kernel: Mat): Mat {
         val dst = Mat()
-        Imgproc.dilate(src, dst, kernel)
+        opencv_imgproc.dilate(src, dst, kernel)
         return dst
     }
 
-    fun findContours(image: Mat, hierarchy: Mat, mode: Int, method: Int): List<MatOfPoint> {
-        val contours = mutableListOf<MatOfPoint>()
-        Imgproc.findContours(image, contours, hierarchy, mode, method)
-        return contours.toList()
+    fun findContours(image: Mat, hierarchy: Mat, mode: Int, method: Int): MatVector {
+        val contours = MatVector()
+        opencv_imgproc.findContours(image, contours, hierarchy, mode, method)
+        return contours
     }
 
     fun contourArea(contour: Mat): Double {
-        return Imgproc.contourArea(contour)
+        return opencv_imgproc.contourArea(contour)
     }
 
     fun getPerspectiveTransform(src: Mat, dst: Mat): Mat {
-        return Imgproc.getPerspectiveTransform(src, dst)
+        return opencv_imgproc.getPerspectiveTransform(src, dst)
     }
 
-    fun warpPerspective(src: Mat, M: Mat, dsize: Pair<Double, Double>): Mat {
+    fun warpPerspective(src: Mat, M: Mat, dsize: Pair<Int, Int>): Mat {
         val dst = Mat()
-        Imgproc.warpPerspective(src, dst, M, Size(dsize.first, dsize.second))
+        opencv_imgproc.warpPerspective(src, dst, M, Size(dsize.first, dsize.second))
         return dst
     }
 
-    fun resize(src: Mat, dsize: Pair<Double, Double>): Mat {
+    fun resize(src: Mat, dsize: Pair<Int, Int>): Mat {
         val dst = Mat()
-        Imgproc.resize(src, dst, Size(dsize.first, dsize.second))
+        opencv_imgproc.resize(src, dst, Size(dsize.first, dsize.second))
         return dst
     }
 
     fun copyMakeBorder(src: Mat, top: Int, bottom: Int, left: Int, right: Int, borderType: Int, value: Double): Mat {
         val dst = Mat()
-        Core.copyMakeBorder(src, dst, top, bottom, left, right, borderType, Scalar(value))
+        copyMakeBorder(src, dst, top, bottom, left, right, borderType, Scalar(value))
         return dst
     }
 
-    fun sumElements(src: Mat) = Core.sumElems(src).`val`.sum()
+    fun sumElements(src: Mat) = sumElems(src).get()
 
     fun destroy() {
-        HighGui.destroyAllWindows()
+        destroyAllWindows()
     }
 
 }

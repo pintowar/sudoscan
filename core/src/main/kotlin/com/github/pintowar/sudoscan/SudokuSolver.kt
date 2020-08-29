@@ -4,13 +4,15 @@ import com.github.pintowar.sudoscan.core.Parser.cropImage
 import com.github.pintowar.sudoscan.core.Parser.extractAllDigits
 import com.github.pintowar.sudoscan.core.Parser.preProcessGrayImage
 import com.github.pintowar.sudoscan.core.Parser.splitSquares
+import com.github.pintowar.sudoscan.core.Plotter.changePerspectiveToOriginalSize
 import com.github.pintowar.sudoscan.core.Plotter.plotResultOnOriginalSource
+import com.github.pintowar.sudoscan.core.Plotter.plotSolution
 import com.github.pintowar.sudoscan.core.Recognizer
 import com.github.pintowar.sudoscan.core.Solver
 import mu.KLogging
+import org.bytedeco.opencv.opencv_core.Mat
 import org.nd4j.shade.guava.cache.CacheBuilder
 import org.nd4j.shade.guava.cache.CacheLoader.from
-import org.opencv.core.Mat
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.time.Duration
@@ -29,13 +31,13 @@ class SudokuSolver {
                 if (it != null) solve(it) else emptyList()
             })
 
-    fun solve(img: BufferedImage, color: Color = Color.green): BufferedImage {
+    fun solveAndPasteSolution(img: BufferedImage, color: Color = Color.green): BufferedImage {
         val mat = cv2.toMat(img)
-        val sol = solve(mat, color)
+        val sol = solveAndPasteSolution(mat, color)
         return cv2.toImage(sol)
     }
 
-    fun solve(img: Mat, color: Color = Color.green) = try {
+    fun solveAndPasteSolution(img: Mat, color: Color = Color.green) = try {
         val squareSize = 28
 
         val cropped = cropImage(img)
@@ -50,6 +52,24 @@ class SudokuSolver {
     } catch (e: Exception) {
         logger.trace("Problem found during solution!", e)
         img
+    }
+
+    fun solve(img: Mat, color: Color = Color.green) = try {
+        val squareSize = 28
+
+        val cropped = cropImage(img)
+        val processedCrop = preProcessGrayImage(cropped.img, true)
+
+        val squares = splitSquares(processedCrop)
+        val cells = extractAllDigits(processedCrop, squares, squareSize)
+        val digits = recognizer.predict(cells)
+        val solution = solve(digits)
+        val result = plotSolution(cropped, solution, color)
+        if (solution.isNotEmpty()) changePerspectiveToOriginalSize(cropped.dst, cropped.src, result, img)
+        else null
+    } catch (e: Exception) {
+        logger.trace("Problem found during solution!", e)
+        null
     }
 
     fun solve(digits: List<Int>): List<Int> {

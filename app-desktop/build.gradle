@@ -6,7 +6,7 @@ dependencies {
 
     implementation project(":core")
 
-    implementation "org.openpnp:opencv:4.3.0-2"
+    implementation "org.bytedeco:javacv-platform:1.5.3"
 }
 
 application {

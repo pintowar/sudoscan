@@ -15,8 +15,6 @@ dependencies {
         exclude(group: "dk.brics.automaton")
     }
 
-    implementation "org.openpnp:opencv:4.3.0-2"
-
     implementation "org.deeplearning4j:deeplearning4j-modelimport:$vNd4j"
 
     implementation "org.nd4j:nd4j-native-platform:$vNd4j"
