@@ -6,7 +6,29 @@ dependencies {
 
     implementation project(":core")
 
-    implementation "org.bytedeco:javacv-platform:1.5.3"
+    api("org.datavec:datavec-data-image:$vNd4j") {
+
+        exclude(group: "org.freemarker")
+        exclude(group: "com.github.jai-imageio")
+        exclude(group: "com.twelvemonkeys.imageio", module: "imageio-bmp")
+        exclude(group: "com.twelvemonkeys.imageio", module: "imageio-psd")
+        exclude(group: "com.twelvemonkeys.imageio", module: "imageio-tiff")
+
+        exclude(group: "org.bytedeco", module: "artoolkitplus")
+        exclude(group: "org.bytedeco", module: "flandmark")
+        exclude(group: "org.bytedeco", module: "flycapture")
+        exclude(group: "org.bytedeco", module: "leptonica-platform")
+        exclude(group: "org.bytedeco", module: "leptonica")
+        exclude(group: "org.bytedeco", module: "libdc1394")
+        exclude(group: "org.bytedeco", module: "libfreenect")
+        exclude(group: "org.bytedeco", module: "libfreenect2")
+        exclude(group: "org.bytedeco", module: "librealsense")
+        exclude(group: "org.bytedeco", module: "librealsense2")
+        exclude(group: "org.bytedeco", module: "tesseract")
+        exclude(group: "org.bytedeco", module: "videoinput")
+        exclude(group: "org.bytedeco", module: "javacv-platform")
+    }
+
 }
 
 application {

@@ -1,5 +1,6 @@
 package com.github.pintowar.sudoscan.core
 
+import com.github.pintowar.sudoscan.NativeImageLoader
 import org.bytedeco.javacv.Java2DFrameUtils
 import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_highgui.destroyAllWindows
@@ -9,7 +10,6 @@ import org.bytedeco.opencv.opencv_core.Mat
 import org.bytedeco.opencv.opencv_core.MatVector
 import org.bytedeco.opencv.opencv_core.Scalar
 import org.bytedeco.opencv.opencv_core.Size
-import org.datavec.image.loader.NativeImageLoader
 import org.nd4j.linalg.api.ndarray.INDArray
 import java.awt.image.BufferedImage
 

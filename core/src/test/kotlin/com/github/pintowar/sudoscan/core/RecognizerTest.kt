@@ -1,11 +1,11 @@
 package com.github.pintowar.sudoscan.core
 
 
+import com.github.pintowar.sudoscan.NativeImageLoader
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
-import org.datavec.image.loader.ImageLoader
 import org.nd4j.linalg.api.ndarray.INDArray
 import java.io.File
 import javax.imageio.ImageIO
@@ -16,7 +16,8 @@ internal class RecognizerTest : StringSpec({
     fun imRead(path: String): INDArray {
         val cl = Thread.currentThread().contextClassLoader
         val img = ImageIO.read(cl.getResourceAsStream(path))
-        return ImageLoader(img.height.toLong(), img.width.toLong(), 1).asMatrix(img)
+        return NativeImageLoader(img.height.toLong(), img.width.toLong(), 1)
+                .asMatrix(cl.getResourceAsStream(path))
                 .reshape(img.height.toLong(), img.width.toLong(), 1)
     }
 

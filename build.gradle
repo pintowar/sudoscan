@@ -8,6 +8,11 @@ allprojects {
     group = "com.github.pintowar"
     version = "0.3.0"
 
+    ext {
+        vNd4j = "1.0.0-beta7"
+        vJavaCv = "1.5.3"
+    }
+
     apply plugin: "org.jetbrains.kotlin.jvm"
 
     repositories {
