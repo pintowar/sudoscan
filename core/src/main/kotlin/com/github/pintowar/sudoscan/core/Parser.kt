@@ -32,7 +32,7 @@ object Parser : KLogging() {
 
     fun findCorners(img: Mat): ImageCorners {
         val contours = cv2.findContours(img, Mat(), opencv_imgproc.RETR_EXTERNAL, opencv_imgproc.CHAIN_APPROX_SIMPLE)
-        val polygon = contours.get().maxBy { cv2.contourArea(it) }!!
+        val polygon = contours.get().maxByOrNull { cv2.contourArea(it) }!!
 
         val idx = polygon.createIndexer<IntIndexer>()
         val points = (0 until polygon.size(0)).map {
@@ -40,16 +40,16 @@ object Parser : KLogging() {
         }
 
         return ImageCorners(
-                bottomRight = points.maxBy { it.x() + it.y() }!!,
-                topLeft = points.minBy { it.x() + it.y() }!!,
-                bottomLeft = points.minBy { it.x() - it.y() }!!,
-                topRight = points.maxBy { it.x() - it.y() }!!
+                bottomRight = points.maxByOrNull { it.x() + it.y() }!!,
+                topLeft = points.minByOrNull { it.x() + it.y() }!!,
+                bottomLeft = points.minByOrNull { it.x() - it.y() }!!,
+                topRight = points.maxByOrNull { it.x() - it.y() }!!
         )
     }
 
     fun cropSudoku(img: Mat, corners: ImageCorners): CroppedImage {
         val sides = corners.sides()
-        val side = sides.max()!!.toFloat()
+        val side = sides.maxOrNull()!!.toFloat()
 
         val src = floatToMat(corners.toFloatArray())
         val dst = floatToMat(arrayOf(

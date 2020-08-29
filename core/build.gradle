@@ -1,7 +1,3 @@
-plugins {
-    id "application"
-}
-
 ext {
     vNd4j = "1.0.0-beta7"
 }
@@ -48,9 +44,4 @@ dependencies {
 
     }
 
-}
-
-application {
-    // Define the main class for the application.
-    mainClassName = "com.github.pintowar.AppKt"
 }
