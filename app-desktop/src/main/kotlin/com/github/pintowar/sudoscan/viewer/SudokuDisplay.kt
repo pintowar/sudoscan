@@ -33,7 +33,7 @@ class SudokuDisplay {
     }
 
     fun showImages(original: BufferedImage) {
-        val transformed = solver.solve(original)
+        val transformed = solver.solveAndPasteSolution(original)
         frame.contentPane.removeAll()
         frame.contentPane.add(JLabel(ImageIcon(original)))
         frame.contentPane.add(JLabel(ImageIcon(transformed)))

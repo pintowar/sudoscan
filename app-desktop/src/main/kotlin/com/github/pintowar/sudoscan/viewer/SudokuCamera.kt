@@ -2,88 +2,102 @@ package com.github.pintowar.sudoscan.viewer
 
 import com.github.pintowar.sudoscan.SudokuSolver
 import com.github.pintowar.sudoscan.core.OpenCvWrapper
+import com.github.pintowar.sudoscan.core.Plotter.combineSolutionToOriginal
 import mu.KLogging
-import nu.pattern.OpenCV
-import org.opencv.core.Mat
-import org.opencv.core.Size
-import org.opencv.imgproc.Imgproc
-import org.opencv.videoio.VideoCapture
-import org.opencv.videoio.VideoWriter
-import org.opencv.videoio.Videoio
-import java.awt.FlowLayout
-import java.awt.image.BufferedImage
-import javax.swing.ImageIcon
-import javax.swing.JFrame
-import javax.swing.JLabel
+import org.bytedeco.ffmpeg.global.avcodec
+import org.bytedeco.ffmpeg.global.avutil
+import org.bytedeco.javacv.CanvasFrame
+import org.bytedeco.javacv.FFmpegFrameRecorder
+import org.bytedeco.javacv.Java2DFrameUtils
+import org.bytedeco.javacv.OpenCVFrameGrabber
+import org.bytedeco.opencv.opencv_core.Mat
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 import javax.swing.WindowConstants
+import kotlin.system.measureTimeMillis
 
-class SudokuCamera {
+class SudokuCamera(val record: Boolean = false, videoPath: String = "/tmp/sudoku.mp4") {
 
     companion object : KLogging() {
-        init {
-            OpenCV.loadShared()
-        }
+        const val FRAME_WIDTH = 640
+        const val FRAME_HEIGHT = 480
     }
 
-    private val capture = VideoCapture()
-    private val frame = JFrame()
+    private val grabber = OpenCVFrameGrabber(0)
+    private val recorder: FFmpegFrameRecorder
+    private val frame = CanvasFrame("SudoScan UI")
     private val solver = SudokuSolver()
-
-    private val frameSize = Size(640.0, 480.0)
-
-    private val writer = VideoWriter("/tmp/sudoku.avi", VideoWriter.fourcc('X', 'V', 'I', 'D'),
-            capture.get(Videoio.CAP_PROP_FPS), frameSize, true)
+    private val fps = 10.0
+    private var isOpen = true
 
     init {
-        frame.contentPane.layout = FlowLayout()
-        frame.setLocationRelativeTo(null)
-        frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
-        frame.isVisible = true
-    }
+        grabber.imageWidth = FRAME_WIDTH
+        grabber.imageHeight = FRAME_HEIGHT
 
-    fun showImages(img: BufferedImage) {
-        frame.contentPane.removeAll()
-        frame.contentPane.add(JLabel(ImageIcon(img)))
-        frame.pack()
-    }
+        recorder = FFmpegFrameRecorder(videoPath, FRAME_WIDTH, FRAME_HEIGHT)
+        recorder.videoCodec = avcodec.AV_CODEC_ID_MPEG4
+        recorder.format = "mp4"
+        recorder.frameRate = fps
+        recorder.pixelFormat = avutil.AV_PIX_FMT_YUV420P
+        recorder.videoBitrate = (FRAME_WIDTH * FRAME_HEIGHT * fps * 10).toInt()
+        recorder.videoQuality = 0.1
 
-    fun destroy() {
-        if (capture.isOpened) {
-            capture.release()
-            writer.release()
-            OpenCvWrapper.destroy()
+        with(frame) {
+            setLocationRelativeTo(null)
+            defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+            isVisible = true
+            addWindowListener(object : WindowAdapter() {
+                override fun windowClosing(e: WindowEvent?) {
+                    isOpen = false
+                }
+            })
         }
+    }
+
+    fun showAndRecord(img: Mat, sol: Mat?) {
+        val frm = solutionToFrame(img, sol)!!
+        frame.showImage(frm)
+        if (record) recorder.record(frm)
     }
 
     fun run() {
-        destroy()
-        capture.open(0)
+        isOpen = true
+        grabber.start()
+        if (record) recorder.start()
+        var sol: Mat? = null
 
-        while (capture.isOpened) {
-            val image = Mat()
-            logger.info("Capturing!!")
-            capture.read(image)
-            val img = OpenCvWrapper.cvtColor(image, Imgproc.COLOR_BGR2RGB)
-            val sol = solver.solve(img)
-
-            val back = OpenCvWrapper.toImage(sol)
-            showImages(back)
-            writer.write(sol)
+        var frm = grabber.grab()
+        while (isOpen && frm != null) {
+            val time = measureTimeMillis {
+                frm = grabber.grab()
+                val img = Java2DFrameUtils.toMat(frm)
+                showAndRecord(img, sol)
+                sol = solver.solve(img)
+//                showAndRecord(solutionToImage(img, sol))
+            }
+            logger.info("Processing took: $time ms")
         }
 
-        destroy()
+    }
+
+    fun solutionToFrame(img: Mat, sol: Mat?) =
+            OpenCvWrapper.toFrame(if (sol != null) combineSolutionToOriginal(img, sol) else img)
+
+    fun dispose() {
+        logger.debug("Stopping!!!")
+        if (record) recorder.stop()
+        grabber.stop()
+        logger.debug("Stopped.")
     }
 
 }
 
 fun main() {
-    val cam = SudokuCamera()
-
+    val cam = SudokuCamera(true)
     val mainThread = Thread.currentThread()
     Runtime.getRuntime().addShutdownHook(object : Thread() {
         override fun run() {
-            println("Finishing!!")
-            cam.destroy()
+            cam.dispose()
             mainThread.join()
         }
     })
