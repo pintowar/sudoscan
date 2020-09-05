@@ -1,19 +1,22 @@
 plugins {
     id "idea"
     id "org.jetbrains.kotlin.jvm" version "1.4.0" apply false
-    id 'org.jetbrains.dokka' version '0.10.1' apply false
+    id "org.jetbrains.dokka" version "0.10.1" apply false
+    id "org.bytedeco.gradle-javacpp-platform" version "1.5.4-SNAPSHOT" apply false
 }
 
 allprojects {
     group = "com.github.pintowar"
-    version = "0.3.0"
+    version = "0.3.0-SNAPSHOT"
 
     ext {
         vNd4j = "1.0.0-beta7"
         vJavaCv = "1.5.3"
+        javacppPlatform = "linux-x86_64,macosx-x86_64,windows-x86_64"
     }
 
     apply plugin: "org.jetbrains.kotlin.jvm"
+    apply plugin: "org.bytedeco.gradle-javacpp-platform"
 
     repositories {
         mavenCentral()
@@ -22,14 +25,14 @@ allprojects {
 
     compileKotlin {
         kotlinOptions {
-            jvmTarget = '11'
+            jvmTarget = "11"
             javaParameters = true
         }
     }
 
     compileTestKotlin {
         kotlinOptions {
-            jvmTarget = '11'
+            jvmTarget = "11"
             javaParameters = true
         }
     }

@@ -27,6 +27,7 @@ class SudokuCamera(val record: Boolean = false, videoPath: String = "/tmp/sudoku
     private val recorder: FFmpegFrameRecorder
     private val frame = CanvasFrame("SudoScan UI")
     private val solver = SudokuSolver()
+    private val fps = 10.0
     private var isOpen = true
 
     init {
@@ -36,9 +37,10 @@ class SudokuCamera(val record: Boolean = false, videoPath: String = "/tmp/sudoku
         recorder = FFmpegFrameRecorder(videoPath, FRAME_WIDTH, FRAME_HEIGHT)
         recorder.videoCodec = avcodec.AV_CODEC_ID_MPEG4
         recorder.format = "mp4"
-//        recorder.frameRate = 30.0
+        recorder.frameRate = fps
         recorder.pixelFormat = avutil.AV_PIX_FMT_YUV420P
-//        recorder.videoBitrate = 10 * 1024 * 1024
+        recorder.videoBitrate = (FRAME_WIDTH * FRAME_HEIGHT * fps * 10).toInt()
+        recorder.videoQuality = 0.1
 
         with(frame) {
             setLocationRelativeTo(null)

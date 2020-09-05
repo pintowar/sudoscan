@@ -1,5 +1,5 @@
 plugins {
-    id 'java-library'
+    id "java-library"
 }
 
 dependencies {
@@ -17,7 +17,7 @@ dependencies {
         exclude(group: "org.bytedeco", module: "mkl-platform")
     }
 
-    implementation("org.bytedeco:javacv-platform:$vJavaCv") {
+    api("org.bytedeco:javacv-platform:$vJavaCv") {
         ["artoolkitplus", "flandmark", "flycapture", "leptonica", "libdc1394",
          "libfreenect", "libfreenect2", "librealsense", "librealsense2",
          "tesseract", "videoinput", "ffmeg"].each {
@@ -26,4 +26,11 @@ dependencies {
         }
     }
 
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE // allow duplicates
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }

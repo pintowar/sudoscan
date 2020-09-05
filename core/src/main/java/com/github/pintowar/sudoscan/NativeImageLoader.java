@@ -18,10 +18,8 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.exception.ND4JIllegalStateException;
 import org.nd4j.linalg.factory.Nd4j;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Random;
 
 import static org.bytedeco.opencv.global.opencv_core.*;
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
@@ -32,54 +30,38 @@ import static org.bytedeco.opencv.global.opencv_imgproc.*;
  * @author saudet
  */
 public class NativeImageLoader {
-    public enum MultiPageMode {
-        MINIBATCH, FIRST //, CHANNELS,
-    }
 
-    public static final File BASE_DIR = new File(System.getProperty("user.home"));
-    protected Random rng = new Random(System.currentTimeMillis());
-
-    protected long height = -1;
-    protected long width = -1;
+    protected long height;
+    protected long width;
     protected long channels = -1;
     protected boolean centerCropIfNeeded = false;
-    protected MultiPageMode multiPageMode = null;
 
     private static final int MIN_BUFFER_STEP_SIZE = 64 * 1024;
     private byte[] buffer = null;
     private Mat bufferMat = null;
-
-    public static final String[] ALLOWED_FORMATS = {"bmp", "gif", "jpg", "jpeg", "jp2", "pbm", "pgm", "ppm", "pnm",
-            "png", "tif", "tiff", "exr", "webp", "BMP", "GIF", "JPG", "JPEG", "JP2", "PBM", "PGM", "PPM", "PNM",
-            "PNG", "TIF", "TIFF", "EXR", "WEBP"};
 
     protected OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
 
     boolean direct = !Loader.getPlatform().startsWith("android");
 
     /**
-     * Loads images with no scaling or conversion.
-     */
-    public NativeImageLoader() {}
-
-    /**
      * Instantiate an image with the given
      * height and width
+     *
      * @param height the height to load
      * @param width  the width to load
-
      */
     public NativeImageLoader(long height, long width) {
         this.height = height;
         this.width = width;
     }
 
-
     /**
      * Instantiate an image with the given
      * height and width
-     * @param height the height to load
-     * @param width  the width to load
+     *
+     * @param height   the height to load
+     * @param width    the width to load
      * @param channels the number of channels for the image*
      */
     public NativeImageLoader(long height, long width, long channels) {
@@ -91,9 +73,10 @@ public class NativeImageLoader {
     /**
      * Instantiate an image with the given
      * height and width
-     * @param height the height to load
-     * @param width  the width to load
-     * @param channels the number of channels for the image*
+     *
+     * @param height             the height to load
+     * @param width              the width to load
+     * @param channels           the number of channels for the image*
      * @param centerCropIfNeeded to crop before rescaling and converting
      */
     public NativeImageLoader(long height, long width, long channels, boolean centerCropIfNeeded) {
@@ -102,46 +85,16 @@ public class NativeImageLoader {
     }
 
     /**
-     * Instantiate an image with the given
-     * height and width
-     * @param height the height to load
-     * @param width  the width to load
-     * @param channels the number of channels for the image*
-     * @param mode how to load multipage image
-     */
-    public NativeImageLoader(long height, long width, long channels, MultiPageMode mode) {
-        this(height, width, channels);
-        this.multiPageMode = mode;
-    }
-
-    public String[] getAllowedFormats() {
-        return ALLOWED_FORMATS;
-    }
-
-    public INDArray asRowVector(Frame image) throws IOException {
-        return asMatrix(image).ravel();
-    }
-
-    public INDArray asRowVector(Mat image) throws IOException {
-        INDArray arr = asMatrix(image);
-        return arr.reshape('c', 1, arr.length());
-    }
-
-    public INDArray asRowVector(org.opencv.core.Mat image) throws IOException {
-        INDArray arr = asMatrix(image);
-        return arr.reshape('c', 1, arr.length());
-    }
-
-    /**
      * Read the stream to the buffer, and return the number of bytes read
+     *
      * @param is Input stream to read
      * @return Mat with the buffer data as a row vector
      * @throws IOException
      */
     private Mat streamToMat(InputStream is) throws IOException {
-        if(buffer == null){
+        if (buffer == null) {
             buffer = IOUtils.toByteArray(is);
-            if(buffer.length <= 0){
+            if (buffer.length <= 0) {
                 throw new IOException("Could not decode image from input stream: input stream was empty (no data)");
             }
             bufferMat = new Mat(buffer);
@@ -152,11 +105,11 @@ public class NativeImageLoader {
             //(a) if numRead < buffer.length - got everything
             //(b) if numRead >= buffer.length: we MIGHT have got everything (exact right size buffer) OR we need more data
 
-            if(numReadTotal <= 0){
+            if (numReadTotal <= 0) {
                 throw new IOException("Could not decode image from input stream: input stream was empty (no data)");
             }
 
-            if(numReadTotal < buffer.length){
+            if (numReadTotal < buffer.length) {
                 bufferMat.data().put(buffer, 0, numReadTotal);
                 bufferMat.cols(numReadTotal);
                 return bufferMat;
@@ -164,19 +117,19 @@ public class NativeImageLoader {
 
             //Buffer is full; reallocate and keep reading
             int numReadCurrent = numReadTotal;
-            while(numReadCurrent != -1){
+            while (numReadCurrent != -1) {
                 byte[] oldBuffer = buffer;
-                if(oldBuffer.length == Integer.MAX_VALUE){
+                if (oldBuffer.length == Integer.MAX_VALUE) {
                     throw new IllegalStateException("Cannot read more than Integer.MAX_VALUE bytes");
                 }
                 //Double buffer, but allocate at least 1MB more
                 long increase = Math.max(buffer.length, MIN_BUFFER_STEP_SIZE);
-                int newBufferLength = (int)Math.min(Integer.MAX_VALUE, buffer.length + increase);
+                int newBufferLength = (int) Math.min(Integer.MAX_VALUE, buffer.length + increase);
 
                 buffer = new byte[newBufferLength];
                 System.arraycopy(oldBuffer, 0, buffer, 0, oldBuffer.length);
                 numReadCurrent = is.read(buffer, oldBuffer.length, buffer.length - oldBuffer.length);
-                if(numReadCurrent > 0){
+                if (numReadCurrent > 0) {
                     numReadTotal += numReadCurrent;
                 }
             }
@@ -206,7 +159,7 @@ public class NativeImageLoader {
 
         if (pointer instanceof FloatPointer) {
             FloatIndexer retidx = FloatIndexer.create((FloatPointer) pagedPointer.asFloatPointer(),
-                    new long[] {channels, rows, cols}, new long[] {stride[0], stride[1], stride[2]}, direct);
+                    new long[]{channels, rows, cols}, new long[]{stride[0], stride[1], stride[2]}, direct);
             if (idx instanceof UByteIndexer) {
                 UByteIndexer ubyteidx = (UByteIndexer) idx;
                 for (long k = 0; k < channels; k++) {
@@ -251,7 +204,7 @@ public class NativeImageLoader {
             retidx.release();
         } else if (pointer instanceof DoublePointer) {
             DoubleIndexer retidx = DoubleIndexer.create((DoublePointer) pagedPointer.asDoublePointer(),
-                    new long[] {channels, rows, cols}, new long[] {stride[0], stride[1], stride[2]}, direct);
+                    new long[]{channels, rows, cols}, new long[]{stride[0], stride[1], stride[2]}, direct);
             if (idx instanceof UByteIndexer) {
                 UByteIndexer ubyteidx = (UByteIndexer) idx;
                 for (long k = 0; k < channels; k++) {
@@ -319,14 +272,6 @@ public class NativeImageLoader {
         Nd4j.getAffinityManager().tagLocation(ret, AffinityManager.Location.HOST);
     }
 
-    public void asMatrixView(Mat image, INDArray view) throws IOException {
-        transformImage(image, view);
-    }
-
-    public void asMatrixView(org.opencv.core.Mat image, INDArray view) throws IOException {
-        transformImage(image, view);
-    }
-
     public INDArray asMatrix(Frame image) throws IOException {
         return asMatrix(converter.convert(image));
     }
@@ -334,13 +279,13 @@ public class NativeImageLoader {
     public INDArray asMatrix(org.opencv.core.Mat image) throws IOException {
         INDArray ret = transformImage(image, null);
 
-        return ret.reshape(ArrayUtil.combine(new long[] {1}, ret.shape()));
+        return ret.reshape(ArrayUtil.combine(new long[]{1}, ret.shape()));
     }
 
     public INDArray asMatrix(Mat image) throws IOException {
         INDArray ret = transformImage(image, null);
 
-        return ret.reshape(ArrayUtil.combine(new long[] {1}, ret.shape()));
+        return ret.reshape(ArrayUtil.combine(new long[]{1}, ret.shape()));
     }
 
     public INDArray asMatrix(InputStream is) throws IOException {
@@ -358,7 +303,7 @@ public class NativeImageLoader {
             int code = -1;
             switch (image.channels()) {
                 case 1:
-                    switch ((int)channels) {
+                    switch ((int) channels) {
                         case 3:
                             code = CV_GRAY2BGR;
                             break;
@@ -368,7 +313,7 @@ public class NativeImageLoader {
                     }
                     break;
                 case 3:
-                    switch ((int)channels) {
+                    switch ((int) channels) {
                         case 1:
                             code = CV_BGR2GRAY;
                             break;
@@ -378,7 +323,7 @@ public class NativeImageLoader {
                     }
                     break;
                 case 4:
-                    switch ((int)channels) {
+                    switch ((int) channels) {
                         case 1:
                             code = CV_RGBA2GRAY;
                             break;
@@ -457,13 +402,15 @@ public class NativeImageLoader {
         Mat scaled = image;
         if (dstHeight > 0 && dstWidth > 0 && (image.rows() != dstHeight || image.cols() != dstWidth)) {
             resize(image, scaled = new Mat(), new Size(
-                    (int)Math.min(dstWidth, Integer.MAX_VALUE),
-                    (int)Math.min(dstHeight, Integer.MAX_VALUE)));
+                    (int) Math.min(dstWidth, Integer.MAX_VALUE),
+                    (int) Math.min(dstHeight, Integer.MAX_VALUE)));
         }
         return scaled;
     }
 
-    /** Returns {@code asFrame(array, -1)}. */
+    /**
+     * Returns {@code asFrame(array, -1)}.
+     */
     public Frame asFrame(INDArray array) {
         return converter.convert(asMat(array));
     }
@@ -471,7 +418,7 @@ public class NativeImageLoader {
     /**
      * Converts an INDArray to a JavaCV Frame. Only intended for images with rank 3.
      *
-     * @param array to convert
+     * @param array    to convert
      * @param dataType from JavaCV (DEPTH_FLOAT, DEPTH_UBYTE, etc), or -1 to use same type as the INDArray
      * @return data copied to a Frame
      */
@@ -479,7 +426,9 @@ public class NativeImageLoader {
         return converter.convert(asMat(array, OpenCVFrameConverter.getMatDepth(dataType)));
     }
 
-    /** Returns {@code asMat(array, -1)}. */
+    /**
+     * Returns {@code asMat(array, -1)}.
+     */
     public Mat asMat(INDArray array) {
         return asMat(array, -1);
     }
@@ -487,7 +436,7 @@ public class NativeImageLoader {
     /**
      * Converts an INDArray to an OpenCV Mat. Only intended for images with rank 3.
      *
-     * @param array to convert
+     * @param array    to convert
      * @param dataType from OpenCV (CV_32F, CV_8U, etc), or -1 to use same type as the INDArray
      * @return data copied to a Mat
      */
@@ -508,16 +457,16 @@ public class NativeImageLoader {
         if (dataType < 0) {
             dataType = pointer instanceof DoublePointer ? CV_64F : CV_32F;
         }
-        Mat mat = new Mat((int)Math.min(rows, Integer.MAX_VALUE), (int)Math.min(cols, Integer.MAX_VALUE),
-                CV_MAKETYPE(dataType, (int)Math.min(channels, Integer.MAX_VALUE)));
+        Mat mat = new Mat((int) Math.min(rows, Integer.MAX_VALUE), (int) Math.min(cols, Integer.MAX_VALUE),
+                CV_MAKETYPE(dataType, (int) Math.min(channels, Integer.MAX_VALUE)));
         Indexer matidx = mat.createIndexer(direct);
 
         Nd4j.getAffinityManager().ensureLocation(array, AffinityManager.Location.HOST);
 
         if (pointer instanceof FloatPointer && dataType == CV_32F) {
-            FloatIndexer ptridx = FloatIndexer.create((FloatPointer)pointer, new long[] {channels, rows, cols},
-                    new long[] {stride[rank == 3 ? 0 : 1], stride[rank == 3 ? 1 : 2], stride[rank == 3 ? 2 : 3]}, direct);
-            FloatIndexer idx = (FloatIndexer)matidx;
+            FloatIndexer ptridx = FloatIndexer.create((FloatPointer) pointer, new long[]{channels, rows, cols},
+                    new long[]{stride[rank == 3 ? 0 : 1], stride[rank == 3 ? 1 : 2], stride[rank == 3 ? 2 : 3]}, direct);
+            FloatIndexer idx = (FloatIndexer) matidx;
             for (long k = 0; k < channels; k++) {
                 for (long i = 0; i < rows; i++) {
                     for (long j = 0; j < cols; j++) {
@@ -528,9 +477,9 @@ public class NativeImageLoader {
             done = true;
             ptridx.release();
         } else if (pointer instanceof DoublePointer && dataType == CV_64F) {
-            DoubleIndexer ptridx = DoubleIndexer.create((DoublePointer)pointer, new long[] {channels, rows, cols},
-                    new long[] {stride[rank == 3 ? 0 : 1], stride[rank == 3 ? 1 : 2], stride[rank == 3 ? 2 : 3]}, direct);
-            DoubleIndexer idx = (DoubleIndexer)matidx;
+            DoubleIndexer ptridx = DoubleIndexer.create((DoublePointer) pointer, new long[]{channels, rows, cols},
+                    new long[]{stride[rank == 3 ? 0 : 1], stride[rank == 3 ? 1 : 2], stride[rank == 3 ? 2 : 3]}, direct);
+            DoubleIndexer idx = (DoubleIndexer) matidx;
             for (long k = 0; k < channels; k++) {
                 for (long i = 0; i < rows; i++) {
                     for (long j = 0; j < cols; j++) {
@@ -547,9 +496,9 @@ public class NativeImageLoader {
                 for (long i = 0; i < rows; i++) {
                     for (long j = 0; j < cols; j++) {
                         if (rank == 3) {
-                            matidx.putDouble(new long[] {i, j, k}, array.getDouble(k, i, j));
+                            matidx.putDouble(new long[]{i, j, k}, array.getDouble(k, i, j));
                         } else {
-                            matidx.putDouble(new long[] {i, j, k}, array.getDouble(0, k, i, j));
+                            matidx.putDouble(new long[]{i, j, k}, array.getDouble(0, k, i, j));
                         }
                     }
                 }

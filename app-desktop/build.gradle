@@ -14,19 +14,11 @@ dependencies {
         exclude(group: "com.twelvemonkeys.imageio", module: "imageio-psd")
         exclude(group: "com.twelvemonkeys.imageio", module: "imageio-tiff")
 
-        exclude(group: "org.bytedeco", module: "artoolkitplus")
-        exclude(group: "org.bytedeco", module: "flandmark")
-        exclude(group: "org.bytedeco", module: "flycapture")
-        exclude(group: "org.bytedeco", module: "leptonica-platform")
-        exclude(group: "org.bytedeco", module: "leptonica")
-        exclude(group: "org.bytedeco", module: "libdc1394")
-        exclude(group: "org.bytedeco", module: "libfreenect")
-        exclude(group: "org.bytedeco", module: "libfreenect2")
-        exclude(group: "org.bytedeco", module: "librealsense")
-        exclude(group: "org.bytedeco", module: "librealsense2")
-        exclude(group: "org.bytedeco", module: "tesseract")
-        exclude(group: "org.bytedeco", module: "videoinput")
-        exclude(group: "org.bytedeco", module: "javacv-platform")
+        ["artoolkitplus", "flandmark", "flycapture", "leptonica", "libdc1394",
+         "libfreenect", "libfreenect2", "librealsense", "librealsense2",
+         "tesseract", "videoinput", "javacv-platform"].each {
+            exclude(group: "org.bytedeco", module: "$it")
+        }
     }
 
 }
@@ -34,4 +26,12 @@ dependencies {
 application {
     // Define the main class for the application.
     mainClassName = "com.github.pintowar.sudoscan.viewer.SudokuCameraKt"
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE // allow duplicates
+    manifest.attributes "Main-Class": "com.github.pintowar.sudoscan.viewer.SudokuCameraKt"
+//    from {
+//        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+//    }
 }
