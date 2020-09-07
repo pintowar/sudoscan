@@ -22,9 +22,8 @@ class SudokuSolver {
 
     companion object : KLogging()
 
-    val recognizer = Recognizer()
-
-    val cache = CacheBuilder
+    private val recognizer = Recognizer()
+    private val cache = CacheBuilder
             .newBuilder()
             .expireAfterWrite(Duration.ofMinutes(1))
             .build(from { it: List<Int>? ->
