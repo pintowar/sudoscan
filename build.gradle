@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group = "com.github.pintowar"
-    version = "0.3.0-SNAPSHOT"
+    version = "0.3.0"
 
     ext {
         vPicocli = "4.5.1"
