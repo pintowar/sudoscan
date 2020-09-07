@@ -15,8 +15,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Log into Dockerhub (optional)
-        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Running gradle task
         uses: eskatos/gradle-command-action@v1
         with:
