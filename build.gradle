@@ -14,7 +14,7 @@ allprojects {
         vPicocli = "4.5.1"
         vNd4j = "1.0.0-beta7"
         vJavaCv = "1.5.3"
-        javacppPlatform = "linux-x86_64,macosx-x86_64,windows-x86_64"
+//        javacppPlatform = "linux-x86_64,macosx-x86_64,windows-x86_64"
     }
 
     apply plugin: "org.jetbrains.kotlin.jvm"
@@ -53,5 +53,18 @@ allprojects {
 
     test {
         useJUnitPlatform()
+    }
+}
+
+task assembleDesktopApp(dependsOn: [':app-desktop:shadowJar']) {
+    group = 'build'
+    description = 'Build desktop app'
+
+    doLast {
+        copy {
+            from fileTree(dir: "${project(':app-desktop').buildDir}/libs/")
+            into "$rootDir/build/"
+            logger.quiet "JAR generated at $rootDir/build/."
+        }
     }
 }

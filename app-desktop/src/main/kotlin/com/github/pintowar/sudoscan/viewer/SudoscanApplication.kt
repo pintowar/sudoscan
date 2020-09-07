@@ -1,6 +1,5 @@
 package com.github.pintowar.sudoscan.viewer
 
-import mu.KLogging
 import org.beryx.awt.color.ColorFactory
 import picocli.CommandLine
 import picocli.CommandLine.Option
@@ -10,12 +9,11 @@ import java.util.concurrent.Callable
 
 class SudoscanApplication : Callable<Int> {
 
-    companion object : KLogging()
-
-    @Option(names = ["-c", "--color"], description = ["Solution color"])
+    @Option(names = ["-c", "--color"], description = ["Solution color"], defaultValue = "BLUE")
     var color: Color = Color.BLUE
 
-    @Option(names = ["-r", "--record"], description = ["In case the solution must be recorded on a video file"])
+    @Option(names = ["-r", "--record"], description = ["In case the solution must be recorded on a video file"],
+            defaultValue = "false")
     var record: Boolean = false
 
     @Option(names = ["-f", "--file"], description = ["File path to record the solution with solution " +
@@ -33,10 +31,8 @@ class SudoscanApplication : Callable<Int> {
         })
 
         cam.run()
-
         return 0
     }
-
 }
 
 fun main(args: Array<String>) {

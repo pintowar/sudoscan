@@ -17,7 +17,8 @@ import java.awt.event.WindowEvent
 import javax.swing.WindowConstants
 import kotlin.system.measureTimeMillis
 
-class SudokuCamera(val color: Color = Color.BLUE, val record: Boolean = false,
+class SudokuCamera(private val color: Color = Color.BLUE,
+                   private val record: Boolean = false,
                    videoPath: String = "/tmp/sudoku.mp4") {
 
     companion object : KLogging() {
