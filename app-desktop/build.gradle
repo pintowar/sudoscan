@@ -2,9 +2,21 @@ plugins {
     id "application"
 }
 
+apply plugin: "org.jetbrains.kotlin.kapt"
+
+kapt {
+    arguments {
+        arg("project", "${project.group}/${project.name}")
+    }
+}
+
 dependencies {
 
     implementation project(":core")
+
+    kapt "info.picocli:picocli-codegen:$vPicocli"
+    implementation "info.picocli:picocli:$vPicocli"
+    implementation "org.beryx:awt-color-factory:1.0.1"
 
     api("org.datavec:datavec-data-image:$vNd4j") {
 

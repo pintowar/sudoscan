@@ -17,7 +17,8 @@ import java.awt.event.WindowEvent
 import javax.swing.WindowConstants
 import kotlin.system.measureTimeMillis
 
-class SudokuCamera(val record: Boolean = false, videoPath: String = "/tmp/sudoku.mp4") {
+class SudokuCamera(val color: Color = Color.BLUE, val record: Boolean = false,
+                   videoPath: String = "/tmp/sudoku.mp4") {
 
     companion object : KLogging() {
         const val FRAME_WIDTH = 640
@@ -29,7 +30,6 @@ class SudokuCamera(val record: Boolean = false, videoPath: String = "/tmp/sudoku
     private val frame = CanvasFrame("SudoScan UI")
     private val solver = SudokuSolver()
     private val fps = 10.0
-    private var isOpen = true
 
     init {
         grabber.imageWidth = FRAME_WIDTH
@@ -49,7 +49,7 @@ class SudokuCamera(val record: Boolean = false, videoPath: String = "/tmp/sudoku
             isVisible = true
             addWindowListener(object : WindowAdapter() {
                 override fun windowClosing(e: WindowEvent?) {
-                    isOpen = false
+                    dispose()
                 }
             })
         }
@@ -58,49 +58,32 @@ class SudokuCamera(val record: Boolean = false, videoPath: String = "/tmp/sudoku
     fun showAndRecord(img: Mat, sol: Mat?) {
         val frm = solutionToFrame(img, sol)!!
         frame.showImage(frm)
-        if (record) recorder.record(frm)
+        if (frame.isVisible && record) recorder.record(frm)
     }
 
     fun run() {
-        isOpen = true
         grabber.start()
         if (record) recorder.start()
-        var sol: Mat? = null
 
-        var frm = grabber.grab()
-        while (isOpen && frm != null) {
-            val time = measureTimeMillis {
-                frm = grabber.grab()
-                val img = Java2DFrameUtils.toMat(frm)
-                sol = solver.solve(img)
-                showAndRecord(img, sol)
+        while (frame.isVisible) {
+            val img = Java2DFrameUtils.toMat(grabber.grab())
+            if (img != null) {
+                val time = measureTimeMillis {
+                    val sol = solver.solve(img, color)
+                    showAndRecord(img, sol)
+                }
+                logger.debug("Processing took: $time ms")
             }
-            logger.debug("Processing took: $time ms")
         }
-
     }
 
     fun solutionToFrame(img: Mat, sol: Mat?) =
             OpenCvWrapper.toFrame(if (sol != null) combineSolutionToOriginal(img, sol) else img)
 
     fun dispose() {
-        logger.debug("Stopping!!!")
+        frame.isVisible = false
         if (record) recorder.stop()
         grabber.stop()
-        logger.debug("Stopped.")
     }
 
-}
-
-fun main() {
-    val cam = SudokuCamera(true)
-    val mainThread = Thread.currentThread()
-    Runtime.getRuntime().addShutdownHook(object : Thread() {
-        override fun run() {
-            cam.dispose()
-            mainThread.join()
-        }
-    })
-
-    cam.run()
 }

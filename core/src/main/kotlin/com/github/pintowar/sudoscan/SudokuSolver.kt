@@ -30,13 +30,13 @@ class SudokuSolver {
                 if (it != null) solve(it) else emptyList()
             })
 
-    fun solveAndPasteSolution(img: BufferedImage, color: Color = Color.BLUE): BufferedImage {
+    fun solveAndPasteSolution(img: BufferedImage, color: Color = Color.GREEN): BufferedImage {
         val mat = cv2.toMat(img)
         val sol = solveAndPasteSolution(mat, color)
         return cv2.toImage(sol)
     }
 
-    fun solveAndPasteSolution(img: Mat, color: Color = Color.BLUE) = try {
+    fun solveAndPasteSolution(img: Mat, color: Color = Color.GREEN) = try {
         val squareSize = 28
 
         val cropped = cropImage(img)
@@ -53,7 +53,7 @@ class SudokuSolver {
         img
     }
 
-    fun solve(img: Mat, color: Color = Color.BLUE) = try {
+    fun solve(img: Mat, color: Color = Color.GREEN) = try {
         val squareSize = 28
 
         val cropped = cropImage(img)
