@@ -1,16 +1,18 @@
 package com.github.pintowar.sudoscan
 
-import com.github.pintowar.sudoscan.core.Parser.cropImage
-import com.github.pintowar.sudoscan.core.Parser.extractAllDigits
-import com.github.pintowar.sudoscan.core.Parser.preProcessGrayImage
-import com.github.pintowar.sudoscan.core.Parser.splitSquares
+import com.github.pintowar.sudoscan.core.Extractor.cropImage
+import com.github.pintowar.sudoscan.core.Extractor.extractAllDigits
+import com.github.pintowar.sudoscan.core.Extractor.preProcessGrayImage
+import com.github.pintowar.sudoscan.core.Extractor.splitSquares
+import com.github.pintowar.sudoscan.core.Plotter.changePerspectiveToOriginalSize
 import com.github.pintowar.sudoscan.core.Plotter.plotResultOnOriginalSource
+import com.github.pintowar.sudoscan.core.Plotter.plotSolution
 import com.github.pintowar.sudoscan.core.Recognizer
 import com.github.pintowar.sudoscan.core.Solver
 import mu.KLogging
+import org.bytedeco.opencv.opencv_core.Mat
 import org.nd4j.shade.guava.cache.CacheBuilder
 import org.nd4j.shade.guava.cache.CacheLoader.from
-import org.opencv.core.Mat
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.time.Duration
@@ -20,22 +22,21 @@ class SudokuSolver {
 
     companion object : KLogging()
 
-    val recognizer = Recognizer()
-
-    val cache = CacheBuilder
+    private val recognizer = Recognizer()
+    private val cache = CacheBuilder
             .newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(5))
+            .expireAfterWrite(Duration.ofMinutes(1))
             .build(from { it: List<Int>? ->
                 if (it != null) solve(it) else emptyList()
             })
 
-    fun solve(img: BufferedImage, color: Color = Color.green): BufferedImage {
+    fun solveAndPasteSolution(img: BufferedImage, color: Color = Color.GREEN): BufferedImage {
         val mat = cv2.toMat(img)
-        val sol = solve(mat, color)
+        val sol = solveAndPasteSolution(mat, color)
         return cv2.toImage(sol)
     }
 
-    fun solve(img: Mat, color: Color = Color.green) = try {
+    fun solveAndPasteSolution(img: Mat, color: Color = Color.GREEN) = try {
         val squareSize = 28
 
         val cropped = cropImage(img)
@@ -44,7 +45,7 @@ class SudokuSolver {
         val squares = splitSquares(processedCrop)
         val cells = extractAllDigits(processedCrop, squares, squareSize)
         val digits = recognizer.predict(cells)
-        val solution = solve(digits)
+        val solution = cache.get(digits)
         if (solution.isNotEmpty()) plotResultOnOriginalSource(img, cropped, solution, color)
         else img
     } catch (e: Exception) {
@@ -52,10 +53,34 @@ class SudokuSolver {
         img
     }
 
+    fun solve(img: Mat, color: Color = Color.GREEN) = try {
+        val squareSize = 28
+
+        val cropped = cropImage(img)
+        val processedCrop = preProcessGrayImage(cropped.img, true)
+
+        val squares = splitSquares(processedCrop)
+        val cells = extractAllDigits(processedCrop, squares, squareSize)
+        val digits = recognizer.predict(cells)
+        if (digits.sum() > 0) {
+            val solution = cache.get(digits)
+            val result = plotSolution(cropped, solution, color)
+            if (solution.isNotEmpty()) changePerspectiveToOriginalSize(cropped.dst, cropped.src, result, img)
+            else null
+        } else null
+    } catch (e: Exception) {
+        logger.trace("Problem found during solution!", e)
+        null
+    }
+
     fun solve(digits: List<Int>): List<Int> {
-        logger.debug { "Digital Sudoku: \n" + digits.chunked(9).joinToString("\n") { it.joinToString(" | ") } }
+        fun printableSol(prob: List<Int>) = prob.chunked(9).joinToString("\n") {
+            it.joinToString("|").replace("0", " ")
+        }
+
         val solution = Solver.solve(digits, false)
-        logger.debug { "Solution: \n" + solution.chunked(9).joinToString("\n") { it.joinToString(" | ") } }
+        logger.debug { "Digital Sudoku:\n" + printableSol(digits) }
+        logger.debug { "Solution:\n" + printableSol(solution) }
         return solution
     }
 

@@ -1,9 +1,5 @@
 plugins {
-    id "application"
-}
-
-ext {
-    vNd4j = "1.0.0-beta7"
+    id "java-library"
 }
 
 dependencies {
@@ -15,44 +11,19 @@ dependencies {
         exclude(group: "dk.brics.automaton")
     }
 
-    implementation "org.openpnp:opencv:4.3.0-2"
-
     implementation "org.deeplearning4j:deeplearning4j-modelimport:$vNd4j"
 
-    implementation "org.nd4j:nd4j-native-platform:$vNd4j"
-//    implementation "org.nd4j:nd4j-native:$vNd4j"
-//    implementation "org.nd4j:nd4j-native:$vNd4j:linux-x86_64"
-
-    implementation("org.datavec:datavec-data-image:$vNd4j") {
-        exclude(group: "org.freemarker")
-        exclude(group: "com.github.jai-imageio")
-//        exclude(group: "com.twelvemonkeys.imageio")
-        exclude(group: "com.twelvemonkeys.imageio", module: "imageio-bmp")
-        exclude(group: "com.twelvemonkeys.imageio", module: "imageio-psd")
-        exclude(group: "com.twelvemonkeys.imageio", module: "imageio-tiff")
-
-        exclude(group: "org.bytedeco", module: "artoolkitplus")
-        exclude(group: "org.bytedeco", module: "ffmpeg")
-        exclude(group: "org.bytedeco", module: "flandmark")
-        exclude(group: "org.bytedeco", module: "flycapture")
-        exclude(group: "org.bytedeco", module: "leptonica-platform")
-        exclude(group: "org.bytedeco", module: "leptonica")
-        exclude(group: "org.bytedeco", module: "libdc1394")
-        exclude(group: "org.bytedeco", module: "libfreenect")
-        exclude(group: "org.bytedeco", module: "libfreenect2")
-        exclude(group: "org.bytedeco", module: "librealsense")
-        exclude(group: "org.bytedeco", module: "librealsense2")
-        exclude(group: "org.bytedeco", module: "tesseract")
-        exclude(group: "org.bytedeco", module: "videoinput")
-        exclude(group: "org.bytedeco", module: "javacv-platform")
-
-//        exclude(group: "org.bytedeco", module: "opencv-platform")
-
+    implementation("org.nd4j:nd4j-native-platform:$vNd4j") {
+        exclude(group: "org.bytedeco", module: "mkl-platform")
     }
 
-}
+    api("org.bytedeco:javacv-platform:$vJavaCv") {
+        ["artoolkitplus", "flandmark", "flycapture", "leptonica", "libdc1394",
+         "libfreenect", "libfreenect2", "librealsense", "librealsense2",
+         "tesseract", "videoinput", "ffmeg"].each {
+            exclude(group: "org.bytedeco", module: "${it}-platform")
+            exclude(group: "org.bytedeco", module: "$it")
+        }
+    }
 
-application {
-    // Define the main class for the application.
-    mainClassName = "com.github.pintowar.AppKt"
 }

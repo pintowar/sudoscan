@@ -28,7 +28,7 @@ class Recognizer {
         assert(shape[3] == 1L)
     }
 
-    fun predict(digits: List<Parser.Digit>): List<Int> {
+    fun predict(digits: List<Digit>): List<Int> {
         val digitArray = digits.map { OpenCvWrapper.toNdArray(it.data) }.toTypedArray()
         val stackDigits = Nd4j.stack(0, *digitArray)
         return predict(stackDigits).zip(digits).map { (rec, dig) -> if (dig.empty) 0 else rec }
