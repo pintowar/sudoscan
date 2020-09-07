@@ -3,16 +3,16 @@ package com.github.pintowar.sudoscan.core
 import mu.KLogging
 import org.bytedeco.javacpp.indexer.FloatIndexer
 import org.bytedeco.javacpp.indexer.IntIndexer
+import org.bytedeco.javacpp.indexer.UByteIndexer
 import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.global.opencv_imgproc.COLOR_RGB2GRAY
 import org.bytedeco.opencv.opencv_core.Mat
 import org.bytedeco.opencv.opencv_core.Point
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.min
 import com.github.pintowar.sudoscan.core.OpenCvWrapper as cv2
 
-object Parser : KLogging() {
+object Extractor : KLogging() {
 
     fun toGrayScale(img: Mat) = cv2.cvtColor(img, COLOR_RGB2GRAY)
 
@@ -32,19 +32,20 @@ object Parser : KLogging() {
 
     fun findCorners(img: Mat): ImageCorners {
         val contours = cv2.findContours(img, Mat(), opencv_imgproc.RETR_EXTERNAL, opencv_imgproc.CHAIN_APPROX_SIMPLE)
-        val polygon = contours.get().maxByOrNull { cv2.contourArea(it) }!!
+        val polygons = contours.get()
 
-        val idx = polygon.createIndexer<IntIndexer>()
-        val points = (0 until polygon.size(0)).map {
-            Point(idx.get(2L * it), idx.get(2L * it + 1))
-        }
+        return if (polygons.isNotEmpty()) {
+            val polygon = polygons.maxByOrNull { cv2.contourArea(it) }!!
+            val idx = polygon.createIndexer<IntIndexer>()
+            val points = (0 until polygon.size(0)).map { Point(idx.get(2L * it), idx.get(2L * it + 1)) }
 
-        return ImageCorners(
-                bottomRight = points.maxByOrNull { it.x() + it.y() }!!,
-                topLeft = points.minByOrNull { it.x() + it.y() }!!,
-                bottomLeft = points.minByOrNull { it.x() - it.y() }!!,
-                topRight = points.maxByOrNull { it.x() - it.y() }!!
-        )
+            ImageCorners(
+                    bottomRight = points.maxByOrNull { it.x() + it.y() }!!,
+                    topLeft = points.minByOrNull { it.x() + it.y() }!!,
+                    bottomLeft = points.minByOrNull { it.x() - it.y() }!!,
+                    topRight = points.maxByOrNull { it.x() - it.y() }!!
+            )
+        } else ImageCorners.EMPTY_CORNERS
     }
 
     fun cropSudoku(img: Mat, corners: ImageCorners): CroppedImage {
@@ -110,16 +111,51 @@ object Parser : KLogging() {
     fun extractDigit(img: Mat, s: Pair<Point, Point>, size: Int): Digit {
         val digit = cutFromRect(img, s)
 
-        val margin = ((digit.arrayWidth() + digit.arrayHeight()) / 2 / 6.0).toInt()
+        val margin = ((digit.arrayWidth() + digit.arrayHeight()) / 5.0).toInt()
 
-        val noBorder = cutFromRect(digit, Point(margin, margin) to
-                Point(digit.arrayWidth() - margin, digit.arrayHeight() - margin))
+        val (_, box) = findLargestFeature(digit,
+                Point(margin, margin), Point(digit.arrayWidth() - margin, digit.arrayHeight() - margin))
 
-        val percentFill = (cv2.sumElements(noBorder) / 255) / (noBorder.size(0) * noBorder.size(1))
+        val noBorder = cutFromRect(digit, box.topLeft to box.bottomRight)
+        val dim = noBorder.size(0) * noBorder.size(1)
+        val percentFill = if (dim > 0) (cv2.sumElements(noBorder) / 255) / dim else 0.0
         logger.debug { "Percent: %.2f".format(percentFill) }
 
-        return if (percentFill >= 0.1) Digit(scaleAndCenter(noBorder, size, 4), false)
+        return if (percentFill > 0.1) Digit(scaleAndCenter(noBorder, size, 4), false)
         else Digit(Mat.zeros(size, size, CV_8UC1).asMat(), true)
+    }
+
+    fun findLargestFeature(inputImg: Mat, topLeft: Point = Point(0, 0),
+                           bottomRight: Point = Point(inputImg.arrayWidth(), inputImg.arrayHeight())): Pair<Mat, ImageCorners> {
+        val img = inputImg.clone()
+        val indexer = img.createIndexer<UByteIndexer>()
+        val size = img.size()
+
+        (topLeft.x() until min(bottomRight.x(), size.width())).forEach { x ->
+            (topLeft.y() until min(bottomRight.y(), size.height())).forEach { y ->
+                if (indexer[y.toLong(), x.toLong()] == 255) {
+                    cv2.floodFill(img, x to y, 64.0)
+                }
+            }
+        }
+
+        var (top, bottom, left, right) = listOf(size.height(), 0, size.width(), 0)
+
+        (0 until size.width()).forEach { x ->
+            (0 until size.height()).forEach { y ->
+                val color = if (indexer[y.toLong(), x.toLong()] != 64) 0 else 255
+                indexer.put(y.toLong(), x.toLong(), color)
+
+                if (indexer[y.toLong(), x.toLong()] == 255) {
+                    top = if (x < top) x else top
+                    bottom = if (x > bottom) x else bottom
+                    left = if (y < left) y else left
+                    right = if (y > right) y else right
+                }
+            }
+        }
+
+        return img to ImageCorners(Point(top, left), Point(top, right), Point(bottom, right), Point(bottom, left))
     }
 
     fun extractAllDigits(img: Mat, squares: List<Pair<Point, Point>>, size: Int = 28) =
@@ -135,30 +171,10 @@ object Parser : KLogging() {
         return mat
     }
 
-    data class ImageCorners(val topLeft: Point, val topRight: Point, val bottomRight: Point, val bottomLeft: Point) {
-
-        fun sides() = listOf(bottomRight to topRight, topLeft to bottomLeft,
-                bottomRight to bottomLeft, topLeft to topRight).map { (a, b) ->
-            sqrt((a.x() - b.x()).toDouble().pow(2) + (a.y() - b.y()).toDouble().pow(2))
-        }
-
-        fun toFloatArray() = arrayOf(
-                arrayOf(topLeft.x().toFloat(), topLeft.y().toFloat()),
-                arrayOf(topRight.x().toFloat(), topRight.y().toFloat()),
-                arrayOf(bottomRight.x().toFloat(), bottomRight.y().toFloat()),
-                arrayOf(bottomLeft.x().toFloat(), bottomLeft.y().toFloat())
-        )
-
-    }
-
     fun cropImage(img: Mat): CroppedImage {
         val gray = toGrayScale(img)
         val proc = preProcessGrayImage(gray)
         val corners = findCorners(proc)
         return cropSudoku(gray, corners)
     }
-
-    data class CroppedImage(val img: Mat, val src: Mat, val dst: Mat)
-
-    data class Digit(val data: Mat, val empty: Boolean)
 }

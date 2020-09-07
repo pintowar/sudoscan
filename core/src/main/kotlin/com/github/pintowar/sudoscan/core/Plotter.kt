@@ -13,7 +13,7 @@ import com.github.pintowar.sudoscan.core.OpenCvWrapper as cv2
 
 object Plotter : KLogging() {
 
-    fun plotSolution(image: Parser.CroppedImage, solution: List<Int>, color: Color = Color.green): Mat {
+    fun plotSolution(image: CroppedImage, solution: List<Int>, color: Color = Color.GREEN): Mat {
         val base = image.img
         val squareImage = cv2.zeros(base.arrayHeight(), base.arrayWidth(), CV_8UC3)
 
@@ -25,7 +25,7 @@ object Plotter : KLogging() {
 
         val font = FONT_HERSHEY_DUPLEX
 
-        val textColor = Scalar((255.0 - color.red), (255.0 - color.green), (255.0 - color.blue), 0.0)
+        val textColor = Scalar((255.0 - color.blue), (255.0 - color.green), (255.0 - color.red), 0.0)
 
         solution.forEach {
             if (x % 9 == 0) {
@@ -60,8 +60,8 @@ object Plotter : KLogging() {
         return cv2.bitwiseAnd(solution, original)
     }
 
-    fun plotResultOnOriginalSource(original: Mat, cropped: Parser.CroppedImage, solution: List<Int>,
-                                   color: Color = Color.green): Mat {
+    fun plotResultOnOriginalSource(original: Mat, cropped: CroppedImage, solution: List<Int>,
+                                   color: Color = Color.GREEN): Mat {
         val result = plotSolution(cropped, solution, color)
         return changePerspectiveAndPasteToOriginal(cropped.dst, cropped.src, result, original)
     }

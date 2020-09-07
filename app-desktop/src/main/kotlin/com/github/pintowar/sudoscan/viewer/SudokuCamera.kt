@@ -11,6 +11,7 @@ import org.bytedeco.javacv.FFmpegFrameRecorder
 import org.bytedeco.javacv.Java2DFrameUtils
 import org.bytedeco.javacv.OpenCVFrameGrabber
 import org.bytedeco.opencv.opencv_core.Mat
+import java.awt.Color
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import javax.swing.WindowConstants
@@ -71,11 +72,10 @@ class SudokuCamera(val record: Boolean = false, videoPath: String = "/tmp/sudoku
             val time = measureTimeMillis {
                 frm = grabber.grab()
                 val img = Java2DFrameUtils.toMat(frm)
-                showAndRecord(img, sol)
                 sol = solver.solve(img)
-//                showAndRecord(solutionToImage(img, sol))
+                showAndRecord(img, sol)
             }
-            logger.info("Processing took: $time ms")
+            logger.debug("Processing took: $time ms")
         }
 
     }

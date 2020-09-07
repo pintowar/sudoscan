@@ -3,13 +3,9 @@ package com.github.pintowar.sudoscan.core
 import com.github.pintowar.sudoscan.NativeImageLoader
 import org.bytedeco.javacv.Java2DFrameUtils
 import org.bytedeco.opencv.global.opencv_core.*
-import org.bytedeco.opencv.global.opencv_highgui.destroyAllWindows
 import org.bytedeco.opencv.global.opencv_imgcodecs
 import org.bytedeco.opencv.global.opencv_imgproc
-import org.bytedeco.opencv.opencv_core.Mat
-import org.bytedeco.opencv.opencv_core.MatVector
-import org.bytedeco.opencv.opencv_core.Scalar
-import org.bytedeco.opencv.opencv_core.Size
+import org.bytedeco.opencv.opencv_core.*
 import org.nd4j.linalg.api.ndarray.INDArray
 import java.awt.image.BufferedImage
 
@@ -47,6 +43,9 @@ object OpenCvWrapper {
         opencv_imgproc.adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, blockSize, C)
         return dst
     }
+
+    fun floodFill(img: Mat, seed: Pair<Int, Int>, newVal: Double) =
+            opencv_imgproc.floodFill(img, Point(seed.first, seed.second), Scalar(newVal))
 
     fun bitwiseNot(src: Mat): Mat {
         val dst = Mat()
@@ -103,9 +102,5 @@ object OpenCvWrapper {
     }
 
     fun sumElements(src: Mat) = sumElems(src).get()
-
-    fun destroy() {
-        destroyAllWindows()
-    }
 
 }
