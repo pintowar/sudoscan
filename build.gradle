@@ -1,13 +1,13 @@
 plugins {
     id "idea"
     id "com.limark.gitflowsemver" version "0.3.1"
-    id "org.jetbrains.kotlin.jvm" version "1.4.0" apply false
-    id 'org.jetbrains.kotlin.kapt' version "1.4.0" apply false
-    id "org.jetbrains.dokka" version "0.10.1" apply false
-    id "org.bytedeco.gradle-javacpp-platform" version "1.5.4-SNAPSHOT" apply false
+    id "org.jetbrains.kotlin.jvm" version "1.4.10" apply false
+    id "org.jetbrains.kotlin.kapt" version "1.4.10" apply false
+    id "org.jetbrains.dokka" version "1.4.10" apply false
+    id "org.bytedeco.gradle-javacpp-platform" version "1.5.4" apply false
 }
 
-allprojects {
+subprojects {
     group = "com.github.pintowar"
 //    version = "0.3.0"
 
@@ -18,7 +18,9 @@ allprojects {
 //        javacppPlatform = "linux-x86_64,macosx-x86_64,windows-x86_64"
     }
 
+    apply plugin: "maven-publish"
     apply plugin: "org.jetbrains.kotlin.jvm"
+    apply plugin: "org.jetbrains.dokka"
     apply plugin: "org.bytedeco.gradle-javacpp-platform"
 
     repositories {
@@ -55,15 +57,39 @@ allprojects {
     test {
         useJUnitPlatform()
     }
+
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/pintowar/sudoscan")
+                credentials {
+                    username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                    password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+                }
+            }
+        }
+        publications {
+            gpr(MavenPublication) {
+                from(components.java)
+            }
+        }
+    }
 }
 
-task assembleDesktopApp(dependsOn: [':app-desktop:shadowJar']) {
+task clean(type: Delete) {
+    group = 'build'
+    description = 'Deletes the build directory.'
+    delete 'build'
+}
+
+task assembleDesktopApp(dependsOn: [':sudoscan-deskapp:shadowJar']) {
     group = 'build'
     description = 'Build desktop app'
 
     doLast {
         copy {
-            from fileTree(dir: "${project(':app-desktop').buildDir}/libs/")
+            from fileTree(dir: "${project(':sudoscan-deskapp').buildDir}/libs/")
             into "$rootDir/build/"
             logger.quiet "JAR generated at $rootDir/build/."
         }
