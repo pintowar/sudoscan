@@ -7,7 +7,7 @@ plugins {
     id "org.bytedeco.gradle-javacpp-platform" version "1.5.4" apply false
 }
 
-allprojects {
+subprojects {
     group = "com.github.pintowar"
 //    version = "0.3.0"
 
@@ -18,6 +18,7 @@ allprojects {
 //        javacppPlatform = "linux-x86_64,macosx-x86_64,windows-x86_64"
     }
 
+    apply plugin: "maven-publish"
     apply plugin: "org.jetbrains.kotlin.jvm"
     apply plugin: "org.jetbrains.dokka"
     apply plugin: "org.bytedeco.gradle-javacpp-platform"
@@ -56,6 +57,30 @@ allprojects {
     test {
         useJUnitPlatform()
     }
+
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/pintowar/sudoscan")
+                credentials {
+                    username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                    password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+                }
+            }
+        }
+        publications {
+            gpr(MavenPublication) {
+                from(components.java)
+            }
+        }
+    }
+}
+
+task clean(type: Delete) {
+    group = 'build'
+    description = 'Deletes the build directory.'
+    delete 'build'
 }
 
 task assembleDesktopApp(dependsOn: [':sudoscan-deskapp:shadowJar']) {

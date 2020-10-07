@@ -1,6 +1,6 @@
 package com.github.pintowar.sudoscan.core
 
-import com.github.pintowar.sudoscan.NativeImageLoader
+import com.github.pintowar.sudoscan.core.loader.NativeImageLoader
 import org.bytedeco.javacv.Java2DFrameUtils
 import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_imgcodecs

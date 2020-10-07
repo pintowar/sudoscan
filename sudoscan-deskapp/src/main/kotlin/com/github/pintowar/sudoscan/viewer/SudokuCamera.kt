@@ -1,6 +1,6 @@
 package com.github.pintowar.sudoscan.viewer
 
-import com.github.pintowar.sudoscan.SudokuSolver
+import com.github.pintowar.sudoscan.core.solver.SudokuSolver
 import com.github.pintowar.sudoscan.core.OpenCvWrapper
 import com.github.pintowar.sudoscan.core.Plotter.combineSolutionToOriginal
 import mu.KLogging

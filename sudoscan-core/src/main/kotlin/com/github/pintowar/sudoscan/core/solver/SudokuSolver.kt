@@ -1,4 +1,4 @@
-package com.github.pintowar.sudoscan
+package com.github.pintowar.sudoscan.core.solver
 
 import com.github.pintowar.sudoscan.core.Extractor.cropImage
 import com.github.pintowar.sudoscan.core.Extractor.extractAllDigits

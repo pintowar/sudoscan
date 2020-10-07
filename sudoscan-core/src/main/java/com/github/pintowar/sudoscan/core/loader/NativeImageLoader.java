@@ -1,4 +1,4 @@
-package com.github.pintowar.sudoscan;
+package com.github.pintowar.sudoscan.core.loader;
 
 import org.apache.commons.io.IOUtils;
 import org.bytedeco.javacpp.DoublePointer;
