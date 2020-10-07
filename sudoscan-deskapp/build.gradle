@@ -5,6 +5,8 @@ plugins {
 
 apply plugin: "org.jetbrains.kotlin.kapt"
 
+description = 'Sudoscan Desktop App'
+
 kapt {
     arguments {
         arg("project", "${project.group}/${project.name}")
@@ -13,7 +15,7 @@ kapt {
 
 dependencies {
 
-    implementation project(":core")
+    implementation project(":sudoscan-core")
 
     kapt "info.picocli:picocli-codegen:$vPicocli"
     implementation "info.picocli:picocli:$vPicocli"

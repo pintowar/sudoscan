@@ -2,6 +2,8 @@ plugins {
     id "java-library"
 }
 
+description = 'Sudoscan Core'
+
 dependencies {
 
     implementation("org.choco-solver:choco-solver:4.10.2") {
