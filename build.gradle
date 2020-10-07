@@ -59,6 +59,16 @@ subprojects {
         useJUnitPlatform()
     }
 
+    task sourcesJar(type: Jar) {
+        archiveClassifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
+        archiveClassifier = 'javadoc'
+        from "$buildDir/dokka/javadoc"
+    }
+
     publishing {
         repositories {
             maven {
@@ -73,6 +83,8 @@ subprojects {
         publications {
             gpr(MavenPublication) {
                 from(components.java)
+                artifact sourcesJar
+                artifact javadocJar
             }
         }
     }
