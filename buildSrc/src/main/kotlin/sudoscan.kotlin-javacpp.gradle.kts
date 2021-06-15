@@ -1,11 +1,9 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("sudoscan.kotlin-base")
     kotlin("kapt")
     id("org.bytedeco.gradle-javacpp-platform")
     id("io.kotest")
-    id("maven-publish")
+    `maven-publish`
 }
 
 val kotestVersion by extra("4.6.0")
@@ -23,14 +21,14 @@ publishing {
         maven {
             name = "GitHubPackages"
             setUrl("https://maven.pkg.github.com/pintowar/sudoscan")
-//            credentials {
-//                username = project.extra["gpr.user"].toString() ?: System.getenv("USERNAME")
-//                password = project.extra["gpr.key"].toString() ?: System.getenv("TOKEN")
-//            }
+            credentials {
+                username = project.findProperty("gpr.user")?.toString() ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key")?.toString() ?: System.getenv("TOKEN")
+            }
         }
     }
     publications {
-        create<MavenPublication>("mavenJava") {
+        register<MavenPublication>("gpr") {
             from(components["java"])
             artifact(tasks["sourcesJar"])
             artifact(tasks["javadocJar"])

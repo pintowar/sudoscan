@@ -60,3 +60,7 @@ release {
         signTag = true
     }
 }
+
+tasks.afterReleaseBuild {
+    dependsOn("publish")
+}
