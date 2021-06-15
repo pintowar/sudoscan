@@ -62,5 +62,5 @@ release {
 }
 
 tasks.afterReleaseBuild {
-    dependsOn("publish")
+    dependsOn(":sudoscan-core:publish", ":sudoscan-deskapp:publish")
 }
