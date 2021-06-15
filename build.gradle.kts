@@ -5,10 +5,9 @@ plugins {
 
 allprojects {
     group = "com.github.pintowar"
-
     val vPicocli by extra("4.5.1")
-    val vNd4j by extra("1.0.0-M1")
-    val vJavaCv by extra("1.5.5")
+    val vNd4j by extra("1.0.0-beta7")
+    val vJavaCv by extra("1.5.3")
     val vChocoSolver by extra("4.10.6")
 //    javacppPlatform = "linux-x86_64,macosx-x86_64,windows-x86_64"
 

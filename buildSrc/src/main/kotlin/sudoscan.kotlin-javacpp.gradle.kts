@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("sudoscan.kotlin-base")
     kotlin("kapt")
-        id("org.bytedeco.gradle-javacpp-platform")
+    id("org.bytedeco.gradle-javacpp-platform")
     id("io.kotest")
     id("maven-publish")
 }
