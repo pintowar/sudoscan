@@ -55,12 +55,6 @@ tasks {
     }
 }
 
-release {
-    git {
-        signTag = true
-    }
-}
-
 tasks.afterReleaseBuild {
     dependsOn(":sudoscan-core:publish", ":sudoscan-deskapp:publish")
 }

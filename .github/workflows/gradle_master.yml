@@ -13,6 +13,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: set up git
+        run: git config user.email "${{ github.actor }}@users.noreply.github.com" && git config user.name "Github Actions"
       - name: Setting up JAVA
         uses: actions/setup-java@v1
         with:
@@ -23,7 +25,7 @@ jobs:
           USERNAME: ${{ secrets.USERNAME }}
           TOKEN: ${{ secrets.TOKEN }}
         with:
-          gradle-version: current
+          gradle-version: wrapper
           arguments: -PjavacppPlatform=linux-x86_64,macosx-x86_64,windows-x86_64 clean assembleDesktopApp release -Prelease.useAutomaticVersion=true
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
