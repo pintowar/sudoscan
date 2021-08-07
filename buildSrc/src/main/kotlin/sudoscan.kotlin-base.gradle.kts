@@ -7,22 +7,19 @@ plugins {
     id("idea")
 }
 
-val kLoggingVersion by extra("2.0.8")
-val mockkVersion by extra("1.11.0")
-
 repositories {
     mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("io.github.microutils:kotlin-logging-jvm:$kLoggingVersion")
-    runtimeOnly("ch.qos.logback:logback-classic:1.2.3")
+    implementation(platform(Libs.Kotlin.bom))
+    implementation(Libs.Kotlin.reflect)
+    implementation(Libs.Kotlin.jdk8)
+    implementation(Libs.Kotlin.logging)
 
-    testImplementation("io.mockk:mockk:$mockkVersion")
+    runtimeOnly(Libs.LogBack.logback)
+    testImplementation(Libs.Mockk.mockk)
 }
 
 java {

@@ -10,3 +10,5 @@ pluginManagement {
 rootProject.name = "sudoscan"
 
 include("sudoscan-core", "sudoscan-deskapp")
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
