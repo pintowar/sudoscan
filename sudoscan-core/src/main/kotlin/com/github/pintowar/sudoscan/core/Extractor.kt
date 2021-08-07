@@ -36,9 +36,9 @@ object Extractor : KLogging() {
         val polygons = contours.get()
 
         return if (polygons.isNotEmpty()) {
-            val polygon = polygons.maxByOrNull { cv2.contourArea(it) }!!
+            val polygon = polygons.maxByOrNull(cv2::contourArea)!!
             val idx = polygon.createIndexer<IntIndexer>()
-            val points = (0 until polygon.size(0)).map { Point(idx.get(2L * it), idx.get(2L * it + 1)) }
+            val points = (0 until idx.size(0)).map { Point(idx.get(it, 0, 0), idx.get(it, 0, 1)) }
 
             ImageCorners(
                     bottomRight = points.maxByOrNull { it.x() + it.y() }!!,
