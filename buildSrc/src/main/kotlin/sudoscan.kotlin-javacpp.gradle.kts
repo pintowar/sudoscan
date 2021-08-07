@@ -6,14 +6,12 @@ plugins {
     `maven-publish`
 }
 
-val kotestVersion by extra("4.6.0")
-
 dependencies {
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion") {
+    testImplementation(Libs.Kotest.junit) {
         exclude(group = "org.jetbrains.kotlin")
     }
-    testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
-    testImplementation("io.kotest:kotest-assertions-json-jvm:$kotestVersion")
+    testImplementation(Libs.Kotest.assertionsCore)
+    testImplementation(Libs.Kotest.assertionsJson)
 }
 
 publishing {

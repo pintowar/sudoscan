@@ -17,6 +17,7 @@ object Extractor : KLogging() {
     fun toGrayScale(img: Mat) = cv2.cvtColor(img, COLOR_RGB2GRAY)
 
     fun preProcessGrayImage(img: Mat, skipDilate: Boolean = false): Mat {
+        assert(img.channels() == 1)
         val proc = cv2.gaussianBlur(img, Pair(9, 9), 0.0)
 
         val threshold = cv2.adaptiveThreshold(proc, 255.0, opencv_imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,

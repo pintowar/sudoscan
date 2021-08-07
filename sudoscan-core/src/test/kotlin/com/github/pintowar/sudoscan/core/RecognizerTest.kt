@@ -1,25 +1,14 @@
 package com.github.pintowar.sudoscan.core
 
-
-import com.github.pintowar.sudoscan.core.loader.NativeImageLoader
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 import org.nd4j.linalg.api.ndarray.INDArray
 import java.io.File
-import javax.imageio.ImageIO
 
-internal class RecognizerTest : StringSpec({
+class RecognizerTest : StringSpec({
     val recognizer = Recognizer()
-
-    fun imRead(path: String): INDArray {
-        val cl = Thread.currentThread().contextClassLoader
-        val img = ImageIO.read(cl.getResourceAsStream(path))
-        return NativeImageLoader(img.height.toLong(), img.width.toLong(), 1)
-                .asMatrix(cl.getResourceAsStream(path))
-                .reshape(img.height.toLong(), img.width.toLong(), 1)
-    }
 
     fun cvRead(path: String): INDArray {
         val cl = Thread.currentThread().contextClassLoader
@@ -39,7 +28,7 @@ internal class RecognizerTest : StringSpec({
                 row("eight", 8),
                 row("nine", 9)
         ) { file: String, digit: Int ->
-            val img = cvRead("imgs/${file}.png")
+            val img = cvRead("imgs/digits/${file}.png")
             recognizer.predict(img.reshape(1, 28, 28, 1))[0] shouldBe digit
         }
     }
