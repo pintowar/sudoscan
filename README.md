@@ -1,5 +1,11 @@
 # SudoScan
-Scan and Solve Sudoku
+![master status](https://github.com/pintowar/sudoscan/actions/workflows/gradle_master.yml/badge.svg?branch=master)
+![develop status](https://github.com/pintowar/sudoscan/actions/workflows/gradle_develop.yml/badge.svg?branch=develop)
+![GitHub license](https://img.shields.io/github/license/pintowar/sudoscan)
+
+![GitHub tag (latest)](https://img.shields.io/github/v/tag/pintowar/sudoscan)
+
+Scan and Solve Sudoku Puzzles
 
 ## Building Project
 
