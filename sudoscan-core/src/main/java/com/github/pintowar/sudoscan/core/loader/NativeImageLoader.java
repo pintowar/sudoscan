@@ -185,7 +185,9 @@ public class NativeImageLoader {
     }
 
     protected INDArray transformImage(Mat image, INDArray ret) throws IOException {
-        Mat image2 = null, image3 = null, image4 = null;
+        Mat image2 = null;
+        Mat image3 = null;
+        Mat image4 = null;
         if (channels > 0 && image.channels() != channels) {
             int code = -1;
             switch (image.channels()) {
@@ -219,16 +221,15 @@ public class NativeImageLoader {
                             break;
                     }
                     break;
-            }
-            if (code < 0) {
-                throw new IOException("Cannot convert from " + image.channels() + " to " + channels + " channels.");
+                default:
+                    throw new IOException("Cannot convert from " + image.channels() + " to " + channels + " channels.");
             }
             image2 = new Mat();
             cvtColor(image, image2, code);
             image = image2;
         }
         if (centerCropIfNeeded) {
-            image3 = centerCropIfNeeded(image);
+            image3 = centerCrop(image);
             if (image3 != image) {
                 image = image3;
             } else {
@@ -264,7 +265,7 @@ public class NativeImageLoader {
     }
 
     // TODO build flexibility on where to crop the image
-    protected Mat centerCropIfNeeded(Mat img) {
+    protected Mat centerCrop(Mat img) {
         int x = 0;
         int y = 0;
         int height = img.rows();
