@@ -1,9 +1,11 @@
 # SudoScan
 ![master status](https://github.com/pintowar/sudoscan/actions/workflows/gradle_master.yml/badge.svg?branch=master)
+
 ![develop status](https://github.com/pintowar/sudoscan/actions/workflows/gradle_develop.yml/badge.svg?branch=develop)
-![GitHub license](https://img.shields.io/github/license/pintowar/sudoscan)
+[![Sonar Coverage](https://sonarcloud.io/api/project_badges/measure?project=pintowar_sudoscan&metric=coverage)](https://sonarcloud.io/dashboard?id=pintowar_sudoscan)
 
 ![GitHub tag (latest)](https://img.shields.io/github/v/tag/pintowar/sudoscan)
+![GitHub license](https://img.shields.io/github/license/pintowar/sudoscan)
 
 Scan and Solve Sudoku Puzzles
 
