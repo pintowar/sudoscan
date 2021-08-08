@@ -47,7 +47,7 @@ object Libs {
     }
 
     object Nd4j {
-        private const val vNd4j = "1.0.0-beta7"
+        private const val vNd4j = "1.0.0-M1.1"
         const val nd4j = "org.nd4j:nd4j-native-platform:$vNd4j"
         const val deeplearning4j = "org.deeplearning4j:deeplearning4j-modelimport:$vNd4j"
         const val datavec = "org.datavec:datavec-data-image:$vNd4j"
@@ -77,7 +77,7 @@ object Libs {
     }
 
     object JavaCv {
-        private const val vJavaCv = "1.5.3"
+        private const val vJavaCv = "1.5.5"
         const val javaCvPlatform = "org.bytedeco:javacv-platform:$vJavaCv"
 
         fun DependencyHandler.apiJavaCv() {

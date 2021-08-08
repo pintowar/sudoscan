@@ -43,4 +43,13 @@ class ExtractorTest: StringSpec({
         sides[3] shouldBe(480.0).plusOrMinus(1.0)
     }
 
+    "test crop image" {
+        val sudoku = cvRead("imgs/sudoku01.jpg")
+        val cropped = Extractor.cropImage(sudoku)
+
+        cropped.img.arrayHeight() shouldBe  387
+        cropped.img.arrayWidth() shouldBe  387
+        cropped.img.channels() shouldBe 1
+    }
+
 })

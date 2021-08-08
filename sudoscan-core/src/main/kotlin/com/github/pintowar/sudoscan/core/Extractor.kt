@@ -166,8 +166,8 @@ object Extractor : KLogging() {
         val mat = Mat(data.size, data[0].size, CV_32FC1)
         val idx = mat.createIndexer<FloatIndexer>()
         data.forEachIndexed { i, it ->
-            idx.put(2L * i, it[0])
-            idx.put(2L * i + 1, it[1])
+            idx.put(longArrayOf(i.toLong(), 0, 0), it[0])
+            idx.put(longArrayOf(i.toLong(), 1, 0), it[1])
         }
         return mat
     }
