@@ -138,34 +138,35 @@ object Extractor : KLogging() {
         bottomRight: Point = Point(inputImg.arrayWidth(), inputImg.arrayHeight())
     ): Pair<Mat, ImageCorners> {
         val img = inputImg.clone()
-        val indexer = img.createIndexer<UByteIndexer>()
-        val size = img.size()
+        return img.createIndexer<UByteIndexer>().use { indexer ->
+            val size = img.size()
 
-        (topLeft.x() until min(bottomRight.x(), size.width())).forEach { x ->
-            (topLeft.y() until min(bottomRight.y(), size.height())).forEach { y ->
-                if (indexer[y.toLong(), x.toLong()] == 255) {
-                    cv2.floodFill(img, x to y, 64.0)
+            (topLeft.x() until min(bottomRight.x(), size.width())).forEach { x ->
+                (topLeft.y() until min(bottomRight.y(), size.height())).forEach { y ->
+                    if (indexer[y.toLong(), x.toLong()] == 255) {
+                        cv2.floodFill(img, x to y, 64.0)
+                    }
                 }
             }
-        }
 
-        var (top, bottom, left, right) = listOf(size.height(), 0, size.width(), 0)
+            var (top, bottom, left, right) = listOf(size.height(), 0, size.width(), 0)
 
-        (0 until size.width()).forEach { x ->
-            (0 until size.height()).forEach { y ->
-                val color = if (indexer[y.toLong(), x.toLong()] != 64) 0 else 255
-                indexer.put(y.toLong(), x.toLong(), color)
+            (0 until size.width()).forEach { x ->
+                (0 until size.height()).forEach { y ->
+                    val color = if (indexer[y.toLong(), x.toLong()] != 64) 0 else 255
+                    indexer.put(y.toLong(), x.toLong(), color)
 
-                if (indexer[y.toLong(), x.toLong()] == 255) {
-                    top = if (x < top) x else top
-                    bottom = if (x > bottom) x else bottom
-                    left = if (y < left) y else left
-                    right = if (y > right) y else right
+                    if (indexer[y.toLong(), x.toLong()] == 255) {
+                        top = if (x < top) x else top
+                        bottom = if (x > bottom) x else bottom
+                        left = if (y < left) y else left
+                        right = if (y > right) y else right
+                    }
                 }
             }
-        }
 
-        return img to ImageCorners(Point(top, left), Point(top, right), Point(bottom, right), Point(bottom, left))
+            img to ImageCorners(Point(top, left), Point(top, right), Point(bottom, right), Point(bottom, left))
+        }
     }
 
     fun extractAllDigits(img: Mat, squares: List<Pair<Point, Point>>, size: Int = 28) =
