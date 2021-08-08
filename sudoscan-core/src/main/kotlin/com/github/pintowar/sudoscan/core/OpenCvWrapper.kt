@@ -20,8 +20,8 @@ object OpenCvWrapper {
     fun toFrame(mat: Mat) = Java2DFrameUtils.toFrame(mat)
 
     fun toNdArray(mat: Mat): INDArray {
-        return NativeImageLoader(mat.arrayHeight().toLong(), mat.arrayWidth().toLong()).asMatrix(mat)
-                .reshape(mat.arrayHeight().toLong(), mat.arrayWidth().toLong(), mat.elemSize())
+        return NativeImageLoader(mat.arrayHeight().toLong(), mat.arrayWidth().toLong(), mat.channels().toLong())
+            .asMatrix(mat).reshape(mat.arrayHeight().toLong(), mat.arrayWidth().toLong(), mat.elemSize())
     }
 
     fun zeros(width: Int, height: Int, type: Int = CV_8U) = Mat.zeros(Size(width, height), type).asMat()
