@@ -30,4 +30,4 @@ jobs:
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
           gradle-version: wrapper
-          arguments: clean sonarqube --stacktrace
+          arguments: clean codeCoverageReport sonarqube
