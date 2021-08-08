@@ -20,8 +20,10 @@ object Extractor : KLogging() {
         assert(img.channels() == 1)
         val proc = cv2.gaussianBlur(img, Pair(9, 9), 0.0)
 
-        val threshold = cv2.adaptiveThreshold(proc, 255.0, opencv_imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,
-                opencv_imgproc.THRESH_BINARY, 11, 2.0)
+        val threshold = cv2.adaptiveThreshold(
+            proc, 255.0, opencv_imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,
+            opencv_imgproc.THRESH_BINARY, 11, 2.0
+        )
 
         val thresholdNot = cv2.bitwiseNot(threshold)
 
@@ -37,14 +39,15 @@ object Extractor : KLogging() {
 
         return if (polygons.isNotEmpty()) {
             val polygon = polygons.maxByOrNull(cv2::contourArea)!!
-            val idx = polygon.createIndexer<IntIndexer>()
-            val points = (0 until idx.size(0)).map { Point(idx.get(it, 0, 0), idx.get(it, 0, 1)) }
+            val points = polygon.createIndexer<IntIndexer>().use { idx ->
+                (0 until idx.size(0)).map { Point(idx.get(it, 0, 0), idx.get(it, 0, 1)) }
+            }
 
             ImageCorners(
-                    bottomRight = points.maxByOrNull { it.x() + it.y() }!!,
-                    topLeft = points.minByOrNull { it.x() + it.y() }!!,
-                    bottomLeft = points.minByOrNull { it.x() - it.y() }!!,
-                    topRight = points.maxByOrNull { it.x() - it.y() }!!
+                bottomRight = points.maxByOrNull { it.x() + it.y() }!!,
+                topLeft = points.minByOrNull { it.x() + it.y() }!!,
+                bottomLeft = points.minByOrNull { it.x() - it.y() }!!,
+                topRight = points.maxByOrNull { it.x() - it.y() }!!
             )
         } else ImageCorners.EMPTY_CORNERS
     }
@@ -54,9 +57,11 @@ object Extractor : KLogging() {
         val side = sides.maxOrNull()!!.toFloat()
 
         val src = floatToMat(corners.toFloatArray())
-        val dst = floatToMat(arrayOf(
+        val dst = floatToMat(
+            arrayOf(
                 arrayOf(0.0f, 0.0f), arrayOf(side - 1, 0.0f), arrayOf(side - 1, side - 1), arrayOf(0.0f, side - 1)
-        ))
+            )
+        )
         val m = cv2.getPerspectiveTransform(src, dst)
 
         val result = cv2.warpPerspective(img, m, Pair(side.toInt(), side.toInt()))
@@ -104,18 +109,20 @@ object Extractor : KLogging() {
     }
 
     fun cutFromRect(img: Mat, s: Pair<Point, Point>) =
-            if (s.first.x() <= s.second.x() && s.first.y() <= s.second.y())
-                img.colRange(s.first.x(), s.second.x())
-                        .rowRange(s.first.y(), s.second.y())
-            else img.colRange(0, 0).rowRange(0, 0)
+        if (s.first.x() <= s.second.x() && s.first.y() <= s.second.y())
+            img.colRange(s.first.x(), s.second.x())
+                .rowRange(s.first.y(), s.second.y())
+        else img.colRange(0, 0).rowRange(0, 0)
 
     fun extractDigit(img: Mat, s: Pair<Point, Point>, size: Int): Digit {
         val digit = cutFromRect(img, s)
 
         val margin = ((digit.arrayWidth() + digit.arrayHeight()) / 5.0).toInt()
 
-        val (_, box) = findLargestFeature(digit,
-                Point(margin, margin), Point(digit.arrayWidth() - margin, digit.arrayHeight() - margin))
+        val (_, box) = findLargestFeature(
+            digit,
+            Point(margin, margin), Point(digit.arrayWidth() - margin, digit.arrayHeight() - margin)
+        )
 
         val noBorder = cutFromRect(digit, box.topLeft to box.bottomRight)
         val dim = noBorder.size(0) * noBorder.size(1)
@@ -126,8 +133,10 @@ object Extractor : KLogging() {
         else Digit(Mat.zeros(size, size, CV_8UC1).asMat(), true)
     }
 
-    fun findLargestFeature(inputImg: Mat, topLeft: Point = Point(0, 0),
-                           bottomRight: Point = Point(inputImg.arrayWidth(), inputImg.arrayHeight())): Pair<Mat, ImageCorners> {
+    fun findLargestFeature(
+        inputImg: Mat, topLeft: Point = Point(0, 0),
+        bottomRight: Point = Point(inputImg.arrayWidth(), inputImg.arrayHeight())
+    ): Pair<Mat, ImageCorners> {
         val img = inputImg.clone()
         val indexer = img.createIndexer<UByteIndexer>()
         val size = img.size()
@@ -160,14 +169,15 @@ object Extractor : KLogging() {
     }
 
     fun extractAllDigits(img: Mat, squares: List<Pair<Point, Point>>, size: Int = 28) =
-            squares.map { s -> extractDigit(img, s, size) }
+        squares.map { s -> extractDigit(img, s, size) }
 
     private fun floatToMat(data: Array<Array<Float>>): Mat {
         val mat = Mat(data.size, data[0].size, CV_32FC1)
-        val idx = mat.createIndexer<FloatIndexer>()
-        data.forEachIndexed { i, it ->
-            idx.put(longArrayOf(i.toLong(), 0, 0), it[0])
-            idx.put(longArrayOf(i.toLong(), 1, 0), it[1])
+        mat.createIndexer<FloatIndexer>().use { idx ->
+            data.forEachIndexed { i, it ->
+                idx.put(longArrayOf(i.toLong(), 0, 0), it[0])
+                idx.put(longArrayOf(i.toLong(), 1, 0), it[1])
+            }
         }
         return mat
     }

@@ -57,7 +57,7 @@ public class NativeImageLoader {
                     + channels + ", rows: " + rows + ", columns: " + cols + "}");
         }
 
-        try(Indexer idx = image.createIndexer(direct)) {
+        try (Indexer idx = image.createIndexer(direct)) {
             Pointer pointer = ret.data().pointer();
             long[] stride = ret.stride();
             boolean done = false;
