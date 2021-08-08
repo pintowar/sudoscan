@@ -24,5 +24,7 @@ jobs:
       - name: Running gradle task
         uses: eskatos/gradle-command-action@v1
         with:
+          dependencies-cache-enabled: true
+          configuration-cache-enabled: true
           gradle-version: wrapper
-          arguments: clean test
+          arguments: clean sonarqube
