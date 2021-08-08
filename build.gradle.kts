@@ -62,7 +62,7 @@ sonarqube {
         property("sonar.projectKey", "pintowar_sudoscan")
         property("sonar.projectVersion", project.version.toString())
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.login", sonarToken)
+        property("sonar.login", "$sonarToken")
         property("sonar.verbose", true)
         property("sonar.github.repository", "pintowar/sudoscan")
         property("sonar.coverage.jacoco.xmlReportPaths", "$jacocoReportPath/codeCoverageReport.xml")
