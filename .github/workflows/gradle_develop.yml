@@ -29,4 +29,4 @@ jobs:
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
           gradle-version: wrapper
-          arguments: clean sonarqube --info
+          arguments: clean sonarqube --debug
