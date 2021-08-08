@@ -57,126 +57,125 @@ public class NativeImageLoader {
                     + channels + ", rows: " + rows + ", columns: " + cols + "}");
         }
 
-        Indexer idx = image.createIndexer(direct);
-        Pointer pointer = ret.data().pointer();
-        long[] stride = ret.stride();
-        boolean done = false;
-        PagedPointer pagedPointer = new PagedPointer(pointer, rows * cols * channels,
-                ret.data().offset() * Nd4j.sizeOfDataType(ret.data().dataType()));
+        try(Indexer idx = image.createIndexer(direct)) {
+            Pointer pointer = ret.data().pointer();
+            long[] stride = ret.stride();
+            boolean done = false;
+            PagedPointer pagedPointer = new PagedPointer(pointer, rows * cols * channels,
+                    ret.data().offset() * Nd4j.sizeOfDataType(ret.data().dataType()));
 
-        if (pointer instanceof FloatPointer) {
-            FloatIndexer retidx = FloatIndexer.create(pagedPointer.asFloatPointer(),
-                    new long[]{channels, rows, cols}, new long[]{stride[0], stride[1], stride[2]}, direct);
-            if (idx instanceof UByteIndexer) {
-                UByteIndexer ubyteidx = (UByteIndexer) idx;
-                for (long k = 0; k < channels; k++) {
-                    for (long i = 0; i < rows; i++) {
-                        for (long j = 0; j < cols; j++) {
-                            retidx.put(k, i, j, ubyteidx.get(i, j, k));
+            if (pointer instanceof FloatPointer) {
+                try (FloatIndexer retidx = FloatIndexer.create(pagedPointer.asFloatPointer(),
+                        new long[]{channels, rows, cols}, new long[]{stride[0], stride[1], stride[2]}, direct)) {
+                    if (idx instanceof UByteIndexer) {
+                        UByteIndexer ubyteidx = (UByteIndexer) idx;
+                        for (long k = 0; k < channels; k++) {
+                            for (long i = 0; i < rows; i++) {
+                                for (long j = 0; j < cols; j++) {
+                                    retidx.put(k, i, j, ubyteidx.get(i, j, k));
+                                }
+                            }
                         }
+                        done = true;
+                    } else if (idx instanceof UShortIndexer) {
+                        UShortIndexer ushortidx = (UShortIndexer) idx;
+                        for (long k = 0; k < channels; k++) {
+                            for (long i = 0; i < rows; i++) {
+                                for (long j = 0; j < cols; j++) {
+                                    retidx.put(k, i, j, ushortidx.get(i, j, k));
+                                }
+                            }
+                        }
+                        done = true;
+                    } else if (idx instanceof IntIndexer) {
+                        IntIndexer intidx = (IntIndexer) idx;
+                        for (long k = 0; k < channels; k++) {
+                            for (long i = 0; i < rows; i++) {
+                                for (long j = 0; j < cols; j++) {
+                                    retidx.put(k, i, j, intidx.get(i, j, k));
+                                }
+                            }
+                        }
+                        done = true;
+                    } else if (idx instanceof FloatIndexer) {
+                        FloatIndexer floatidx = (FloatIndexer) idx;
+                        for (long k = 0; k < channels; k++) {
+                            for (long i = 0; i < rows; i++) {
+                                for (long j = 0; j < cols; j++) {
+                                    retidx.put(k, i, j, floatidx.get(i, j, k));
+                                }
+                            }
+                        }
+                        done = true;
                     }
                 }
-                done = true;
-            } else if (idx instanceof UShortIndexer) {
-                UShortIndexer ushortidx = (UShortIndexer) idx;
-                for (long k = 0; k < channels; k++) {
-                    for (long i = 0; i < rows; i++) {
-                        for (long j = 0; j < cols; j++) {
-                            retidx.put(k, i, j, ushortidx.get(i, j, k));
+            } else if (pointer instanceof DoublePointer) {
+                try (DoubleIndexer retidx = DoubleIndexer.create(pagedPointer.asDoublePointer(),
+                        new long[]{channels, rows, cols}, new long[]{stride[0], stride[1], stride[2]}, direct)) {
+                    if (idx instanceof UByteIndexer) {
+                        UByteIndexer ubyteidx = (UByteIndexer) idx;
+                        for (long k = 0; k < channels; k++) {
+                            for (long i = 0; i < rows; i++) {
+                                for (long j = 0; j < cols; j++) {
+                                    retidx.put(k, i, j, ubyteidx.get(i, j, k));
+                                }
+                            }
                         }
+                        done = true;
+                    } else if (idx instanceof UShortIndexer) {
+                        UShortIndexer ushortidx = (UShortIndexer) idx;
+                        for (long k = 0; k < channels; k++) {
+                            for (long i = 0; i < rows; i++) {
+                                for (long j = 0; j < cols; j++) {
+                                    retidx.put(k, i, j, ushortidx.get(i, j, k));
+                                }
+                            }
+                        }
+                        done = true;
+                    } else if (idx instanceof IntIndexer) {
+                        IntIndexer intidx = (IntIndexer) idx;
+                        for (long k = 0; k < channels; k++) {
+                            for (long i = 0; i < rows; i++) {
+                                for (long j = 0; j < cols; j++) {
+                                    retidx.put(k, i, j, intidx.get(i, j, k));
+                                }
+                            }
+                        }
+                        done = true;
+                    } else if (idx instanceof FloatIndexer) {
+                        FloatIndexer floatidx = (FloatIndexer) idx;
+                        for (long k = 0; k < channels; k++) {
+                            for (long i = 0; i < rows; i++) {
+                                for (long j = 0; j < cols; j++) {
+                                    retidx.put(k, i, j, floatidx.get(i, j, k));
+                                }
+                            }
+                        }
+                        done = true;
                     }
                 }
-                done = true;
-            } else if (idx instanceof IntIndexer) {
-                IntIndexer intidx = (IntIndexer) idx;
-                for (long k = 0; k < channels; k++) {
-                    for (long i = 0; i < rows; i++) {
-                        for (long j = 0; j < cols; j++) {
-                            retidx.put(k, i, j, intidx.get(i, j, k));
-                        }
-                    }
-                }
-                done = true;
-            } else if (idx instanceof FloatIndexer) {
-                FloatIndexer floatidx = (FloatIndexer) idx;
-                for (long k = 0; k < channels; k++) {
-                    for (long i = 0; i < rows; i++) {
-                        for (long j = 0; j < cols; j++) {
-                            retidx.put(k, i, j, floatidx.get(i, j, k));
-                        }
-                    }
-                }
-                done = true;
             }
-            retidx.release();
-        } else if (pointer instanceof DoublePointer) {
-            DoubleIndexer retidx = DoubleIndexer.create(pagedPointer.asDoublePointer(),
-                    new long[]{channels, rows, cols}, new long[]{stride[0], stride[1], stride[2]}, direct);
-            if (idx instanceof UByteIndexer) {
-                UByteIndexer ubyteidx = (UByteIndexer) idx;
+
+            if (!done) {
                 for (long k = 0; k < channels; k++) {
                     for (long i = 0; i < rows; i++) {
                         for (long j = 0; j < cols; j++) {
-                            retidx.put(k, i, j, ubyteidx.get(i, j, k));
+                            if (ret.rank() == 3) {
+                                ret.putScalar(k, i, j, idx.getDouble(i, j, k));
+                            } else if (ret.rank() == 4) {
+                                ret.putScalar(1, k, i, j, idx.getDouble(i, j, k));
+                            } else if (ret.rank() == 2) {
+                                ret.putScalar(i, j, idx.getDouble(i, j));
+                            } else
+                                throw new ND4JIllegalStateException("NativeImageLoader expects 2D, 3D or 4D output array, but " + ret.rank() + "D array was given");
                         }
                     }
                 }
-                done = true;
-            } else if (idx instanceof UShortIndexer) {
-                UShortIndexer ushortidx = (UShortIndexer) idx;
-                for (long k = 0; k < channels; k++) {
-                    for (long i = 0; i < rows; i++) {
-                        for (long j = 0; j < cols; j++) {
-                            retidx.put(k, i, j, ushortidx.get(i, j, k));
-                        }
-                    }
-                }
-                done = true;
-            } else if (idx instanceof IntIndexer) {
-                IntIndexer intidx = (IntIndexer) idx;
-                for (long k = 0; k < channels; k++) {
-                    for (long i = 0; i < rows; i++) {
-                        for (long j = 0; j < cols; j++) {
-                            retidx.put(k, i, j, intidx.get(i, j, k));
-                        }
-                    }
-                }
-                done = true;
-            } else if (idx instanceof FloatIndexer) {
-                FloatIndexer floatidx = (FloatIndexer) idx;
-                for (long k = 0; k < channels; k++) {
-                    for (long i = 0; i < rows; i++) {
-                        for (long j = 0; j < cols; j++) {
-                            retidx.put(k, i, j, floatidx.get(i, j, k));
-                        }
-                    }
-                }
-                done = true;
             }
-            retidx.release();
+
+            image.data();
+            Nd4j.getAffinityManager().tagLocation(ret, AffinityManager.Location.HOST);
         }
-
-
-        if (!done) {
-            for (long k = 0; k < channels; k++) {
-                for (long i = 0; i < rows; i++) {
-                    for (long j = 0; j < cols; j++) {
-                        if (ret.rank() == 3) {
-                            ret.putScalar(k, i, j, idx.getDouble(i, j, k));
-                        } else if (ret.rank() == 4) {
-                            ret.putScalar(1, k, i, j, idx.getDouble(i, j, k));
-                        } else if (ret.rank() == 2) {
-                            ret.putScalar(i, j, idx.getDouble(i, j));
-                        } else
-                            throw new ND4JIllegalStateException("NativeImageLoader expects 2D, 3D or 4D output array, but " + ret.rank() + "D array was given");
-                    }
-                }
-            }
-        }
-
-        idx.release();
-        image.data();
-        Nd4j.getAffinityManager().tagLocation(ret, AffinityManager.Location.HOST);
     }
 
     public INDArray asMatrix(Mat image) throws IOException {
