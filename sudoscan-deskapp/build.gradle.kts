@@ -17,13 +17,10 @@ kapt {
 }
 
 dependencies {
-
     implementation(projects.sudoscanCore)
-
     implementPicocli()
     implementAwtColorFactory()
     apiDatavec()
-
 }
 
 application {

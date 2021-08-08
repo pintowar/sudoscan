@@ -27,10 +27,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-jacoco {
-    toolVersion = "0.8.7"
-}
-
 tasks {
     register<Jar>("sourcesJar") {
         archiveClassifier.set("sources")

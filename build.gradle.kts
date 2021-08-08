@@ -6,25 +6,25 @@ plugins {
 allprojects {
     group = "com.github.pintowar"
 //    javacppPlatform = "linux-x86_64,macosx-x86_64,windows-x86_64"
-
 }
+
 tasks {
     register<JacocoReport>("codeCoverageReport") {
         group = "verification"
         description = "Run tests and merge all jacoco reports"
 
+        val codeCoverageTask = this
         // If a subproject applies the 'jacoco' plugin, add the result it to the report
         subprojects {
             val subproject = this
             subproject.plugins.withType<JacocoPlugin>().configureEach {
-                subproject.tasks.matching { it.extensions.findByType<JacocoTaskExtension>() != null }.configureEach {
+                val extensions = subproject.tasks.matching { it.extensions.findByType<JacocoTaskExtension>() != null }
+                extensions.forEach { codeCoverageTask.dependsOn(it) }
+
+                extensions.configureEach {
                     val testTask = this
                     sourceSets(subproject.sourceSets.main.get())
                     executionData(testTask)
-                }
-
-                subproject.tasks.matching { it.extensions.findByType<JacocoTaskExtension>() != null }.forEach {
-                    rootProject.tasks["codeCoverageReport"].dependsOn(it)
                 }
             }
         }
