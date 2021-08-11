@@ -46,6 +46,23 @@ object Libs {
         }
     }
 
+    object Djl {
+        private const val vDjl = "0.12.0"
+        private const val vTensorFlow = "2.4.1"
+
+        const val djlApi = "ai.djl:api:$vDjl"
+        const val djlTensorflowApi = "ai.djl.tensorflow:tensorflow-api:$vDjl"
+        const val djlTensorflowEngine = "ai.djl.tensorflow:tensorflow-engine:$vDjl"
+        const val djlTensorflowZoo = "ai.djl.tensorflow:tensorflow-model-zoo:$vDjl"
+        const val djlTensorflowNative = "ai.djl.tensorflow:tensorflow-native-auto:$vTensorFlow"
+
+        fun DependencyHandler.implementDjl() {
+            listOf(djlApi, djlTensorflowApi, djlTensorflowEngine, djlTensorflowZoo, djlTensorflowNative).forEach {
+                add("implementation", it)
+            }
+        }
+    }
+
     object Nd4j {
         private const val vNd4j = "1.0.0-M1.1"
         const val nd4j = "org.nd4j:nd4j-native-platform:$vNd4j"
