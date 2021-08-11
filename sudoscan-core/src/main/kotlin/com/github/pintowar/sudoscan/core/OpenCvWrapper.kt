@@ -38,14 +38,16 @@ object OpenCvWrapper {
         return dst
     }
 
-    fun adaptiveThreshold(src: Mat, maxValue: Double, adaptiveMethod: Int, thresholdType: Int, blockSize: Int, C: Double): Mat {
+    fun adaptiveThreshold(
+        src: Mat, maxValue: Double, adaptiveMethod: Int, thresholdType: Int, blockSize: Int, c: Double
+    ): Mat {
         val dst = Mat()
-        opencv_imgproc.adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, blockSize, C)
+        opencv_imgproc.adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, blockSize, c)
         return dst
     }
 
     fun floodFill(img: Mat, seed: Pair<Int, Int>, newVal: Double) =
-            opencv_imgproc.floodFill(img, Point(seed.first, seed.second), Scalar(newVal))
+        opencv_imgproc.floodFill(img, Point(seed.first, seed.second), Scalar(newVal))
 
     fun bitwiseNot(src: Mat): Mat {
         val dst = Mat()
@@ -83,9 +85,9 @@ object OpenCvWrapper {
         return opencv_imgproc.getPerspectiveTransform(src, dst)
     }
 
-    fun warpPerspective(src: Mat, M: Mat, dsize: Pair<Int, Int>): Mat {
+    fun warpPerspective(src: Mat, m: Mat, dsize: Pair<Int, Int>): Mat {
         val dst = Mat()
-        opencv_imgproc.warpPerspective(src, dst, M, Size(dsize.first, dsize.second))
+        opencv_imgproc.warpPerspective(src, dst, m, Size(dsize.first, dsize.second))
         return dst
     }
 

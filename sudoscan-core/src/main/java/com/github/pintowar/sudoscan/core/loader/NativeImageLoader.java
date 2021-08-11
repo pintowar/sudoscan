@@ -28,7 +28,7 @@ public class NativeImageLoader {
 
     protected long height;
     protected long width;
-    protected long channels = -1;
+    protected long channels;
     protected boolean centerCropIfNeeded = false;
 
     boolean direct = !Loader.getPlatform().startsWith("android");
