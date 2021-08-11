@@ -1,8 +1,8 @@
 package com.github.pintowar.sudoscan.viewer
 
-import com.github.pintowar.sudoscan.core.solver.SudokuSolver
-import com.github.pintowar.sudoscan.core.OpenCvWrapper
-import com.github.pintowar.sudoscan.core.Plotter.combineSolutionToOriginal
+import com.github.pintowar.sudoscan.nd4j.solver.SudokuSolver
+import com.github.pintowar.sudoscan.nd4j.OpenCvWrapper
+import com.github.pintowar.sudoscan.nd4j.Plotter.combineSolutionToOriginal
 import mu.KLogging
 import org.bytedeco.ffmpeg.global.avcodec
 import org.bytedeco.ffmpeg.global.avutil

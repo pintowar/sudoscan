@@ -1,6 +1,6 @@
-package com.github.pintowar.sudoscan.core
+package com.github.pintowar.sudoscan.nd4j
 
-import com.github.pintowar.sudoscan.core.loader.NativeImageLoader
+import com.github.pintowar.sudoscan.nd4j.loader.NativeImageLoader
 import org.bytedeco.javacv.Java2DFrameUtils
 import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_imgcodecs
@@ -20,7 +20,11 @@ object OpenCvWrapper {
     fun toFrame(mat: Mat) = Java2DFrameUtils.toFrame(mat)
 
     fun toNdArray(mat: Mat): INDArray {
-        return NativeImageLoader(mat.arrayHeight().toLong(), mat.arrayWidth().toLong(), mat.channels().toLong())
+        return NativeImageLoader(
+            mat.arrayHeight().toLong(),
+            mat.arrayWidth().toLong(),
+            mat.channels().toLong()
+        )
             .asMatrix(mat).reshape(mat.arrayHeight().toLong(), mat.arrayWidth().toLong(), mat.elemSize())
     }
 

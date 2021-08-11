@@ -1,4 +1,4 @@
-package com.github.pintowar.sudoscan.core
+package com.github.pintowar.sudoscan.nd4j
 
 import mu.KLogging
 import org.deeplearning4j.nn.modelimport.keras.KerasModelImport

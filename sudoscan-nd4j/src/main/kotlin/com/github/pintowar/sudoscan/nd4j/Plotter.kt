@@ -1,4 +1,4 @@
-package com.github.pintowar.sudoscan.core
+package com.github.pintowar.sudoscan.nd4j
 
 import mu.KLogging
 import org.bytedeco.opencv.global.opencv_core.CV_8UC3
@@ -9,7 +9,7 @@ import org.bytedeco.opencv.opencv_core.Point
 import org.bytedeco.opencv.opencv_core.Scalar
 import java.awt.Color
 import kotlin.math.ceil
-import com.github.pintowar.sudoscan.core.OpenCvWrapper as cv2
+import com.github.pintowar.sudoscan.nd4j.OpenCvWrapper as cv2
 
 object Plotter : KLogging() {
 

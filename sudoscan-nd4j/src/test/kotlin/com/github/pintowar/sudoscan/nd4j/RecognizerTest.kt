@@ -1,4 +1,4 @@
-package com.github.pintowar.sudoscan.core
+package com.github.pintowar.sudoscan.nd4j
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
@@ -12,7 +12,7 @@ class RecognizerTest : StringSpec({
 
     fun cvRead(path: String): INDArray {
         val cl = Thread.currentThread().contextClassLoader
-        val mat = OpenCvWrapper.imread(File(cl.getResource(path).toURI()).absolutePath)
+        val mat = OpenCvWrapper.imread(File(cl.getResource(path)!!.toURI()).absolutePath)
         return OpenCvWrapper.toNdArray(mat)
     }
 
