@@ -1,6 +1,7 @@
 package com.github.pintowar.sudoscan.djl
 
 import ai.djl.Application
+import ai.djl.Model
 import ai.djl.inference.Predictor
 import ai.djl.modality.Classifications
 import ai.djl.modality.cv.Image
@@ -17,19 +18,19 @@ class Recognizer(path: String = "model/chars74k") {
 
     companion object : KLogging()
 
-    private var predictor: Predictor<Image, Classifications>
+    private var model: Model
+    private val translator = MyTranslator()
 
     init {
         val cl = Thread.currentThread().contextClassLoader
         val input = Path.of(cl.getResource(path)!!.toURI())
-        val model = Criteria.builder()
+        model = Criteria.builder()
             .optApplication(Application.CV.IMAGE_CLASSIFICATION)
             .setTypes(Image::class.java, Classifications::class.java)
             .optEngine("TensorFlow")
             .optModelPath(input)
             .build()
             .loadModel()
-        predictor = model.newPredictor(MyTranslator())
         logger.debug {
             """
                 Input: ${model.describeOutput()}
@@ -41,16 +42,20 @@ class Recognizer(path: String = "model/chars74k") {
     fun predict(digits: List<Image>): List<Int> = digits.map(this::predict)
 
     fun predict(digit: Image): Int {
-        val prediction = predictor.predict(digit)
-        return prediction.best<Classifications.Classification>().className.toInt()
+        model.newPredictor(translator).use { predictor ->
+            val prediction = predictor.predict(digit)
+            return prediction.best<Classifications.Classification>().className.toInt()
+        }
     }
 
     internal class MyTranslator : Translator<Image, Classifications> {
         private val digits = (0..9).map { "$it" }
+        private val size = 28
+        private val lSize = size.toLong()
 
         override fun processInput(ctx: TranslatorContext, input: Image): NDList {
             val array = input.toNDArray(ctx.ndManager, Image.Flag.GRAYSCALE)
-            return NDList(NDImageUtils.resize(array, 28).reshape(28, 28, 1).div(255).neg().add(1))
+            return NDList(NDImageUtils.resize(array, size).reshape(lSize, lSize, 1).div(255).neg().add(1))
         }
 
         override fun processOutput(ctx: TranslatorContext, list: NDList): Classifications {
