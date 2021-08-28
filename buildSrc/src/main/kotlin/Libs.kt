@@ -95,14 +95,16 @@ object Libs {
 
     object JavaCv {
         private const val vJavaCv = "1.5.5"
-        const val javaCvPlatform = "org.bytedeco:javacv-platform:$vJavaCv"
+        private const val vOpenCv = "4.5.1-1.5.5"
+        const val javaCv = "org.bytedeco:javacv:$vJavaCv"
+        const val openCvPlatform = "org.bytedeco:opencv-platform:$vOpenCv"
 
-        fun DependencyHandler.apiJavaCv() {
-            addDependencyTo(this, "api", javaCvPlatform, Action<ExternalModuleDependency> {
+        fun DependencyHandler.apiOpenCv() {
+            add("api", openCvPlatform)
+            addDependencyTo(this, "api", javaCv, Action<ExternalModuleDependency> {
                 listOf("artoolkitplus", "flandmark", "flycapture", "leptonica", "libdc1394",
                     "libfreenect", "libfreenect2", "librealsense", "librealsense2",
-                    "tesseract", "videoinput", "ffmeg").forEach {
-                    exclude(group = "org.bytedeco", module = "${it}-platform")
+                    "tesseract", "videoinput", "ffmpeg").forEach {
                     exclude(group = "org.bytedeco", module = it)
                 }
             })

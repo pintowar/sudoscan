@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.30")
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.5.0")
     implementation("org.bytedeco.gradle-javacpp-platform:org.bytedeco.gradle-javacpp-platform.gradle.plugin:1.5.5")
     implementation("gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0")

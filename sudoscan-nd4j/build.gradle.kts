@@ -1,4 +1,4 @@
-import Libs.JavaCv.apiJavaCv
+import Libs.JavaCv.apiOpenCv
 import Libs.Nd4j.implementNd4j
 
 plugins {
@@ -11,5 +11,5 @@ description = "Sudoscan Nd4j"
 dependencies {
     api(projects.sudoscanCore)
     implementNd4j()
-    apiJavaCv()
+    apiOpenCv()
 }
