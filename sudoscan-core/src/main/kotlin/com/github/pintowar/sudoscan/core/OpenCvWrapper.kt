@@ -1,12 +1,12 @@
-package com.github.pintowar.sudoscan.nd4j
+package com.github.pintowar.sudoscan.core
 
-import com.github.pintowar.sudoscan.nd4j.loader.NativeImageLoader
+//import com.github.pintowar.sudoscan.core.loader.NativeImageLoader
 import org.bytedeco.javacv.Java2DFrameUtils
 import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_imgcodecs
 import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.opencv_core.*
-import org.nd4j.linalg.api.ndarray.INDArray
+//import org.nd4j.linalg.api.ndarray.INDArray
 import java.awt.image.BufferedImage
 
 object OpenCvWrapper {
@@ -18,15 +18,6 @@ object OpenCvWrapper {
     fun toImage(mat: Mat) = Java2DFrameUtils.toBufferedImage(mat)
 
     fun toFrame(mat: Mat) = Java2DFrameUtils.toFrame(mat)
-
-    fun toNdArray(mat: Mat): INDArray {
-        return NativeImageLoader(
-            mat.arrayHeight().toLong(),
-            mat.arrayWidth().toLong(),
-            mat.channels().toLong()
-        )
-            .asMatrix(mat).reshape(mat.arrayHeight().toLong(), mat.arrayWidth().toLong(), mat.elemSize())
-    }
 
     fun zeros(width: Int, height: Int, type: Int = CV_8U) = Mat.zeros(Size(width, height), type).asMat()
 

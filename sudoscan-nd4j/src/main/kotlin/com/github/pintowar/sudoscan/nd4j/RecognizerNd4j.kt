@@ -1,5 +1,7 @@
 package com.github.pintowar.sudoscan.nd4j
 
+import com.github.pintowar.sudoscan.core.Digit
+import com.github.pintowar.sudoscan.core.Recognizer
 import mu.KLogging
 import org.deeplearning4j.nn.modelimport.keras.KerasModelImport
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
@@ -7,7 +9,7 @@ import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
 import kotlin.properties.Delegates
 
-class Recognizer {
+class RecognizerNd4j : Recognizer {
 
     companion object : KLogging()
 
@@ -28,8 +30,8 @@ class Recognizer {
         assert(shape[3] == 1L)
     }
 
-    fun predict(digits: List<Digit>): List<Int> {
-        val digitArray = digits.map { OpenCvWrapper.toNdArray(it.data) }.toTypedArray()
+    override fun predict(digits: List<Digit>): List<Int> {
+        val digitArray = digits.map { it.data.toNdArray() }.toTypedArray()
         val stackDigits = Nd4j.stack(0, *digitArray)
         return predict(stackDigits).zip(digits).map { (rec, dig) -> if (dig.empty) 0 else rec }
     }

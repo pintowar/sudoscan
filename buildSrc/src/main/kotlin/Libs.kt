@@ -46,6 +46,15 @@ object Libs {
         }
     }
 
+    object Guava {
+        private const val vGuava = "30.1.1-jre"
+        const val guava = "com.google.guava:guava:$vGuava"
+
+        fun DependencyHandler.apiGuava() {
+            add("api", guava)
+        }
+    }
+
     object Djl {
         private const val vDjl = "0.12.0"
         private const val vTensorFlow = "2.4.1"
@@ -84,9 +93,11 @@ object Libs {
                 exclude(group = "com.twelvemonkeys.imageio", module = "imageio-psd")
                 exclude(group = "com.twelvemonkeys.imageio", module = "imageio-tiff")
 
-                listOf("artoolkitplus", "flandmark", "flycapture", "leptonica", "libdc1394",
+                listOf(
+                    "artoolkitplus", "flandmark", "flycapture", "leptonica", "libdc1394",
                     "libfreenect", "libfreenect2", "librealsense", "librealsense2",
-                    "tesseract", "videoinput", "javacv-platform").forEach {
+                    "tesseract", "videoinput", "javacv-platform"
+                ).forEach {
                     exclude(group = "org.bytedeco", module = it)
                 }
             })
@@ -102,9 +113,11 @@ object Libs {
         fun DependencyHandler.apiOpenCv() {
             add("api", openCvPlatform)
             addDependencyTo(this, "api", javaCv, Action<ExternalModuleDependency> {
-                listOf("artoolkitplus", "flandmark", "flycapture", "leptonica", "libdc1394",
+                listOf(
+                    "artoolkitplus", "flandmark", "flycapture", "leptonica", "libdc1394",
                     "libfreenect", "libfreenect2", "librealsense", "librealsense2",
-                    "tesseract", "videoinput", "ffmpeg").forEach {
+                    "tesseract", "videoinput", "ffmpeg"
+                ).forEach {
                     exclude(group = "org.bytedeco", module = it)
                 }
             })

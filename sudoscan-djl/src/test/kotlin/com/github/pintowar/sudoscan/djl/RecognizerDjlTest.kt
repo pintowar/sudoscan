@@ -1,19 +1,18 @@
-package com.github.pintowar.sudoscan.nd4j
+package com.github.pintowar.sudoscan.djl
 
+import ai.djl.modality.cv.Image
+import ai.djl.modality.cv.ImageFactory
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
-import org.nd4j.linalg.api.ndarray.INDArray
-import java.io.File
 
-class RecognizerTest : StringSpec({
-    val recognizer = Recognizer()
+class RecognizerDjlTest : StringSpec({
+    val recognizer = RecognizerDjl()
 
-    fun cvRead(path: String): INDArray {
+    fun cvRead(path: String): Image {
         val cl = Thread.currentThread().contextClassLoader
-        val mat = OpenCvWrapper.imread(File(cl.getResource(path)!!.toURI()).absolutePath)
-        return OpenCvWrapper.toNdArray(mat)
+        return ImageFactory.getInstance().fromInputStream(cl.getResourceAsStream(path))
     }
 
     "should recognize sample digits" {
@@ -29,7 +28,7 @@ class RecognizerTest : StringSpec({
                 row("nine", 9)
         ) { file: String, digit: Int ->
             val img = cvRead("imgs/digits/${file}.png")
-            recognizer.predict(img.reshape(1, 28, 28, 1))[0] shouldBe digit
+            recognizer.predict(img) shouldBe digit
         }
     }
 })

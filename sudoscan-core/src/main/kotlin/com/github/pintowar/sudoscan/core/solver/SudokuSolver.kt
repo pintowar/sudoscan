@@ -1,34 +1,33 @@
-package com.github.pintowar.sudoscan.nd4j.solver
+package com.github.pintowar.sudoscan.core.solver
 
-import com.github.pintowar.sudoscan.nd4j.Extractor.cropImage
-import com.github.pintowar.sudoscan.nd4j.Extractor.extractAllDigits
-import com.github.pintowar.sudoscan.nd4j.Extractor.preProcessGrayImage
-import com.github.pintowar.sudoscan.nd4j.Extractor.splitSquares
-import com.github.pintowar.sudoscan.nd4j.Plotter.changePerspectiveToOriginalSize
-import com.github.pintowar.sudoscan.nd4j.Plotter.plotResultOnOriginalSource
-import com.github.pintowar.sudoscan.nd4j.Plotter.plotSolution
-import com.github.pintowar.sudoscan.nd4j.Recognizer
+import com.github.pintowar.sudoscan.core.Extractor.cropImage
+import com.github.pintowar.sudoscan.core.Extractor.extractAllDigits
+import com.github.pintowar.sudoscan.core.Extractor.preProcessGrayImage
+import com.github.pintowar.sudoscan.core.Extractor.splitSquares
+import com.github.pintowar.sudoscan.core.Plotter.changePerspectiveToOriginalSize
+import com.github.pintowar.sudoscan.core.Plotter.plotResultOnOriginalSource
+import com.github.pintowar.sudoscan.core.Plotter.plotSolution
+import com.github.pintowar.sudoscan.core.Recognizer
 import com.github.pintowar.sudoscan.core.Solver
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader.from
 import mu.KLogging
 import org.bytedeco.opencv.opencv_core.Mat
-import org.nd4j.shade.guava.cache.CacheBuilder
-import org.nd4j.shade.guava.cache.CacheLoader.from
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.time.Duration
-import com.github.pintowar.sudoscan.nd4j.OpenCvWrapper as cv2
+import com.github.pintowar.sudoscan.core.OpenCvWrapper as cv2
 
-class SudokuSolver {
+class SudokuSolver(private val recognizer: Recognizer) {
 
     companion object : KLogging()
 
-    private val recognizer = Recognizer()
     private val cache = CacheBuilder
-            .newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(1))
-            .build(from { it: List<Int>? ->
-                if (it != null) solve(it) else emptyList()
-            })
+        .newBuilder()
+        .expireAfterWrite(Duration.ofMinutes(1))
+        .build(from { it: List<Int>? ->
+            if (it != null) solve(it) else emptyList()
+        })
 
     fun solveAndPasteSolution(img: BufferedImage, color: Color = Color.GREEN): BufferedImage {
         val mat = cv2.toMat(img)

@@ -4,6 +4,7 @@ import ai.djl.Application
 import ai.djl.Model
 import ai.djl.inference.Predictor
 import ai.djl.modality.Classifications
+import ai.djl.modality.cv.BufferedImageFactory
 import ai.djl.modality.cv.Image
 import ai.djl.modality.cv.util.NDImageUtils
 import ai.djl.ndarray.NDList
@@ -11,10 +12,13 @@ import ai.djl.repository.zoo.Criteria
 import ai.djl.translate.Batchifier
 import ai.djl.translate.Translator
 import ai.djl.translate.TranslatorContext
+import com.github.pintowar.sudoscan.core.Digit
+import com.github.pintowar.sudoscan.core.OpenCvWrapper
+import com.github.pintowar.sudoscan.core.Recognizer
 import mu.KLogging
 import java.nio.file.Path
 
-class Recognizer(path: String = "model/chars74k") {
+class RecognizerDjl(path: String = "model/chars74k") : Recognizer {
 
     companion object : KLogging()
 
@@ -39,7 +43,9 @@ class Recognizer(path: String = "model/chars74k") {
         }
     }
 
-    fun predict(digits: List<Image>): List<Int> = digits.map(this::predict)
+    override fun predict(digits: List<Digit>): List<Int> {
+        return digits.map { predict(BufferedImageFactory().fromImage(OpenCvWrapper.toImage(it.data))) }
+    }
 
     fun predict(digit: Image): Int {
         model.newPredictor(translator).use { predictor ->

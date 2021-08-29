@@ -1,4 +1,6 @@
+import Libs.JavaCv.apiOpenCv
 import Libs.ChocoSolver.implementChocoSolver
+import Libs.Guava.apiGuava
 
 plugins {
     id("sudoscan.kotlin-kotest")
@@ -9,4 +11,6 @@ description = "Sudoscan Core"
 
 dependencies {
     implementChocoSolver()
+    apiGuava()
+    apiOpenCv()
 }

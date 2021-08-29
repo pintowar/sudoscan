@@ -1,4 +1,4 @@
-package com.github.pintowar.sudoscan.nd4j
+package com.github.pintowar.sudoscan.core
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.doubles.plusOrMinus
