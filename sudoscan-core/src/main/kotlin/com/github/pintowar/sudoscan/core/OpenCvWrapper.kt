@@ -1,12 +1,10 @@
 package com.github.pintowar.sudoscan.core
 
-//import com.github.pintowar.sudoscan.core.loader.NativeImageLoader
 import org.bytedeco.javacv.Java2DFrameUtils
 import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_imgcodecs
 import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.opencv_core.*
-//import org.nd4j.linalg.api.ndarray.INDArray
 import java.awt.image.BufferedImage
 
 object OpenCvWrapper {
