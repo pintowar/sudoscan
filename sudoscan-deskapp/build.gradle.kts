@@ -18,6 +18,7 @@ kapt {
 
 dependencies {
     implementation(projects.sudoscanCore)
+    implementation(projects.sudoscanNd4j)
     implementPicocli()
     implementAwtColorFactory()
     apiDatavec()

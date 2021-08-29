@@ -9,26 +9,25 @@ import com.github.pintowar.sudoscan.core.Plotter.plotResultOnOriginalSource
 import com.github.pintowar.sudoscan.core.Plotter.plotSolution
 import com.github.pintowar.sudoscan.core.Recognizer
 import com.github.pintowar.sudoscan.core.Solver
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader.from
 import mu.KLogging
 import org.bytedeco.opencv.opencv_core.Mat
-import org.nd4j.shade.guava.cache.CacheBuilder
-import org.nd4j.shade.guava.cache.CacheLoader.from
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.time.Duration
 import com.github.pintowar.sudoscan.core.OpenCvWrapper as cv2
 
-class SudokuSolver {
+class SudokuSolver(private val recognizer: Recognizer) {
 
     companion object : KLogging()
 
-    private val recognizer = Recognizer()
     private val cache = CacheBuilder
-            .newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(1))
-            .build(from { it: List<Int>? ->
-                if (it != null) solve(it) else emptyList()
-            })
+        .newBuilder()
+        .expireAfterWrite(Duration.ofMinutes(1))
+        .build(from { it: List<Int>? ->
+            if (it != null) solve(it) else emptyList()
+        })
 
     fun solveAndPasteSolution(img: BufferedImage, color: Color = Color.GREEN): BufferedImage {
         val mat = cv2.toMat(img)

@@ -1,5 +1,6 @@
-package com.github.pintowar.sudoscan.core
+package com.github.pintowar.sudoscan.nd4j
 
+import com.github.pintowar.sudoscan.core.OpenCvWrapper
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
 import io.kotest.data.row
@@ -7,13 +8,13 @@ import io.kotest.matchers.shouldBe
 import org.nd4j.linalg.api.ndarray.INDArray
 import java.io.File
 
-class RecognizerTest : StringSpec({
-    val recognizer = Recognizer()
+class RecognizerNd4jTest : StringSpec({
+    val recognizer = RecognizerNd4j()
 
     fun cvRead(path: String): INDArray {
         val cl = Thread.currentThread().contextClassLoader
-        val mat = OpenCvWrapper.imread(File(cl.getResource(path).toURI()).absolutePath)
-        return OpenCvWrapper.toNdArray(mat)
+        val mat = OpenCvWrapper.imread(File(cl.getResource(path)!!.toURI()).absolutePath)
+        return mat.toNdArray()
     }
 
     "should recognize sample digits" {

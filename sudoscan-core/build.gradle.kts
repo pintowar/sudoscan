@@ -1,9 +1,9 @@
+import Libs.JavaCv.apiOpenCv
 import Libs.ChocoSolver.implementChocoSolver
-import Libs.JavaCv.apiJavaCv
-import Libs.Nd4j.implementNd4j
+import Libs.Guava.apiGuava
 
 plugins {
-    id("sudoscan.kotlin-javacpp")
+    id("sudoscan.kotlin-kotest")
     id("java-library")
 }
 
@@ -11,6 +11,6 @@ description = "Sudoscan Core"
 
 dependencies {
     implementChocoSolver()
-    implementNd4j()
-    apiJavaCv()
+    apiGuava()
+    apiOpenCv()
 }

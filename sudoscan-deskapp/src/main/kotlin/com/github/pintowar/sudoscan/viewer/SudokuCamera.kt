@@ -1,8 +1,9 @@
 package com.github.pintowar.sudoscan.viewer
 
-import com.github.pintowar.sudoscan.core.solver.SudokuSolver
 import com.github.pintowar.sudoscan.core.OpenCvWrapper
 import com.github.pintowar.sudoscan.core.Plotter.combineSolutionToOriginal
+import com.github.pintowar.sudoscan.core.solver.SudokuSolver
+import com.github.pintowar.sudoscan.nd4j.RecognizerNd4j
 import mu.KLogging
 import org.bytedeco.ffmpeg.global.avcodec
 import org.bytedeco.ffmpeg.global.avutil
@@ -29,7 +30,7 @@ class SudokuCamera(private val color: Color = Color.BLUE,
     private val grabber = OpenCVFrameGrabber(0)
     private val recorder: FFmpegFrameRecorder
     private val frame = CanvasFrame("SudoScan UI")
-    private val solver = SudokuSolver()
+    private val solver = SudokuSolver(RecognizerNd4j())
     private val fps = 10.0
 
     init {

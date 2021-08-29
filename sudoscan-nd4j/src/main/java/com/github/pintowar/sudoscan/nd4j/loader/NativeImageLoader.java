@@ -1,4 +1,4 @@
-package com.github.pintowar.sudoscan.core.loader;
+package com.github.pintowar.sudoscan.nd4j.loader;
 
 import org.bytedeco.javacpp.DoublePointer;
 import org.bytedeco.javacpp.FloatPointer;
