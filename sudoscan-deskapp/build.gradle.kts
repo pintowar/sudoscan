@@ -16,9 +16,10 @@ kapt {
     }
 }
 
+val hasDjl = project.hasProperty("djl")
 dependencies {
     implementation(projects.sudoscanCore)
-    implementation(projects.sudoscanNd4j)
+    implementation(if(hasDjl) projects.sudoscanDjl else projects.sudoscanNd4j)
     implementPicocli()
     implementAwtColorFactory()
     apiDatavec()

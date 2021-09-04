@@ -1,7 +1,7 @@
 package com.github.pintowar.sudoscan.nd4j
 
 import com.github.pintowar.sudoscan.core.Digit
-import com.github.pintowar.sudoscan.core.Recognizer
+import com.github.pintowar.sudoscan.core.spi.Recognizer
 import mu.KLogging
 import org.deeplearning4j.nn.modelimport.keras.KerasModelImport
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
@@ -15,13 +15,15 @@ class RecognizerNd4j : Recognizer {
 
     private var model: MultiLayerNetwork by Delegates.notNull()
 
-    constructor(path: String = "model/chars74k_model.h5") {
+    constructor(path: String) {
         val cl = Thread.currentThread().contextClassLoader
         val input = cl.getResourceAsStream(path)
         model = KerasModelImport.importKerasSequentialModelAndWeights(input, false)
 
         logger.debug { model.summary() }
     }
+
+    constructor() : this("model/chars74k_model.h5")
 
     fun validateImages(digits: INDArray) {
         val shape = digits.shape()

@@ -2,7 +2,6 @@ package com.github.pintowar.sudoscan.djl
 
 import ai.djl.Application
 import ai.djl.Model
-import ai.djl.inference.Predictor
 import ai.djl.modality.Classifications
 import ai.djl.modality.cv.BufferedImageFactory
 import ai.djl.modality.cv.Image
@@ -14,11 +13,13 @@ import ai.djl.translate.Translator
 import ai.djl.translate.TranslatorContext
 import com.github.pintowar.sudoscan.core.Digit
 import com.github.pintowar.sudoscan.core.OpenCvWrapper
-import com.github.pintowar.sudoscan.core.Recognizer
+import com.github.pintowar.sudoscan.core.spi.Recognizer
 import mu.KLogging
 import java.nio.file.Path
 
-class RecognizerDjl(path: String = "model/chars74k") : Recognizer {
+class RecognizerDjl(path: String) : Recognizer {
+
+    constructor() : this("model/chars74k")
 
     companion object : KLogging()
 

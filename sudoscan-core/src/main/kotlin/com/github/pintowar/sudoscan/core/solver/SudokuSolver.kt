@@ -7,7 +7,7 @@ import com.github.pintowar.sudoscan.core.Extractor.splitSquares
 import com.github.pintowar.sudoscan.core.Plotter.changePerspectiveToOriginalSize
 import com.github.pintowar.sudoscan.core.Plotter.plotResultOnOriginalSource
 import com.github.pintowar.sudoscan.core.Plotter.plotSolution
-import com.github.pintowar.sudoscan.core.Recognizer
+import com.github.pintowar.sudoscan.core.spi.Recognizer
 import com.github.pintowar.sudoscan.core.Solver
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader.from

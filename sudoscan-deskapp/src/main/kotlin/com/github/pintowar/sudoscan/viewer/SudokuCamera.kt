@@ -2,8 +2,8 @@ package com.github.pintowar.sudoscan.viewer
 
 import com.github.pintowar.sudoscan.core.OpenCvWrapper
 import com.github.pintowar.sudoscan.core.Plotter.combineSolutionToOriginal
+import com.github.pintowar.sudoscan.core.spi.Recognizer
 import com.github.pintowar.sudoscan.core.solver.SudokuSolver
-import com.github.pintowar.sudoscan.nd4j.RecognizerNd4j
 import mu.KLogging
 import org.bytedeco.ffmpeg.global.avcodec
 import org.bytedeco.ffmpeg.global.avutil
@@ -18,9 +18,11 @@ import java.awt.event.WindowEvent
 import javax.swing.WindowConstants
 import kotlin.system.measureTimeMillis
 
-class SudokuCamera(private val color: Color = Color.BLUE,
-                   private val record: Boolean = false,
-                   videoPath: String = "/tmp/sudoku.mp4") {
+class SudokuCamera(
+    private val color: Color = Color.BLUE,
+    private val record: Boolean = false,
+    videoPath: String = "/tmp/sudoku.mp4"
+) {
 
     companion object : KLogging() {
         const val FRAME_WIDTH = 640
@@ -30,7 +32,7 @@ class SudokuCamera(private val color: Color = Color.BLUE,
     private val grabber = OpenCVFrameGrabber(0)
     private val recorder: FFmpegFrameRecorder
     private val frame = CanvasFrame("SudoScan UI")
-    private val solver = SudokuSolver(RecognizerNd4j())
+    private val solver = SudokuSolver(Recognizer.provider())
     private val fps = 10.0
 
     init {
@@ -74,13 +76,13 @@ class SudokuCamera(private val color: Color = Color.BLUE,
                     val sol = solver.solve(img, color)
                     showAndRecord(img, sol)
                 }
-                logger.debug("Processing took: $time ms")
+                logger.debug { "Processing took: $time ms" }
             }
         }
     }
 
     fun solutionToFrame(img: Mat, sol: Mat?) =
-            OpenCvWrapper.toFrame(if (sol != null) combineSolutionToOriginal(img, sol) else img)
+        OpenCvWrapper.toFrame(if (sol != null) combineSolutionToOriginal(img, sol) else img)
 
     fun dispose() {
         frame.isVisible = false
