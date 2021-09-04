@@ -29,29 +29,6 @@ class SudokuSolver(private val recognizer: Recognizer) {
             if (it != null) solve(it) else emptyList()
         })
 
-    fun solveAndPasteSolution(img: BufferedImage, color: Color = Color.GREEN): BufferedImage {
-        val mat = cv2.toMat(img)
-        val sol = solveAndPasteSolution(mat, color)
-        return cv2.toImage(sol)
-    }
-
-    fun solveAndPasteSolution(img: Mat, color: Color = Color.GREEN) = try {
-        val squareSize = 28
-
-        val cropped = cropImage(img)
-        val processedCrop = preProcessGrayImage(cropped.img, true)
-
-        val squares = splitSquares(processedCrop)
-        val cells = extractAllDigits(processedCrop, squares, squareSize)
-        val digits = recognizer.predict(cells)
-        val solution = cache.get(digits)
-        if (solution.isNotEmpty()) plotResultOnOriginalSource(img, cropped, solution, color)
-        else img
-    } catch (e: Exception) {
-        logger.trace("Problem found during solution!", e)
-        img
-    }
-
     fun solve(img: Mat, color: Color = Color.GREEN) = try {
         val squareSize = 28
 

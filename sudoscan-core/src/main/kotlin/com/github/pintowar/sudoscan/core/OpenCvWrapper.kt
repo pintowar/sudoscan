@@ -15,8 +15,6 @@ object OpenCvWrapper {
 
     fun toImage(mat: Mat) = Java2DFrameUtils.toBufferedImage(mat)
 
-    fun toFrame(mat: Mat) = Java2DFrameUtils.toFrame(mat)
-
     fun zeros(width: Int, height: Int, type: Int = CV_8U) = Mat.zeros(Size(width, height), type).asMat()
 
     fun cvtColor(src: Mat, code: Int): Mat {

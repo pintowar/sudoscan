@@ -18,11 +18,12 @@ kapt {
 
 val hasDjl = project.hasProperty("djl")
 dependencies {
-    implementation(projects.sudoscanCore)
-    implementation(if(hasDjl) projects.sudoscanDjl else projects.sudoscanNd4j)
+    api(projects.sudoscanCore)
+    api(if(hasDjl) projects.sudoscanDjl else projects.sudoscanNd4j)
+    apiFfmpeg()
+
     implementPicocli()
     implementAwtColorFactory()
-    apiFfmpeg()
 }
 
 application {

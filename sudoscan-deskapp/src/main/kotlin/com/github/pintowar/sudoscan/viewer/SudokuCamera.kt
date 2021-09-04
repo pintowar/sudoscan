@@ -1,6 +1,5 @@
 package com.github.pintowar.sudoscan.viewer
 
-import com.github.pintowar.sudoscan.core.OpenCvWrapper
 import com.github.pintowar.sudoscan.core.Plotter.combineSolutionToOriginal
 import com.github.pintowar.sudoscan.core.spi.Recognizer
 import com.github.pintowar.sudoscan.core.solver.SudokuSolver
@@ -82,7 +81,7 @@ class SudokuCamera(
     }
 
     fun solutionToFrame(img: Mat, sol: Mat?) =
-        OpenCvWrapper.toFrame(if (sol != null) combineSolutionToOriginal(img, sol) else img)
+        Java2DFrameUtils.toFrame(if (sol != null) combineSolutionToOriginal(img, sol) else img)
 
     fun dispose() {
         frame.isVisible = false
