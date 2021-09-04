@@ -94,21 +94,23 @@ object Libs {
         const val openCvPlatform = "org.bytedeco:opencv-platform:$vOpenCv"
         const val ffmpegPlatform = "org.bytedeco:ffmpeg-platform:$vFfmpeg"
 
-        fun DependencyHandler.apiOpenCv() {
-            add("api", openCvPlatform)
+        fun DependencyHandler.apiJavaCv() {
             addDependencyTo(this, "api", javaCv, Action<ExternalModuleDependency> {
                 listOf(
                     "artoolkitplus", "flandmark", "flycapture", "leptonica", "libdc1394",
                     "libfreenect", "libfreenect2", "librealsense", "librealsense2",
-                    "tesseract", "videoinput", "ffmpeg"
+                    "tesseract", "videoinput", "ffmpeg", "opencv", "openblas"
                 ).forEach {
                     exclude(group = "org.bytedeco", module = it)
                 }
             })
         }
 
-        fun DependencyHandler.apiFfmpeg() {
+        fun DependencyHandler.apiOpenCv() {
             add("api", openCvPlatform)
+        }
+
+        fun DependencyHandler.apiFfmpeg() {
             add("api", ffmpegPlatform)
         }
     }
