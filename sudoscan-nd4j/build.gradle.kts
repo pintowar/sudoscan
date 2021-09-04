@@ -8,6 +8,6 @@ plugins {
 description = "Sudoscan Nd4j"
 
 dependencies {
-    implementation(projects.sudoscanCore)
+    api(projects.sudoscanCore)
     implementNd4j()
 }

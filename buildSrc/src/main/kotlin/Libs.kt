@@ -76,7 +76,6 @@ object Libs {
         private const val vNd4j = "1.0.0-M1.1"
         const val nd4j = "org.nd4j:nd4j-native-platform:$vNd4j"
         const val deeplearning4j = "org.deeplearning4j:deeplearning4j-modelimport:$vNd4j"
-        const val datavec = "org.datavec:datavec-data-image:$vNd4j"
 
         fun DependencyHandler.implementNd4j() {
             addDependencyTo(this, "implementation", nd4j, Action<ExternalModuleDependency> {
@@ -85,30 +84,15 @@ object Libs {
             add("implementation", deeplearning4j)
         }
 
-        fun DependencyHandler.apiDatavec() {
-            addDependencyTo(this, "api", datavec, Action<ExternalModuleDependency> {
-                exclude(group = "org.freemarker")
-                exclude(group = "com.github.jai-imageio")
-                exclude(group = "com.twelvemonkeys.imageio", module = "imageio-bmp")
-                exclude(group = "com.twelvemonkeys.imageio", module = "imageio-psd")
-                exclude(group = "com.twelvemonkeys.imageio", module = "imageio-tiff")
-
-                listOf(
-                    "artoolkitplus", "flandmark", "flycapture", "leptonica", "libdc1394",
-                    "libfreenect", "libfreenect2", "librealsense", "librealsense2",
-                    "tesseract", "videoinput", "javacv-platform"
-                ).forEach {
-                    exclude(group = "org.bytedeco", module = it)
-                }
-            })
-        }
     }
 
     object JavaCv {
         private const val vJavaCv = "1.5.5"
-        private const val vOpenCv = "4.5.1-1.5.5"
+        private const val vOpenCv = "4.5.1-$vJavaCv"
+        private const val vFfmpeg = "4.3.2-$vJavaCv"
         const val javaCv = "org.bytedeco:javacv:$vJavaCv"
         const val openCvPlatform = "org.bytedeco:opencv-platform:$vOpenCv"
+        const val ffmpegPlatform = "org.bytedeco:ffmpeg-platform:$vFfmpeg"
 
         fun DependencyHandler.apiOpenCv() {
             add("api", openCvPlatform)
@@ -121,6 +105,11 @@ object Libs {
                     exclude(group = "org.bytedeco", module = it)
                 }
             })
+        }
+
+        fun DependencyHandler.apiFfmpeg() {
+            add("api", openCvPlatform)
+            add("api", ffmpegPlatform)
         }
     }
 

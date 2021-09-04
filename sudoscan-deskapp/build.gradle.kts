@@ -1,5 +1,5 @@
 import Libs.AwtColorFactory.implementAwtColorFactory
-import Libs.Nd4j.apiDatavec
+import Libs.JavaCv.apiFfmpeg
 import Libs.Picocli.implementPicocli
 
 plugins {
@@ -22,7 +22,7 @@ dependencies {
     implementation(if(hasDjl) projects.sudoscanDjl else projects.sudoscanNd4j)
     implementPicocli()
     implementAwtColorFactory()
-    apiDatavec()
+    apiFfmpeg()
 }
 
 application {
