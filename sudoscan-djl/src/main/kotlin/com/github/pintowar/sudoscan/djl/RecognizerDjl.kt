@@ -23,7 +23,7 @@ class RecognizerDjl(path: String) : Recognizer {
     companion object : KLogging()
 
     private var model: Model
-    private val translator = MyTranslator()
+    private val translator = ImageTranslator()
 
     init {
         val cl = Thread.currentThread().contextClassLoader
@@ -44,7 +44,9 @@ class RecognizerDjl(path: String) : Recognizer {
     }
 
     override fun predict(digits: List<Digit>): List<Int> {
-        return digits.map { predict(BufferedImageFactory().fromImage(OpenCvWrapper.toImage(it.data))) }
+        return digits.map {
+            if (it.empty) 0 else predict(BufferedImageFactory().fromImage(OpenCvWrapper.toImage(it.data)))
+        }
     }
 
     fun predict(digit: Image): Int {
@@ -54,7 +56,7 @@ class RecognizerDjl(path: String) : Recognizer {
         }
     }
 
-    internal class MyTranslator : Translator<Image, Classifications> {
+    internal class ImageTranslator : Translator<Image, Classifications> {
         private val digits = (0..9).map { "$it" }
         private val size = 28
         private val lSize = size.toLong()
