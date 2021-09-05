@@ -15,7 +15,6 @@ import com.github.pintowar.sudoscan.core.Digit
 import com.github.pintowar.sudoscan.core.OpenCvWrapper
 import com.github.pintowar.sudoscan.core.spi.Recognizer
 import mu.KLogging
-import java.nio.file.Path
 
 class RecognizerDjl(path: String) : Recognizer {
 
@@ -28,12 +27,12 @@ class RecognizerDjl(path: String) : Recognizer {
 
     init {
         val cl = Thread.currentThread().contextClassLoader
-        val input = Path.of(cl.getResource(path)!!.toURI())
+        val input = cl.getResource(path)!!
         model = Criteria.builder()
             .optApplication(Application.CV.IMAGE_CLASSIFICATION)
             .setTypes(Image::class.java, Classifications::class.java)
             .optEngine("TensorFlow")
-            .optModelPath(input)
+            .optModelUrls(input.toString())
             .build()
             .loadModel()
         logger.debug {

@@ -32,7 +32,6 @@ application {
 }
 
 tasks.shadowJar {
-//    mainClassName.set("com.github.pintowar.sudoscan.viewer.SudoscanApplicationKt")
     archiveBaseName.set("sudoscan-desktop-app")
     mergeServiceFiles()
 }

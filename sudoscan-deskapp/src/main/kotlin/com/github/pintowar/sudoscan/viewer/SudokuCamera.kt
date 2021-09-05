@@ -28,10 +28,10 @@ class SudokuCamera(
         const val FRAME_HEIGHT = 480
     }
 
+    private val solver = SudokuSolver(Recognizer.provider())
     private val grabber = OpenCVFrameGrabber(0)
     private val recorder: FFmpegFrameRecorder
     private val frame = CanvasFrame("SudoScan UI")
-    private val solver = SudokuSolver(Recognizer.provider())
     private val fps = 10.0
 
     init {
