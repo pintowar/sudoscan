@@ -74,22 +74,27 @@ object Libs {
 
     object Nd4j {
         private const val vNd4j = "1.0.0-M1.1"
+        private const val vHdf5 = "1.12.1-1.5.6"
         const val nd4j = "org.nd4j:nd4j-native-platform:$vNd4j"
         const val deeplearning4j = "org.deeplearning4j:deeplearning4j-modelimport:$vNd4j"
+        const val hdf5 = "org.bytedeco:hdf5-platform:$vHdf5"
 
         fun DependencyHandler.implementNd4j() {
             addDependencyTo(this, "implementation", nd4j, Action<ExternalModuleDependency> {
                 exclude(group = "org.bytedeco", module = "mkl-platform")
             })
-            add("implementation", deeplearning4j)
+            addDependencyTo(this, "implementation", deeplearning4j, Action<ExternalModuleDependency> {
+                exclude(group = "org.bytedeco", module = "hdf5-platform")
+            })
+            add("implementation", hdf5)
         }
 
     }
 
     object JavaCv {
-        private const val vJavaCv = "1.5.5"
-        private const val vOpenCv = "4.5.1-$vJavaCv"
-        private const val vFfmpeg = "4.3.2-$vJavaCv"
+        private const val vJavaCv = "1.5.6"
+        private const val vOpenCv = "4.5.3-$vJavaCv"
+        private const val vFfmpeg = "4.4-$vJavaCv"
         const val javaCv = "org.bytedeco:javacv:$vJavaCv"
         const val openCvPlatform = "org.bytedeco:opencv-platform:$vOpenCv"
         const val ffmpegPlatform = "org.bytedeco:ffmpeg-platform:$vFfmpeg"
