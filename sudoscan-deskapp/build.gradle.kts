@@ -1,5 +1,6 @@
 import Libs.AwtColorFactory.implementAwtColorFactory
 import Libs.JavaCv.apiFfmpeg
+import Libs.JavaCv.apiJavaCv
 import Libs.Picocli.implementPicocli
 
 plugins {
@@ -20,6 +21,7 @@ val hasDjl = project.hasProperty("djl")
 dependencies {
     api(projects.sudoscanCore)
     api(if(hasDjl) projects.sudoscanDjl else projects.sudoscanNd4j)
+    apiJavaCv()
     apiFfmpeg()
 
     implementPicocli()
