@@ -1,15 +1,11 @@
-package com.github.pintowar.sudoscan.core
+package com.github.pintowar.sudoscan.choco
 
+import com.github.pintowar.sudoscan.core.spi.Solver
 import org.chocosolver.solver.Model
 
-object Solver {
+class SolverChoco : Solver {
 
-    fun solve(problem: String, entireSol: Boolean = true): String {
-        val prob = problem.toList().map(Character::getNumericValue)
-        return solve(prob, entireSol).joinToString("")
-    }
-
-    fun solve(problem: List<Int>, entireSol: Boolean = true): List<Int> {
+    override fun solve(problem: List<Int>, entireSol: Boolean): List<Int> {
         val prob = problem.chunked(9).map { it.toIntArray() }.toTypedArray()
         return solveWithChoco(prob, entireSol).flatMap { it.toList() }
     }
@@ -57,5 +53,4 @@ object Solver {
         else
             throw IllegalArgumentException("Could not find solution for the given problem.")
     }
-
 }

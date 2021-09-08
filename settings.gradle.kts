@@ -10,6 +10,7 @@ pluginManagement {
 rootProject.name = "sudoscan"
 
 include("sudoscan-core")
+include("sudoscan-solver-choco")
 include("sudoscan-recognizer-nd4j", "sudoscan-recognizer-djl")
 include("sudoscan-deskapp")
 

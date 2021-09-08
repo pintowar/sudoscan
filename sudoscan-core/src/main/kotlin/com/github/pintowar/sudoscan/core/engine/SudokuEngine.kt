@@ -7,7 +7,7 @@ import com.github.pintowar.sudoscan.core.Extractor.splitSquares
 import com.github.pintowar.sudoscan.core.Plotter.changePerspectiveToOriginalSize
 import com.github.pintowar.sudoscan.core.Plotter.plotSolution
 import com.github.pintowar.sudoscan.core.spi.Recognizer
-import com.github.pintowar.sudoscan.core.Solver
+import com.github.pintowar.sudoscan.core.spi.Solver
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader.from
 import mu.KLogging
@@ -15,7 +15,7 @@ import org.bytedeco.opencv.opencv_core.Mat
 import java.awt.Color
 import java.time.Duration
 
-class SudokuEngine(private val recognizer: Recognizer) {
+class SudokuEngine(private val recognizer: Recognizer, private val solver: Solver) {
 
     companion object : KLogging()
 
@@ -51,7 +51,7 @@ class SudokuEngine(private val recognizer: Recognizer) {
             it.joinToString("|").replace("0", " ")
         }
 
-        val solution = Solver.solve(digits, false)
+        val solution = solver.solve(digits, false)
         logger.debug { "Digital Sudoku:\n" + printableSol(digits) }
         logger.debug { "Solution:\n" + printableSol(solution) }
         return solution
