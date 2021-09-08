@@ -17,5 +17,7 @@ interface Solver {
         return solve(prob, entireSol).joinToString("")
     }
 
+    val name: String
+
     fun solve(problem: List<Int>, entireSol: Boolean = true): List<Int>
 }

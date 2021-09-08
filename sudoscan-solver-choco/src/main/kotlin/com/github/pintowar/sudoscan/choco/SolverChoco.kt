@@ -5,6 +5,8 @@ import org.chocosolver.solver.Model
 
 class SolverChoco : Solver {
 
+    override val name: String = "Choco Solver"
+
     override fun solve(problem: List<Int>, entireSol: Boolean): List<Int> {
         val prob = problem.chunked(9).map { it.toIntArray() }.toTypedArray()
         return solveWithChoco(prob, entireSol).flatMap { it.toList() }
