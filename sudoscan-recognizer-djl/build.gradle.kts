@@ -1,13 +1,13 @@
-import Libs.Nd4j.implementNd4j
+import Libs.Djl.implementDjl
 
 plugins {
     id("sudoscan.kotlin-kotest")
     id("java-library")
 }
 
-description = "Sudoscan Nd4j"
+description = "Sudoscan Recognizer DJL"
 
 dependencies {
     api(projects.sudoscanCore)
-    implementNd4j()
+    implementDjl()
 }

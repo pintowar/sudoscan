@@ -1,7 +1,7 @@
 package com.github.pintowar.sudoscan.viewer
 
 import com.github.pintowar.sudoscan.core.Plotter.combineSolutionToOriginal
-import com.github.pintowar.sudoscan.core.solver.SudokuSolver
+import com.github.pintowar.sudoscan.core.engine.SudokuEngine
 import com.github.pintowar.sudoscan.core.spi.Recognizer
 import mu.KLogging
 import org.bytedeco.ffmpeg.global.avcodec
@@ -29,7 +29,7 @@ class SudokuCamera(
     }
 
     private val recognizer = Recognizer.provider()
-    private val solver = SudokuSolver(recognizer)
+    private val solver = SudokuEngine(recognizer)
     private val grabber = OpenCVFrameGrabber(0)
     private val recorder: FFmpegFrameRecorder
     private val frame = CanvasFrame("SudoScan UI - ${recognizer.name}")

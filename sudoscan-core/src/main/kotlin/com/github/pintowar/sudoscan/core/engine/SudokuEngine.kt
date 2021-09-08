@@ -1,11 +1,10 @@
-package com.github.pintowar.sudoscan.core.solver
+package com.github.pintowar.sudoscan.core.engine
 
 import com.github.pintowar.sudoscan.core.Extractor.cropImage
 import com.github.pintowar.sudoscan.core.Extractor.extractAllDigits
 import com.github.pintowar.sudoscan.core.Extractor.preProcessGrayImage
 import com.github.pintowar.sudoscan.core.Extractor.splitSquares
 import com.github.pintowar.sudoscan.core.Plotter.changePerspectiveToOriginalSize
-import com.github.pintowar.sudoscan.core.Plotter.plotResultOnOriginalSource
 import com.github.pintowar.sudoscan.core.Plotter.plotSolution
 import com.github.pintowar.sudoscan.core.spi.Recognizer
 import com.github.pintowar.sudoscan.core.Solver
@@ -14,11 +13,9 @@ import com.google.common.cache.CacheLoader.from
 import mu.KLogging
 import org.bytedeco.opencv.opencv_core.Mat
 import java.awt.Color
-import java.awt.image.BufferedImage
 import java.time.Duration
-import com.github.pintowar.sudoscan.core.OpenCvWrapper as cv2
 
-class SudokuSolver(private val recognizer: Recognizer) {
+class SudokuEngine(private val recognizer: Recognizer) {
 
     companion object : KLogging()
 
@@ -45,7 +42,7 @@ class SudokuSolver(private val recognizer: Recognizer) {
             else null
         } else null
     } catch (e: Exception) {
-        logger.trace("Problem found during solution!", e)
+        logger.trace(e) { "Problem found during solution!" }
         null
     }
 

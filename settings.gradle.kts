@@ -9,6 +9,8 @@ pluginManagement {
 
 rootProject.name = "sudoscan"
 
-include("sudoscan-core", "sudoscan-nd4j", "sudoscan-djl", "sudoscan-deskapp")
+include("sudoscan-core")
+include("sudoscan-recognizer-nd4j", "sudoscan-recognizer-djl")
+include("sudoscan-deskapp")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
