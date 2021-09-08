@@ -15,32 +15,28 @@ import com.github.pintowar.sudoscan.core.spi.Recognizer
 import mu.KLogging
 import org.bytedeco.opencv.opencv_core.Mat
 
-class RecognizerDjl(path: String) : Recognizer {
-
-    constructor() : this("model/chars74k")
+class RecognizerDjl : Recognizer {
 
     companion object : KLogging()
 
-    private var model: Model
     private val translator = MatTranslator()
-
-    init {
-        val cl = Thread.currentThread().contextClassLoader
-        val input = cl.getResource(path)!!
-        model = Criteria.builder()
-            .optApplication(Application.CV.IMAGE_CLASSIFICATION)
-            .setTypes(Image::class.java, Classifications::class.java)
-            .optEngine("TensorFlow")
-            .optModelUrls(input.toString())
-            .build()
-            .loadModel()
-        logger.debug {
-            """
-                Input: ${model.describeOutput()}
-                Output: ${model.describeOutput()}
+    private val model: Model = Criteria.builder()
+        .optApplication(Application.CV.IMAGE_CLASSIFICATION)
+        .setTypes(Image::class.java, Classifications::class.java)
+        .optEngine("TensorFlow")
+        .optModelUrls(modelUrl())
+        .build()
+        .loadModel()
+        .also {
+            logger.debug {
+                """
+                Input: ${it.describeOutput()}
+                Output: ${it.describeOutput()}
             """.trimIndent()
+            }
         }
-    }
+
+    override val name: String = "Recognizer DJL"
 
     override fun predict(digits: List<Digit>): List<Int> {
         return digits.map {

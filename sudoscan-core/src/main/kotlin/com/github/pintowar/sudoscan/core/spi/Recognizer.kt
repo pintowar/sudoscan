@@ -13,6 +13,14 @@ interface Recognizer {
         }
     }
 
+    fun modelUrl(): String = Thread.currentThread().contextClassLoader.let { cl ->
+        Properties().also {
+            it.load(cl.getResourceAsStream("sudoscan-recognizer.properties"))
+        }.getProperty("sudoscan.recognizer.model.url")!!
+    }
+
+    val name: String
+
     fun predict(digits: List<Digit>): List<Int>
 
 }
