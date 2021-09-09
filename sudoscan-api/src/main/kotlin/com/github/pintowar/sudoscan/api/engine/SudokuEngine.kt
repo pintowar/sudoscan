@@ -1,14 +1,14 @@
-package com.github.pintowar.sudoscan.core.engine
+package com.github.pintowar.sudoscan.api.engine
 
-import com.github.pintowar.sudoscan.core.cv.Extractor.cropImage
-import com.github.pintowar.sudoscan.core.cv.Extractor.extractAllDigits
-import com.github.pintowar.sudoscan.core.cv.Extractor.preProcessGrayImage
-import com.github.pintowar.sudoscan.core.cv.Extractor.splitSquares
-import com.github.pintowar.sudoscan.core.cv.Plotter.combineSolutionToOriginal
-import com.github.pintowar.sudoscan.core.cv.Plotter.changePerspectiveToOriginalSize
-import com.github.pintowar.sudoscan.core.cv.Plotter.plotSolution
-import com.github.pintowar.sudoscan.core.spi.Recognizer
-import com.github.pintowar.sudoscan.core.spi.Solver
+import com.github.pintowar.sudoscan.api.cv.Extractor.cropImage
+import com.github.pintowar.sudoscan.api.cv.Extractor.extractAllDigits
+import com.github.pintowar.sudoscan.api.cv.Extractor.preProcessGrayImage
+import com.github.pintowar.sudoscan.api.cv.Extractor.splitSquares
+import com.github.pintowar.sudoscan.api.cv.Plotter.combineSolutionToOriginal
+import com.github.pintowar.sudoscan.api.cv.Plotter.changePerspectiveToOriginalSize
+import com.github.pintowar.sudoscan.api.cv.Plotter.plotSolution
+import com.github.pintowar.sudoscan.api.spi.Recognizer
+import com.github.pintowar.sudoscan.api.spi.Solver
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader.from
 import mu.KLogging
@@ -16,9 +16,7 @@ import org.bytedeco.opencv.opencv_core.Mat
 import java.awt.Color
 import java.time.Duration
 
-class SudokuEngine(private val recognizer: Recognizer, private val solver: Solver) {
-
-    companion object : KLogging()
+class SudokuEngine(private val recognizer: Recognizer, private val solver: Solver) : KLogging() {
 
     private val cache = CacheBuilder
         .newBuilder()

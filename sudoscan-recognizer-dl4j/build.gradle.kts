@@ -8,6 +8,6 @@ plugins {
 description = "Sudoscan Recognizer Dl4j"
 
 dependencies {
-    api(projects.sudoscanCore)
+    api(projects.sudoscanApi)
     implementDl4j()
 }

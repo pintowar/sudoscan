@@ -8,6 +8,6 @@ plugins {
 description = "Sudoscan Solver Choco"
 
 dependencies {
-    api(projects.sudoscanCore)
+    api(projects.sudoscanApi)
     implementChocoSolver()
 }

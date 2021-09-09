@@ -1,4 +1,4 @@
-package com.github.pintowar.sudoscan.core
+package com.github.pintowar.sudoscan.api
 
 import org.bytedeco.opencv.opencv_core.Mat
 import org.bytedeco.opencv.opencv_core.Point

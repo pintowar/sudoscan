@@ -1,6 +1,6 @@
 package com.github.pintowar.sudoscan.choco
 
-import com.github.pintowar.sudoscan.core.spi.Solver
+import com.github.pintowar.sudoscan.api.spi.Solver
 import org.chocosolver.solver.Model
 
 class SolverChoco : Solver {

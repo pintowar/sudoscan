@@ -1,8 +1,8 @@
 package com.github.pintowar.sudoscan.viewer
 
-import com.github.pintowar.sudoscan.core.engine.SudokuEngine
-import com.github.pintowar.sudoscan.core.spi.Recognizer
-import com.github.pintowar.sudoscan.core.spi.Solver
+import com.github.pintowar.sudoscan.api.engine.SudokuEngine
+import com.github.pintowar.sudoscan.api.spi.Recognizer
+import com.github.pintowar.sudoscan.api.spi.Solver
 import mu.KLogging
 import org.bytedeco.ffmpeg.global.avcodec
 import org.bytedeco.ffmpeg.global.avutil

@@ -1,4 +1,4 @@
-package com.github.pintowar.sudoscan.core.cv
+package com.github.pintowar.sudoscan.api.cv
 
 import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_imgproc

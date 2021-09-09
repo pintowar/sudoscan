@@ -1,4 +1,4 @@
-package com.github.pintowar.sudoscan.core.cv
+package com.github.pintowar.sudoscan.api.cv
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.doubles.plusOrMinus

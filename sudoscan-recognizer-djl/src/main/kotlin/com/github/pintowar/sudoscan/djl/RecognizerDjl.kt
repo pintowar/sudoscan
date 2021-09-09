@@ -10,8 +10,8 @@ import ai.djl.repository.zoo.Criteria
 import ai.djl.translate.Batchifier
 import ai.djl.translate.Translator
 import ai.djl.translate.TranslatorContext
-import com.github.pintowar.sudoscan.core.Digit
-import com.github.pintowar.sudoscan.core.spi.Recognizer
+import com.github.pintowar.sudoscan.api.Digit
+import com.github.pintowar.sudoscan.api.spi.Recognizer
 import mu.KLogging
 import org.bytedeco.opencv.opencv_core.Mat
 

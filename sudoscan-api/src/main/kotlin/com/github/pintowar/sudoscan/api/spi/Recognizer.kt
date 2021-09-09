@@ -1,6 +1,6 @@
-package com.github.pintowar.sudoscan.core.spi
+package com.github.pintowar.sudoscan.api.spi
 
-import com.github.pintowar.sudoscan.core.Digit
+import com.github.pintowar.sudoscan.api.Digit
 import java.util.*
 
 interface Recognizer {

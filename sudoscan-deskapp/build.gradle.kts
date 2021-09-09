@@ -19,7 +19,7 @@ kapt {
 
 val hasDjl = project.hasProperty("djl")
 dependencies {
-    api(projects.sudoscanCore)
+    api(projects.sudoscanApi)
     api(projects.sudoscanSolverChoco)
     api(if(hasDjl) projects.sudoscanRecognizerDjl else projects.sudoscanRecognizerDl4j)
     apiJavaCv()

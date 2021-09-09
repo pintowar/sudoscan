@@ -1,4 +1,4 @@
-package com.github.pintowar.sudoscan.core.spi
+package com.github.pintowar.sudoscan.api.spi
 
 import java.util.*
 

@@ -1,6 +1,6 @@
-package com.github.pintowar.sudoscan.core.cv
+package com.github.pintowar.sudoscan.api.cv
 
-import com.github.pintowar.sudoscan.core.CroppedImage
+import com.github.pintowar.sudoscan.api.CroppedImage
 import mu.KLogging
 import org.bytedeco.opencv.global.opencv_core.CV_8UC3
 import org.bytedeco.opencv.global.opencv_imgproc.FONT_HERSHEY_DUPLEX
@@ -10,7 +10,7 @@ import org.bytedeco.opencv.opencv_core.Point
 import org.bytedeco.opencv.opencv_core.Scalar
 import java.awt.Color
 import kotlin.math.ceil
-import com.github.pintowar.sudoscan.core.cv.OpenCvWrapper as cv2
+import com.github.pintowar.sudoscan.api.cv.OpenCvWrapper as cv2
 
 internal object Plotter : KLogging() {
 
