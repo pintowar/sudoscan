@@ -1,5 +1,8 @@
-package com.github.pintowar.sudoscan.core
+package com.github.pintowar.sudoscan.core.cv
 
+import com.github.pintowar.sudoscan.core.CroppedImage
+import com.github.pintowar.sudoscan.core.Digit
+import com.github.pintowar.sudoscan.core.ImageCorners
 import mu.KLogging
 import org.bytedeco.javacpp.indexer.FloatIndexer
 import org.bytedeco.javacpp.indexer.IntIndexer
@@ -10,9 +13,9 @@ import org.bytedeco.opencv.global.opencv_imgproc.COLOR_RGB2GRAY
 import org.bytedeco.opencv.opencv_core.Mat
 import org.bytedeco.opencv.opencv_core.Point
 import kotlin.math.min
-import com.github.pintowar.sudoscan.core.OpenCvWrapper as cv2
+import com.github.pintowar.sudoscan.core.cv.OpenCvWrapper as cv2
 
-object Extractor : KLogging() {
+internal object Extractor : KLogging() {
 
     fun toGrayScale(img: Mat) = cv2.cvtColor(img, COLOR_RGB2GRAY)
 

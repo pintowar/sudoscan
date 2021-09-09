@@ -1,5 +1,6 @@
-package com.github.pintowar.sudoscan.core
+package com.github.pintowar.sudoscan.core.cv
 
+import com.github.pintowar.sudoscan.core.CroppedImage
 import mu.KLogging
 import org.bytedeco.opencv.global.opencv_core.CV_8UC3
 import org.bytedeco.opencv.global.opencv_imgproc.FONT_HERSHEY_DUPLEX
@@ -9,9 +10,9 @@ import org.bytedeco.opencv.opencv_core.Point
 import org.bytedeco.opencv.opencv_core.Scalar
 import java.awt.Color
 import kotlin.math.ceil
-import com.github.pintowar.sudoscan.core.OpenCvWrapper as cv2
+import com.github.pintowar.sudoscan.core.cv.OpenCvWrapper as cv2
 
-object Plotter : KLogging() {
+internal object Plotter : KLogging() {
 
     fun plotSolution(image: CroppedImage, solution: List<Int>, color: Color = Color.GREEN): Mat {
         val base = image.img
@@ -52,7 +53,7 @@ object Plotter : KLogging() {
 
     fun changePerspectiveToOriginalSize(dst: Mat, src: Mat, sudokuResult: Mat, original: Mat): Mat {
         val m = cv2.getPerspectiveTransform(dst, src)
-        var img = cv2.warpPerspective(sudokuResult, m, (original.size(1) to original.size(0)))
+        val img = cv2.warpPerspective(sudokuResult, m, (original.size(1) to original.size(0)))
         return cv2.bitwiseNot(img)
     }
 

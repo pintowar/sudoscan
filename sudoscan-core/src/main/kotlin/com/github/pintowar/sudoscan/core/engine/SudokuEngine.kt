@@ -1,11 +1,12 @@
 package com.github.pintowar.sudoscan.core.engine
 
-import com.github.pintowar.sudoscan.core.Extractor.cropImage
-import com.github.pintowar.sudoscan.core.Extractor.extractAllDigits
-import com.github.pintowar.sudoscan.core.Extractor.preProcessGrayImage
-import com.github.pintowar.sudoscan.core.Extractor.splitSquares
-import com.github.pintowar.sudoscan.core.Plotter.changePerspectiveToOriginalSize
-import com.github.pintowar.sudoscan.core.Plotter.plotSolution
+import com.github.pintowar.sudoscan.core.cv.Extractor.cropImage
+import com.github.pintowar.sudoscan.core.cv.Extractor.extractAllDigits
+import com.github.pintowar.sudoscan.core.cv.Extractor.preProcessGrayImage
+import com.github.pintowar.sudoscan.core.cv.Extractor.splitSquares
+import com.github.pintowar.sudoscan.core.cv.Plotter.combineSolutionToOriginal
+import com.github.pintowar.sudoscan.core.cv.Plotter.changePerspectiveToOriginalSize
+import com.github.pintowar.sudoscan.core.cv.Plotter.plotSolution
 import com.github.pintowar.sudoscan.core.spi.Recognizer
 import com.github.pintowar.sudoscan.core.spi.Solver
 import com.google.common.cache.CacheBuilder
@@ -55,6 +56,10 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         logger.debug { "Digital Sudoku:\n" + printableSol(digits) }
         logger.debug { "Solution:\n" + printableSol(solution) }
         return solution
+    }
+
+    fun combine(original: Mat, solution: Mat): Mat {
+        return combineSolutionToOriginal(original, solution)
     }
 
 }

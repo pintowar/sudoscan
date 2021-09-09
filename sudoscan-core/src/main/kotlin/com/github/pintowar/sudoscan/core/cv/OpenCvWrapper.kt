@@ -1,12 +1,12 @@
-package com.github.pintowar.sudoscan.core
+package com.github.pintowar.sudoscan.core.cv
 
 import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.opencv_core.*
 
-object OpenCvWrapper {
+internal object OpenCvWrapper {
 
-    fun zeros(width: Int, height: Int, type: Int = CV_8U) = Mat.zeros(Size(width, height), type).asMat()
+    fun zeros(width: Int, height: Int, type: Int = CV_8U): Mat = Mat.zeros(Size(width, height), type).asMat()
 
     fun cvtColor(src: Mat, code: Int): Mat {
         val dst = Mat()
