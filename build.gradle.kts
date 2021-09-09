@@ -76,5 +76,8 @@ release {
 }
 
 tasks.afterReleaseBuild {
-    dependsOn(":sudoscan-core:publish", ":sudoscan-deskapp:publish")
+    dependsOn(
+        ":sudoscan-api:publish", ":sudoscan-solver-choco:publish", ":sudoscan-recognizer-dl4j:publish",
+        ":sudoscan-recognizer-djl:publish", ":sudoscan-deskapp:publish"
+    )
 }
