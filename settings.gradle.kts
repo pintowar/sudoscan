@@ -11,7 +11,7 @@ rootProject.name = "sudoscan"
 
 include("sudoscan-core")
 include("sudoscan-solver-choco")
-include("sudoscan-recognizer-nd4j", "sudoscan-recognizer-djl")
+include("sudoscan-recognizer-dl4j", "sudoscan-recognizer-djl")
 include("sudoscan-deskapp")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

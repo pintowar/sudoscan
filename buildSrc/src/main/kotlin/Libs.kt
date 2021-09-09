@@ -73,14 +73,14 @@ object Libs {
         }
     }
 
-    object Nd4j {
+    object Dl4j {
         private const val vNd4j = "1.0.0-M1.1"
         private const val vHdf5 = "1.12.1-1.5.6"
         const val nd4j = "org.nd4j:nd4j-native-platform:$vNd4j"
         const val deeplearning4j = "org.deeplearning4j:deeplearning4j-modelimport:$vNd4j"
         const val hdf5 = "org.bytedeco:hdf5-platform:$vHdf5"
 
-        fun DependencyHandler.implementNd4j() {
+        fun DependencyHandler.implementDl4j() {
             addDependencyTo(this, "implementation", nd4j, Action<ExternalModuleDependency> {
                 exclude(group = "org.bytedeco", module = "mkl-platform")
             })
