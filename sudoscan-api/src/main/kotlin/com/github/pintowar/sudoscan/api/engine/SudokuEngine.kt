@@ -45,7 +45,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         null
     }
 
-    fun solve(digits: List<Int>): List<Int> {
+    private fun solve(digits: List<Int>): List<Int> {
         fun printableSol(prob: List<Int>) = prob.chunked(9).joinToString("\n") {
             it.joinToString("|").replace("0", " ")
         }
