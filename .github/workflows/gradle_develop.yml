@@ -11,6 +11,7 @@ on:
       - 'support/**'
 jobs:
   gradle_build:
+    name: Gradle Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo

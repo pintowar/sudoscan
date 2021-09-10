@@ -7,6 +7,7 @@ on:
       - master
 jobs:
   gradle_build:
+    name: Gradle Build on master
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
