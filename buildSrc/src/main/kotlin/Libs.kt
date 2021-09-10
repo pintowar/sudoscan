@@ -121,14 +121,19 @@ object Libs {
         }
     }
 
-    object Picocli {
-        private const val vPicocli = "4.5.1"
-        const val picocliCodegen = "info.picocli:picocli-codegen:$vPicocli"
-        const val picocli = "info.picocli:picocli:$vPicocli"
+    object Micronaut {
+        const val picocliCodegen = "info.picocli:picocli-codegen"
 
-        fun DependencyHandler.implementPicocli() {
+        const val micronautKotlinRuntime = "io.micronaut.kotlin:micronaut-kotlin-runtime"
+        const val micronautPicocli = "io.micronaut.picocli:micronaut-picocli"
+        const val graalvm = "org.graalvm.nativeimage:svm"
+
+        fun DependencyHandler.implementMicronautPicocli() {
             add("kapt", picocliCodegen)
-            add("implementation", picocli)
+
+            add("implementation", micronautKotlinRuntime)
+            add("implementation", micronautPicocli)
+            add("compileOnly", graalvm)
         }
     }
 

@@ -12,7 +12,9 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.30")
+    implementation("org.jetbrains.kotlin:kotlin-allopen:1.5.30")
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.5.0")
+    implementation("io.micronaut.gradle:micronaut-gradle-plugin:2.0.4")
     implementation("org.bytedeco.gradle-javacpp-platform:org.bytedeco.gradle-javacpp-platform.gradle.plugin:1.5.6")
     implementation("gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0")
     implementation("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3")

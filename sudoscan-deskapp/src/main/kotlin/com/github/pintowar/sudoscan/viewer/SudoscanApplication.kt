@@ -1,5 +1,6 @@
 package com.github.pintowar.sudoscan.viewer
 
+import io.micronaut.configuration.picocli.PicocliRunner
 import org.beryx.awt.color.ColorFactory
 import picocli.CommandLine
 import picocli.CommandLine.Option
@@ -9,7 +10,11 @@ import java.util.concurrent.Callable
 
 class SudoscanApplication : Callable<Int> {
 
-    @Option(names = ["-c", "--color"], description = ["Solution color"], defaultValue = "BLUE")
+    internal class ColorConverter : CommandLine.ITypeConverter<Color> {
+        override fun convert(value: String): Color = ColorFactory.valueOf(value)
+    }
+
+    @Option(names = ["-c", "--color"], description = ["Solution color"], defaultValue = "BLUE", converter = [ColorConverter::class])
     var color: Color = Color.BLUE
 
     @Option(names = ["-r", "--record"], description = ["In case the solution must be recorded on a video file"],
@@ -21,7 +26,7 @@ class SudoscanApplication : Callable<Int> {
     var file: File = File("${System.getProperty("java.io.tmpdir")}${System.getProperty("file.separator")}sudoku.mp4")
 
     override fun call(): Int {
-        val cam = SudokuCamera(color, record, file.absolutePath)
+        val cam = SudokuCamera(Color.BLUE, record, file.absolutePath)
         val mainThread = Thread.currentThread()
         Runtime.getRuntime().addShutdownHook(object : Thread() {
             override fun run() {
@@ -36,7 +41,5 @@ class SudoscanApplication : Callable<Int> {
 }
 
 fun main(args: Array<String>) {
-    CommandLine(SudoscanApplication())
-            .registerConverter(Color::class.java) { ColorFactory.valueOf(it) }
-            .execute(*args)
+    PicocliRunner.call(SudoscanApplication::class.java, *args)
 }
