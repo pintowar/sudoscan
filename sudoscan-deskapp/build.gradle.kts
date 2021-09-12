@@ -27,9 +27,8 @@ tasks.nativeImage {
 
 val hasDjl = project.hasProperty("djl")
 dependencies {
-    api(projects.sudoscanApi)
-    api(projects.sudoscanSolverChoco)
-    api(if(hasDjl) projects.sudoscanRecognizerDjl else projects.sudoscanRecognizerDl4j)
+    implementation(projects.sudoscanSolverChoco)
+    implementation(if(hasDjl) projects.sudoscanRecognizerDjl else projects.sudoscanRecognizerDl4j)
     apiJavaCv()
     apiFfmpeg()
 
