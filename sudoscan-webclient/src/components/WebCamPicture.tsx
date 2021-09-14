@@ -17,13 +17,18 @@ export const WebCamPicture = () => {
 
     const clean = useCallback(() => {
         setImgSource(noImage)
-    }, [webcamRef])
+    }, [noImage])
 
     return (
         <>
             { alert &&
                 <div role="alert">
-                    <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">Danger</div>
+                    <div className="relative bg-red-500 text-white font-bold rounded-t px-4 py-2">
+                        <strong>Danger</strong>
+                        <span className="absolute top-0 right-0 px-4 py-2" onClick={() => setAlert(!alert)}>
+                            <button>X</button>
+                        </span>
+                    </div>
                     <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
                         <p>Something not ideal might be happening.</p>
                     </div>
@@ -32,7 +37,7 @@ export const WebCamPicture = () => {
 
             <div className="flex justify-center mt-5 space-x-5" >
                 <Webcam audio={false} ref={webcamRef} width={imgWidth} height={imgHeight} screenshotFormat="image/jpeg"/>
-                <img src={imgSource} className="object-scale-down" style={imgStyle}/>
+                <img src={imgSource} className="object-scale-down" style={imgStyle} alt="webcam-capture"/>
             </div>
             
             <div className="flex justify-center space-x-2">
