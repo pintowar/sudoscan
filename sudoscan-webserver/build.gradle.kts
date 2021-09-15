@@ -25,6 +25,10 @@ tasks {
         imageName.set("sudoscan-web-server")
     }
 
+    processResources {
+        dependsOn(":copyClientResources")
+    }
+
 //    jib {
 //        to {
 //            image = "gcr.io/myapp/jib-image"
@@ -35,7 +39,7 @@ tasks {
 val hasDjl = project.hasProperty("djl")
 dependencies {
     implementation(projects.sudoscanSolverChoco)
-    implementation(if(hasDjl) projects.sudoscanRecognizerDjl else projects.sudoscanRecognizerDl4j)
+    implementation(if (hasDjl) projects.sudoscanRecognizerDjl else projects.sudoscanRecognizerDl4j)
     implementMicronautWeb()
 
     implementAwtColorFactory()

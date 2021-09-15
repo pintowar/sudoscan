@@ -4,7 +4,7 @@ plugins {
     id("com.github.node-gradle.node")
 }
 
-project.buildDir = file("dist")
+project.buildDir = file("build")
 
 node {
     version.set("12.16.3")

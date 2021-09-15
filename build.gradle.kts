@@ -50,6 +50,19 @@ tasks {
             logger.quiet("JAR generated at $rootDir/build/. It combines the server and client projects.")
         }
     }
+
+    register("copyClientResources") {
+        dependsOn(":sudoscan-webclient:build")
+        group = "build"
+        description = "Copy client resources into server"
+        doLast {
+            copy {
+                from(project(":sudoscan-webclient").buildDir.absolutePath)
+                into("${project(":sudoscan-webserver").buildDir}/resources/main/public")
+            }
+        }
+    }
+
 }
 
 sonarqube {
