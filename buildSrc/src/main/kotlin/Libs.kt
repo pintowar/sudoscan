@@ -46,12 +46,12 @@ object Libs {
         }
     }
 
-    object Guava {
-        private const val vGuava = "30.1.1-jre"
-        const val guava = "com.google.guava:guava:$vGuava"
+    object Caffeine {
+        private const val vCaffeine = "3.0.4"
+        const val caffeine = "com.github.ben-manes.caffeine:caffeine:$vCaffeine"
 
-        fun DependencyHandler.apiGuava() {
-            add("api", guava)
+        fun DependencyHandler.implementCaffeine() {
+            add("implementation", caffeine)
         }
     }
 
