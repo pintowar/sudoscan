@@ -8,6 +8,7 @@ import { AlertMessage } from "../components/AlertMessage";
 export const WebCamPicture = () => {
     const noImage = "./no-image.png"
     const [imgSource, setImgSource] = useState(noImage);
+    const [color, setColor] = useState('BLUE');
     const [processing, setProcessing] = useState(false);
     const [alert, setAlert] = useState(false);
     const webcamRef = useRef<Webcam>(null);
@@ -18,7 +19,7 @@ export const WebCamPicture = () => {
         try {
             setProcessing(true)
             const screenshot = webcamRef.current?.getScreenshot() || ""
-            const res = await axios.post('/api/solve', { image: screenshot });
+            const res = await axios.post('/api/solve', { encodedImage: screenshot, color });
             setImgSource(res.data)
             setProcessing(false)
         } catch (e) {
@@ -42,6 +43,12 @@ export const WebCamPicture = () => {
             </div>
             
             <div className="flex justify-center space-x-2">
+                <select value={color} onChange={(e) => setColor(e.target.value)} className="px-4 py-3 my-5 bg-blue-500 hover:bg-blue-700 rounded-full text-white font-bold flex" >
+                    <option value="BLUE" className="text-blue-500 bg-white">Blue</option>
+                    <option value="GREEN" className="text-green-500 bg-white">Green</option>
+                    <option value="RED" className="text-red-500 bg-white">Red</option>
+                </select>
+
                 <button onClick={capture} className="px-4 py-3 my-5 bg-blue-500 hover:bg-blue-700 rounded-full text-white font-bold flex">
                     <FaCamera className="h-6 w-6"/>
                     <span className="ml-2">Capture</span>
