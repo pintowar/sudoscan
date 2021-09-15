@@ -26,7 +26,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
             if (it != null) solvePuzzle(it) else emptyList()
         }
 
-    fun solveAndCombineSolution(bytes: ByteArray, color: Color = Color.GREEN, type: String = "jpeg"): ByteArray {
+    fun solveAndCombineSolution(bytes: ByteArray, color: Color = Color.GREEN, type: String = ".jpg"): ByteArray {
         val mat = opencv_imgcodecs.imdecode(Mat(*bytes), Imgcodecs.IMREAD_UNCHANGED)
         val sol = solveAndCombineSolution(mat, color)
         return ByteArray(sol.channels() * sol.cols() * sol.rows()).also { bts ->
