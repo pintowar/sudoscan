@@ -1,5 +1,4 @@
-import Libs.ChocoSolver.implementChocoSolver
-import Libs.Guava.apiGuava
+import Libs.Caffeine.implementCaffeine
 import Libs.JavaCv.apiOpenCv
 
 plugins {
@@ -10,7 +9,6 @@ plugins {
 description = "Sudoscan Core"
 
 dependencies {
-    implementChocoSolver()
-    apiGuava()
+    implementCaffeine()
     apiOpenCv()
 }

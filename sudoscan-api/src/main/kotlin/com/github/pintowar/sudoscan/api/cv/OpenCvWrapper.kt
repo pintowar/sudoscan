@@ -1,10 +1,22 @@
 package com.github.pintowar.sudoscan.api.cv
 
 import org.bytedeco.opencv.global.opencv_core.*
+import org.bytedeco.opencv.global.opencv_imgcodecs
 import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.opencv_core.*
+import org.opencv.imgcodecs.Imgcodecs
 
 internal object OpenCvWrapper {
+
+    fun bytesToMat(bytes: ByteArray): Mat {
+        return opencv_imgcodecs.imdecode(Mat(*bytes), Imgcodecs.IMREAD_UNCHANGED)
+    }
+
+    fun matToBytes(mat: Mat, type: String = ".jpg"): ByteArray {
+        return ByteArray(mat.channels() * mat.cols() * mat.rows()).also { bytes ->
+            opencv_imgcodecs.imencode(type, mat, bytes)
+        }
+    }
 
     fun zeros(width: Int, height: Int, type: Int = CV_8U): Mat = Mat.zeros(Size(width, height), type).asMat()
 
