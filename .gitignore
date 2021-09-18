@@ -88,3 +88,6 @@ gradle-app.setting
 
 # Node modules
 **/node_modules
+
+## Vs Code config
+**/.vscode/**
