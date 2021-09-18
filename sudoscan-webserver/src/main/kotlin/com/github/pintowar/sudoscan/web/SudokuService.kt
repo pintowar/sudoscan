@@ -29,8 +29,10 @@ class SudokuService : KLogging() {
 data class SudokuInfo(val encodedImage: String, val color: String) {
     private val template = "data:image/(.*);base64,"
     private val groups = Regex("^${template}(.*)").find(encodedImage)?.groupValues
-    private val type = groups?.get(1) ?: throw IllegalArgumentException("No type declared on the encoded image.")
-    private val base64Img = groups?.get(2) ?: throw IllegalArgumentException("No type declared on the encoded image.")
+    private val type =
+        groups?.get(1) ?: throw IllegalArgumentException("No type declared on the encoded image. $encodedImage")
+    private val base64Img =
+        groups?.get(2) ?: throw IllegalArgumentException("No type declared on the encoded image. $encodedImage")
 
     fun decode(): ByteArray {
         return Base64.getDecoder().decode(base64Img)
