@@ -10,9 +10,14 @@ export const WebCamPicture = () => {
     const [imgSource, setImgSource] = useState(noImage);
     const [color, setColor] = useState('BLUE');
     const [processing, setProcessing] = useState(false);
-    const [alert, setAlert] = useState(false);
+    const [alert, setAlert] = useState("");
     const webcamRef = useRef<Webcam>(null);
     const [imgWidth, imgHeight] = [480, 360]
+    const videoConstraints = {
+        width: imgWidth,
+        height: imgHeight,
+        facingMode: "environment"
+      };
     const imgStyle = {width: `${imgWidth}px`, height: `${imgHeight}px`}
 
     const capture = async () => {
@@ -21,10 +26,9 @@ export const WebCamPicture = () => {
             const screenshot = webcamRef.current?.getScreenshot() || ""
             const res = await axios.post('/api/solve', { encodedImage: screenshot, color });
             setImgSource(res.data)
-            setProcessing(false)
-        } catch (e) {
-            console.log((e as Error).message)
-            setAlert(true)
+        } catch ({ response: {data, status} }) {
+            setAlert(status === 500 ? data as string : "Something wrong happened!!")            
+        } finally {
             setProcessing(false)
         }
     }
@@ -34,16 +38,15 @@ export const WebCamPicture = () => {
     }
 
     return (
-        // <div className="h-screen mx-auto bg-gradient-to-r from-blue-500 to-gray-300">
-        <div className="h-screen mx-auto py-10 bg-gray-300">
-            { alert && <AlertMessage alert={alert} setAlert={setAlert} /> }
+        <div className="container pt-16 mx-auto items-center">
+            { alert && <AlertMessage message={alert} setMessage={setAlert} /> }
 
-            <div className="flex flex-row justify-center space-x-5" >
-                <Webcam audio={false} ref={webcamRef} width={imgWidth} height={imgHeight} screenshotFormat="image/jpeg"/>
+            <div className="flex flex-wrap justify-center space-x-5 pt-4" >
+                <Webcam audio={false} ref={webcamRef} videoConstraints={videoConstraints} screenshotFormat="image/jpeg"/>
                 <img src={imgSource} className="object-scale-down" style={imgStyle} alt="webcam-capture"/>
             </div>
             
-            <div className="flex justify-center py-5 space-x-5">
+            <div className="flex flex-wrap justify-center py-5 space-x-5">
                 <select value={color} onChange={(e) => setColor(e.target.value)} className="px-4 py-3 my-5 bg-gray-600 hover:bg-gray-800 rounded-full text-white font-bold flex" >
                     <option value="BLUE" className="text-blue-500 bg-white">Blue</option>
                     <option value="GREEN" className="text-green-500 bg-white">Green</option>

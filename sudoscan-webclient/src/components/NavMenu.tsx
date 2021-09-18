@@ -1,7 +1,7 @@
 export const NavMenu = () => { 
 
     return (
-        <nav className="bg-gray-800 ">
+        <nav className="bg-gray-800 fixed w-full z-10 pin-t">
             <div className="max-w-7xl mx-auto ">
                 <div className="relative flex items-center justify-between h-16">       
                     <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start font-mono">
