@@ -26,8 +26,10 @@ export const WebCamPicture = () => {
         try {
             setProcessing(true)
             const screenshot = webcamRef.current?.getScreenshot() || ""
-            const res = await axios.post('/api/solve', { encodedImage: screenshot, color })
-            setImgSource(res.data)
+            if(screenshot !== "") {
+                const res = await axios.post('/api/solve', { encodedImage: screenshot, color })
+                setImgSource(res.data)
+            }
         } catch ({ response: {data, status} }) {
             setAlert(status === 500 ? data as string : "Something wrong happened!!")            
         } finally {
