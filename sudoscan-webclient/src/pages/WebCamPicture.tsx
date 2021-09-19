@@ -46,7 +46,7 @@ export const WebCamPicture = () => {
             <EngineInfoLabel/>
 
             <div className="flex flex-wrap justify-center space-x-5 pt-4">
-                <Webcam audio={false} ref={webcamRef} videoConstraints={videoConstraints} screenshotFormat="image/jpeg"/>
+                <Webcam audio={false} ref={webcamRef} videoConstraints={videoConstraints} />
                 <img src={imgSource} className="object-scale-down" style={imgStyle} alt="webcam-capture"/>
             </div>
             

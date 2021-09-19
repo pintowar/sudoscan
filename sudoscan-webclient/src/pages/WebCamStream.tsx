@@ -4,8 +4,8 @@ import Webcam from "react-webcam";
 import { EngineInfoLabel } from "../components/EngineInfoLabel";
 
 export const WebCamStream = () => {
-    const host = "localhost:8080" //window.location.host
-    const socket = useMemo(() => new WebSocket(`ws://${host}/ws/sudoku`), [])
+    const host = process.env.NODE_ENV !== "production" ? process.env.REACT_APP_WS_PROXY : window.location.host
+    const socket = useMemo(() => new WebSocket(`ws://${host}/ws/sudoku`), [host])
     const [isConnected, setConnected] = useState(false)
 
     useEffect(() => {  
@@ -40,6 +40,11 @@ export const WebCamStream = () => {
     const [color, setColor] = useState('BLUE');
     const webcamRef = useRef<Webcam>(null);
     const [imgWidth, imgHeight] = [480, 360]
+    const videoConstraints = {
+        width: imgWidth,
+        height: imgHeight,
+        facingMode: "environment"
+      };
     const imgStyle = {width: `${imgWidth}px`, height: `${imgHeight}px`}
 
     const clean = () => {
@@ -71,7 +76,7 @@ export const WebCamStream = () => {
             </div>
 
             <div className="flex flex-wrap justify-center space-x-5 pt-4">
-                <Webcam audio={false} ref={webcamRef} width={imgWidth} height={imgHeight} screenshotFormat="image/jpeg"/>
+                <Webcam audio={false} ref={webcamRef} videoConstraints={videoConstraints} />
                 <img src={imgSource} className="object-scale-down" style={imgStyle} alt="webcam-capture"/>
             </div>
         </div>
