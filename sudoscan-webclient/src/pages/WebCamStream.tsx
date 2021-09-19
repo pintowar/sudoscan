@@ -1,14 +1,19 @@
-import { useRef, useState, useEffect, useMemo } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import useInterval from "../utils/useInterval";
 import Webcam from "react-webcam";
 import { EngineInfoLabel } from "../components/EngineInfoLabel";
 
 export const WebCamStream = () => {
     const host = process.env.NODE_ENV !== "production" ? process.env.REACT_APP_WS_PROXY : window.location.host
-    const socket = useMemo(() => new WebSocket(`ws://${host}/ws/sudoku`), [host])
+    const wsUrl = `ws://${host}/ws/sudoku`
+    const [socket, setSocket] = useState(new WebSocket(wsUrl))
     const [isConnected, setConnected] = useState(false)
 
-    useEffect(() => {  
+    const setupSocket = useCallback(() => {
+        if(socket.readyState === WebSocket.CLOSED) {
+            setSocket(new WebSocket(wsUrl))
+        }
+
         socket.addEventListener("open", (e) => {
             setConnected(true)
         })
@@ -28,11 +33,15 @@ export const WebCamStream = () => {
             setConnected(false)
             clean()
         })
+    }, [socket, wsUrl])
+
+    useEffect(() => {  
+        setupSocket()
 
         return () => {
             socket.close()
         }
-    }, [socket]);
+    }, [socket, setupSocket]);
     
 
     const noImage = "./no-image.png"
@@ -52,11 +61,14 @@ export const WebCamStream = () => {
     }
 
     useInterval(() => { 
-        if(socket.readyState === socket.OPEN) {
-            const screenshot = webcamRef.current?.getScreenshot() || ""
+        if(WebSocket.OPEN === socket.readyState && webcamRef.current) {
+            const screenshot = webcamRef.current.getScreenshot()
             const msg = JSON.stringify({ encodedImage: screenshot, color })
             console.debug("Message size: " + msg.length)
             socket.send(msg)
+        } else if(WebSocket.CLOSED === socket.readyState) {
+            console.debug("Reconnecting...")
+            setupSocket()
         }
     }, 500)
 

@@ -2,7 +2,7 @@ import { WebCamPicture } from './pages/WebCamPicture'
 import { WebCamStream } from './pages/WebCamStream'
 import { NavMenu } from './components/NavMenu'
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Switch,
   Route
 } from "react-router-dom"
