@@ -1,3 +1,4 @@
+import { About } from './pages/About'
 import { WebCamPicture } from './pages/WebCamPicture'
 import { WebCamStream } from './pages/WebCamStream'
 import { NavMenu } from './components/NavMenu'
@@ -21,6 +22,9 @@ function App() {
             </Route>
             <Route path="/stream">
               <WebCamStream/>
+            </Route>
+            <Route path="/about">
+              <About/>
             </Route>
           </Switch>  
       </div>  

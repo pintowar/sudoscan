@@ -32,13 +32,16 @@ export const NavMenu = () => {
                                 <Link to="/">Sudoscan</Link>
                             </span>
                         </div>
-                        <div className="hidden sm:block sm:ml-6">
-                            <div className="flex space-x-4">
-                                <span className="px-3 py-2 text-white font-medium">
+                        <div className="block ml-4">
+                            <div className="flex space-x-2 py-2 text-white font-medium">
+                                <span className="px-2">
                                     <Link to="/stream">Stream</Link>
                                 </span>
-                                <span className="px-3 py-2 text-white font-medium">
+                                <span className="px-2">
                                     <Link to="/picture">Picture</Link>
+                                </span>
+                                <span className="px-2">
+                                    <Link to="/about">About</Link>
                                 </span>
                             </div>
                         </div>
