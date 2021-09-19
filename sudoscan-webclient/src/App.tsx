@@ -1,12 +1,30 @@
 import { WebCamPicture } from './pages/WebCamPicture'
-import { NavMenu } from './components/NavMenu';
+import { WebCamStream } from './pages/WebCamStream'
+import { NavMenu } from './components/NavMenu'
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom"
 
 function App() {
   return (
-    <div className="h-screen bg-gray-300 font-sans leading-normal tracking-normal">
-      <NavMenu />
-      <WebCamPicture/>
-    </div>
+    <Router>
+      <div className="h-screen bg-gray-300 font-sans leading-normal tracking-normal">
+        <NavMenu />
+        <Switch>
+            <Route exact path="/">
+              <WebCamStream/>
+            </Route>
+            <Route path="/picture">
+              <WebCamPicture/>
+            </Route>
+            <Route path="/stream">
+              <WebCamStream/>
+            </Route>
+          </Switch>  
+      </div>  
+    </Router>
   );
 }
 

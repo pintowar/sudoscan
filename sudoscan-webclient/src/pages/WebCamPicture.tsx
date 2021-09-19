@@ -1,21 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { FaCamera, FaRegTrashAlt } from 'react-icons/fa';
 import Webcam from "react-webcam";
 import axios from 'axios';
 
 import { AlertMessage } from "../components/AlertMessage";
-
-class EngineInfo {
-    solver: string = "Unknown"
-    recognizer: string = "Unknown"
-}
+import { EngineInfoLabel } from "../components/EngineInfoLabel";
 
 export const WebCamPicture = () => {
     const noImage = "./no-image.png"
     const [imgSource, setImgSource] = useState(noImage);
     const [color, setColor] = useState('BLUE');
     const [processing, setProcessing] = useState(false);
-    const [info, setInfo] = useState(new EngineInfo());
+    
     const [alert, setAlert] = useState("");
     const webcamRef = useRef<Webcam>(null);
     const [imgWidth, imgHeight] = [480, 360]
@@ -25,15 +21,6 @@ export const WebCamPicture = () => {
         facingMode: "environment"
       };
     const imgStyle = {width: `${imgWidth}px`, height: `${imgHeight}px`}
-
-    useEffect(() => {
-        const showInfo = async () => {
-            const res = await axios.get<EngineInfo>('/api/engine-info')
-            setInfo(res.data)
-        }
-
-        showInfo()
-      }, []);
 
     const capture = async () => {
         try {
@@ -56,9 +43,7 @@ export const WebCamPicture = () => {
         <div className="container pt-16 mx-auto items-center">
             { alert && <AlertMessage message={alert} setMessage={setAlert} /> }
 
-            <div className="flex flex-wrap justify-center space-x-5 pt-4">
-                Engine info: {info.recognizer} / {info.solver}
-            </div>
+            <EngineInfoLabel/>
 
             <div className="flex flex-wrap justify-center space-x-5 pt-4">
                 <Webcam audio={false} ref={webcamRef} videoConstraints={videoConstraints} screenshotFormat="image/jpeg"/>

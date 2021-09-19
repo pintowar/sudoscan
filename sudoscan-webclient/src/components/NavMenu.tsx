@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+
 export const NavMenu = () => { 
 
     return (
@@ -26,7 +28,19 @@ export const NavMenu = () => {
                                         c4.048,0,7.342,3.295,7.342,7.345c0,4.049-3.294,7.343-7.342,7.343h-28.77c-4.971,0-9,4.029-9,9s4.029,9,9,9h28.77
                                         c4.048,0,7.342,3.295,7.342,7.345C246.14,235.401,242.846,238.695,238.798,238.695z"/>
                             </svg>
-                            <span className="px-4 text-white font-bold">Sudoscan</span>
+                            <span className="px-4 text-white font-bold">
+                                <Link to="/">Sudoscan</Link>
+                            </span>
+                        </div>
+                        <div className="hidden sm:block sm:ml-6">
+                            <div className="flex space-x-4">
+                                <span className="px-3 py-2 text-white font-medium">
+                                    <Link to="/stream">Stream</Link>
+                                </span>
+                                <span className="px-3 py-2 text-white font-medium">
+                                    <Link to="/picture">Picture</Link>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
