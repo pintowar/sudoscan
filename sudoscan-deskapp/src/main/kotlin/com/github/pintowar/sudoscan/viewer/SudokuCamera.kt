@@ -40,13 +40,14 @@ class SudokuCamera(
         grabber.imageWidth = FRAME_WIDTH
         grabber.imageHeight = FRAME_HEIGHT
 
-        recorder = FFmpegFrameRecorder(videoPath, FRAME_WIDTH, FRAME_HEIGHT)
-        recorder.videoCodec = avcodec.AV_CODEC_ID_MPEG4
-        recorder.format = "mp4"
-        recorder.frameRate = fps
-        recorder.pixelFormat = avutil.AV_PIX_FMT_YUV420P
-        recorder.videoBitrate = (FRAME_WIDTH * FRAME_HEIGHT * fps * 10).toInt()
-        recorder.videoQuality = 0.1
+        recorder = FFmpegFrameRecorder(videoPath, FRAME_WIDTH, FRAME_HEIGHT).also {
+            it.videoCodec = avcodec.AV_CODEC_ID_MPEG4
+            it.format = "mp4"
+            it.frameRate = fps
+            it.pixelFormat = avutil.AV_PIX_FMT_YUV420P
+            it.videoBitrate = (FRAME_WIDTH * FRAME_HEIGHT * fps * 10).toInt()
+            it.videoQuality = 0.1
+        }
 
         with(frame) {
             setLocationRelativeTo(null)
@@ -54,14 +55,14 @@ class SudokuCamera(
             isVisible = true
             addWindowListener(object : WindowAdapter() {
                 override fun windowClosing(e: WindowEvent?) {
-                    dispose()
+                    this@SudokuCamera.dispose()
                 }
             })
         }
     }
 
-    fun showAndRecord(img: Mat, sol: Mat?) {
-        val frm = solutionToFrame(img, sol)!!
+    fun showAndRecord(sol: Mat?) {
+        val frm = Java2DFrameUtils.toFrame(sol)
         frame.showImage(frm)
         if (frame.isVisible && record) recorder.record(frm)
     }
@@ -69,21 +70,17 @@ class SudokuCamera(
     fun run() {
         grabber.start()
         if (record) recorder.start()
-
-        while (frame.isVisible) {
+        while (frame.isVisible && !grabber.isTriggerMode) {
             val img = Java2DFrameUtils.toMat(grabber.grab())
             if (img != null) {
                 val time = measureTimeMillis {
-                    val sol = engine.solve(img, color)
-                    showAndRecord(img, sol)
+                    val sol = engine.solveAndCombineSolution(img, color)
+                    showAndRecord(sol)
                 }
                 logger.debug { "Processing took: $time ms" }
             }
         }
     }
-
-    fun solutionToFrame(img: Mat, sol: Mat?) =
-        Java2DFrameUtils.toFrame(if (sol != null) engine.combine(img, sol) else img)
 
     fun dispose() {
         frame.isVisible = false

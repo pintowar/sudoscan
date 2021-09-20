@@ -29,9 +29,9 @@ jobs:
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
           gradle-version: wrapper
-          arguments: clean assembleDesktopApp release -Prelease.useAutomaticVersion=true
+          arguments: clean assembleApps release -Pweb-cli -Prelease.useAutomaticVersion=true
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: sudoscan desktop-app jar
+          name: sudoscan apps jar
           path: build/*.jar
