@@ -37,13 +37,18 @@ tasks {
         }
     }
 
-    register("assembleDesktopApp") {
-        dependsOn(":sudoscan-deskapp:shadowJar")
+    register("assembleApps") {
+        dependsOn(":sudoscan-deskapp:shadowJar", ":sudoscan-webserver:build")
         group = "build"
         description = "Build desktop app"
         doLast {
             copy {
-                from(fileTree(mapOf("dir" to "${project(":sudoscan-deskapp").buildDir}/libs/")))
+                from(
+                    files(
+                        "${project(":sudoscan-deskapp").buildDir}/libs/",
+                        "${project(":sudoscan-webserver").buildDir}/libs/"
+                    )
+                ) { include("*-all.jar") }
                 into("$rootDir/build/")
             }
 

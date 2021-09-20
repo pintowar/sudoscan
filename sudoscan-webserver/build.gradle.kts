@@ -26,7 +26,9 @@ tasks {
     }
 
     processResources {
-        dependsOn(":copyClientResources")
+        if(project.hasProperty("web-cli")) {
+            dependsOn(":copyClientResources")
+        }
     }
 
 //    jib {
