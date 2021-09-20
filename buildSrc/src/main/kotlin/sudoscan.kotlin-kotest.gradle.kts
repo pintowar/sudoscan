@@ -18,8 +18,8 @@ publishing {
             name = "GitHubPackages"
             setUrl("https://maven.pkg.github.com/pintowar/sudoscan")
             credentials {
-                username = project.findProperty("gpr.user")?.toString() ?: System.getenv("USERNAME")
-                password = project.findProperty("gpr.key")?.toString() ?: System.getenv("TOKEN")
+                username = project.findProperty("gpr.user")?.toString() ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key")?.toString() ?: System.getenv("GITHUB_TOKEN")
             }
         }
     }

@@ -24,7 +24,7 @@ jobs:
         uses: eskatos/gradle-command-action@v1
         env:
           USERNAME: ${{ secrets.USERNAME }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
