@@ -37,19 +37,37 @@ tasks {
         }
     }
 
-    register("assembleDesktopApp") {
-        dependsOn(":sudoscan-deskapp:shadowJar")
+    register("assembleApps") {
+        dependsOn(":sudoscan-deskapp:shadowJar", ":sudoscan-webserver:build")
         group = "build"
         description = "Build desktop app"
         doLast {
             copy {
-                from(fileTree(mapOf("dir" to "${project(":sudoscan-deskapp").buildDir}/libs/")))
+                from(
+                    files(
+                        "${project(":sudoscan-deskapp").buildDir}/libs/",
+                        "${project(":sudoscan-webserver").buildDir}/libs/"
+                    )
+                ) { include("*-all.jar") }
                 into("$rootDir/build/")
             }
 
             logger.quiet("JAR generated at $rootDir/build/. It combines the server and client projects.")
         }
     }
+
+    register("copyClientResources") {
+        dependsOn(":sudoscan-webclient:build")
+        group = "build"
+        description = "Copy client resources into server"
+        doLast {
+            copy {
+                from(project(":sudoscan-webclient").buildDir.absolutePath)
+                into("${project(":sudoscan-webserver").buildDir}/resources/main/public")
+            }
+        }
+    }
+
 }
 
 sonarqube {

@@ -121,14 +121,36 @@ object Libs {
         }
     }
 
-    object Picocli {
-        private const val vPicocli = "4.5.1"
-        const val picocliCodegen = "info.picocli:picocli-codegen:$vPicocli"
-        const val picocli = "info.picocli:picocli:$vPicocli"
+    object Micronaut {
+        const val picocliCodegen = "info.picocli:picocli-codegen"
+        const val openApi = "io.micronaut.openapi:micronaut-openapi"
 
-        fun DependencyHandler.implementPicocli() {
+        const val micronautPicocli = "io.micronaut.picocli:micronaut-picocli"
+
+        const val swagger = "io.swagger.core.v3:swagger-annotations"
+        const val kotlinJackson = "com.fasterxml.jackson.module:jackson-module-kotlin"
+        const val annotationApi = "javax.annotation:javax.annotation-api"
+
+        const val micronautKotlinRuntime = "io.micronaut.kotlin:micronaut-kotlin-runtime"
+        const val graalvm = "org.graalvm.nativeimage:svm"
+
+        fun DependencyHandler.implementMicronautPicocli() {
             add("kapt", picocliCodegen)
-            add("implementation", picocli)
+
+            add("implementation", micronautKotlinRuntime)
+            add("implementation", micronautPicocli)
+            add("compileOnly", graalvm)
+        }
+
+        fun DependencyHandler.implementMicronautWeb() {
+            add("kapt", openApi)
+
+            add("implementation", micronautKotlinRuntime)
+            add("implementation", swagger)
+            add("implementation", annotationApi)
+
+            add("compileOnly", graalvm)
+            add("runtimeOnly", kotlinJackson)
         }
     }
 
