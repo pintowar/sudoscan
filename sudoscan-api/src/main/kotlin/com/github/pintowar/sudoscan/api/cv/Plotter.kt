@@ -1,6 +1,5 @@
 package com.github.pintowar.sudoscan.api.cv
 
-import com.github.pintowar.sudoscan.api.CroppedImage
 import mu.KLogging
 import org.bytedeco.opencv.global.opencv_core.CV_8UC3
 import org.bytedeco.opencv.global.opencv_imgproc.FONT_HERSHEY_DUPLEX
@@ -10,13 +9,12 @@ import org.bytedeco.opencv.opencv_core.Point
 import org.bytedeco.opencv.opencv_core.Scalar
 import java.awt.Color
 import kotlin.math.ceil
-import com.github.pintowar.sudoscan.api.cv.OpenCvWrapper as cv2
 
 internal object Plotter : KLogging() {
 
     fun plotSolution(image: CroppedImage, solution: List<Int>, color: Color = Color.GREEN): Mat {
         val base = image.img
-        val squareImage = cv2.zeros(base.arrayHeight(), base.arrayWidth(), CV_8UC3)
+        val squareImage = zeros(base.arrayHeight(), base.arrayWidth(), CV_8UC3)
 
         val factor = base.size(0) / 9
         val fSize = base.arrayHeight() / 350.0
@@ -52,17 +50,19 @@ internal object Plotter : KLogging() {
     }
 
     fun changePerspectiveToOriginalSize(dst: Mat, src: Mat, sudokuResult: Mat, original: Mat): Mat {
-        val m = cv2.getPerspectiveTransform(dst, src)
-        val img = cv2.warpPerspective(sudokuResult, m, (original.size(1) to original.size(0)))
-        return cv2.bitwiseNot(img)
+        val m = dst.getPerspectiveTransform(src)
+        val img = sudokuResult.warpPerspective(m, (original.size(1) to original.size(0)))
+        return img.bitwiseNot()
     }
 
     fun combineSolutionToOriginal(original: Mat, solution: Mat): Mat {
-        return cv2.bitwiseAnd(solution, original)
+        return solution.bitwiseAnd(original)
     }
 
-    fun plotResultOnOriginalSource(original: Mat, cropped: CroppedImage, solution: List<Int>,
-                                   color: Color = Color.GREEN): Mat {
+    fun plotResultOnOriginalSource(
+        original: Mat, cropped: CroppedImage, solution: List<Int>,
+        color: Color = Color.GREEN
+    ): Mat {
         val result = plotSolution(cropped, solution, color)
         return changePerspectiveAndPasteToOriginal(cropped.dst, cropped.src, result, original)
     }

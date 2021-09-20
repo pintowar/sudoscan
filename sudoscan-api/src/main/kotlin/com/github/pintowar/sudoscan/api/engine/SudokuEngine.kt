@@ -8,12 +8,12 @@ import com.github.pintowar.sudoscan.api.cv.Extractor.splitSquares
 import com.github.pintowar.sudoscan.api.cv.Plotter.changePerspectiveToOriginalSize
 import com.github.pintowar.sudoscan.api.cv.Plotter.combineSolutionToOriginal
 import com.github.pintowar.sudoscan.api.cv.Plotter.plotSolution
+import com.github.pintowar.sudoscan.api.cv.bytesToMat
+import com.github.pintowar.sudoscan.api.cv.matToBytes
 import com.github.pintowar.sudoscan.api.spi.Recognizer
 import com.github.pintowar.sudoscan.api.spi.Solver
 import mu.KLogging
-import org.bytedeco.opencv.global.opencv_imgcodecs
 import org.bytedeco.opencv.opencv_core.Mat
-import org.opencv.imgcodecs.Imgcodecs
 import java.awt.Color
 import java.time.Duration
 
@@ -22,16 +22,14 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
     private val cache = Caffeine
         .newBuilder()
         .expireAfterWrite(Duration.ofMinutes(1))
-        .build{ it: List<Int>? ->
+        .build { it: List<Int>? ->
             if (it != null) solvePuzzle(it) else emptyList()
         }
 
     fun solveAndCombineSolution(bytes: ByteArray, color: Color = Color.GREEN, type: String = ".jpg"): ByteArray {
-        val mat = opencv_imgcodecs.imdecode(Mat(*bytes), Imgcodecs.IMREAD_UNCHANGED)
+        val mat = bytes.bytesToMat()
         val sol = solveAndCombineSolution(mat, color)
-        return ByteArray(sol.channels() * sol.cols() * sol.rows()).also { bts ->
-            opencv_imgcodecs.imencode(type, sol, bts)
-        }
+        return sol.matToBytes(type)
     }
 
     fun solveAndCombineSolution(img: Mat, color: Color = Color.GREEN): Mat {
