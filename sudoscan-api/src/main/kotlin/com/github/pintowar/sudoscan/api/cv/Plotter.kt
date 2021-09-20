@@ -14,7 +14,7 @@ internal object Plotter : KLogging() {
 
     fun plotSolution(image: CroppedImage, solution: List<Int>, color: Color = Color.GREEN): Mat {
         val base = image.img
-        val squareImage = zeros(base.arrayHeight(), base.arrayWidth(), CV_8UC3)
+        val squareImage = zeros(Area(base.arrayWidth(), base.arrayHeight()), CV_8UC3)
 
         val factor = base.size(0) / 9
         val fSize = base.arrayHeight() / 350.0
@@ -51,7 +51,7 @@ internal object Plotter : KLogging() {
 
     fun changePerspectiveToOriginalSize(dst: Mat, src: Mat, sudokuResult: Mat, original: Mat): Mat {
         val m = dst.getPerspectiveTransform(src)
-        val img = sudokuResult.warpPerspective(m, (original.size(1) to original.size(0)))
+        val img = sudokuResult.warpPerspective(m, Area(original.size(1), original.size(0)))
         return img.bitwiseNot()
     }
 

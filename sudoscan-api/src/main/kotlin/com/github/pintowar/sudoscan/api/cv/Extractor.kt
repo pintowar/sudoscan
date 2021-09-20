@@ -19,7 +19,7 @@ internal object Extractor : KLogging() {
 
     fun preProcessGrayImage(img: Mat, skipDilate: Boolean = false): Mat {
         assert(img.channels() == 1)
-        val proc = img.gaussianBlur(Pair(9, 9), 0.0)
+        val proc = img.gaussianBlur(Area(9, 9), 0.0)
 
         val threshold = proc.adaptiveThreshold(
             255.0, opencv_imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, opencv_imgproc.THRESH_BINARY, 11, 2.0
@@ -28,7 +28,7 @@ internal object Extractor : KLogging() {
         val thresholdNot = threshold.bitwiseNot()
 
         return if (!skipDilate) {
-            val kernel = getStructuringElement(opencv_imgproc.MORPH_DILATE, Pair(3, 3))
+            val kernel = getStructuringElement(opencv_imgproc.MORPH_DILATE, Area(3, 3))
             thresholdNot.dilate(kernel)
         } else thresholdNot
     }
@@ -40,14 +40,14 @@ internal object Extractor : KLogging() {
         return if (polygons.isNotEmpty()) {
             val polygon = polygons.maxByOrNull { it.contourArea() }!!
             val points = polygon.createIndexer<IntIndexer>().use { idx ->
-                (0 until idx.size(0)).map { Point(idx.get(it, 0, 0), idx.get(it, 0, 1)) }
+                (0 until idx.size(0)).map { Coord(idx.get(it, 0, 0), idx.get(it, 0, 1)) }
             }
 
             ImageCorners(
-                bottomRight = points.maxByOrNull { it.x() + it.y() }!!,
-                topLeft = points.minByOrNull { it.x() + it.y() }!!,
-                bottomLeft = points.minByOrNull { it.x() - it.y() }!!,
-                topRight = points.maxByOrNull { it.x() - it.y() }!!
+                bottomRight = points.maxByOrNull { it.x + it.y }!!,
+                topLeft = points.minByOrNull { it.x + it.y }!!,
+                bottomLeft = points.minByOrNull { it.x - it.y }!!,
+                topRight = points.maxByOrNull { it.x - it.y }!!
             )
         } else ImageCorners.EMPTY_CORNERS
     }
@@ -63,11 +63,11 @@ internal object Extractor : KLogging() {
             )
         )
         val m = src.getPerspectiveTransform(dst)
-        val result = img.warpPerspective(m, Pair(side.toInt(), side.toInt()))
+        val result = img.warpPerspective(m, Area(side.toInt(), side.toInt()))
         return CroppedImage(result, src, dst)
     }
 
-    fun splitSquares(img: Mat): List<Pair<Point, Point>> {
+    fun splitSquares(img: Mat): List<Segment> {
         assert(img.arrayHeight() == img.arrayWidth())
 
         val numPieces = 9
@@ -75,8 +75,10 @@ internal object Extractor : KLogging() {
 
         return (0 until numPieces).flatMap { i ->
             (0 until numPieces).map { j ->
-                Point((j * side).toInt(), (i * side).toInt()) to
-                        Point(((j + 1) * side).toInt(), ((i + 1) * side).toInt())
+                Segment(
+                    Coord((j * side).toInt(), (i * side).toInt()),
+                    Coord(((j + 1) * side).toInt(), ((i + 1) * side).toInt())
+                )
             }
         }
     }
@@ -102,28 +104,29 @@ internal object Extractor : KLogging() {
             listOf(t, b, halfMargin, halfMargin)
         }
 
-        val aux = img.resize(Pair(w, h))
+        val aux = img.resize(Area(w, h))
         val aux2 = aux.copyMakeBorder(tPad, bPad, lPad, rPad, BORDER_CONSTANT, background.toDouble())
-        return aux2.resize(Pair(size, size))
+        return aux2.resize(Area(size, size))
     }
 
-    fun cutFromRect(img: Mat, s: Pair<Point, Point>) =
-        if (s.first.x() <= s.second.x() && s.first.y() <= s.second.y())
-            img.colRange(s.first.x(), s.second.x())
-                .rowRange(s.first.y(), s.second.y())
+    fun cutFromRect(img: Mat, segment: Segment) =
+        if (segment.begin.x <= segment.end.x && segment.begin.y <= segment.end.y)
+            img.colRange(segment.begin.x, segment.end.x)
+                .rowRange(segment.begin.y, segment.end.y)
         else img.colRange(0, 0).rowRange(0, 0)
 
-    fun extractDigit(img: Mat, s: Pair<Point, Point>, size: Int): Digit {
-        val digit = cutFromRect(img, s)
+    fun extractDigit(img: Mat, segment: Segment, size: Int): Digit {
+        val digit = cutFromRect(img, segment)
 
         val margin = ((digit.arrayWidth() + digit.arrayHeight()) / 5.0).toInt()
 
-        val (_, box) = findLargestFeature(
+        val box = findLargestFeature(
             digit,
             Point(margin, margin), Point(digit.arrayWidth() - margin, digit.arrayHeight() - margin)
         )
 
-        val noBorder = cutFromRect(digit, box.topLeft to box.bottomRight)
+        val noBorder = cutFromRect(digit, box.diagonal())
+
         val dim = noBorder.size(0) * noBorder.size(1)
         val percentFill = if (dim > 0) (noBorder.sumElements() / 255) / dim else 0.0
         logger.debug { "Percent: %.2f".format(percentFill) }
@@ -135,7 +138,7 @@ internal object Extractor : KLogging() {
     fun findLargestFeature(
         inputImg: Mat, topLeft: Point = Point(0, 0),
         bottomRight: Point = Point(inputImg.arrayWidth(), inputImg.arrayHeight())
-    ): Pair<Mat, ImageCorners> {
+    ): ImageCorners {
         val img = inputImg.clone()
         return img.createIndexer<UByteIndexer>().use { indexer ->
             val size = img.size()
@@ -143,7 +146,7 @@ internal object Extractor : KLogging() {
             (topLeft.x() until min(bottomRight.x(), size.width())).forEach { x ->
                 (topLeft.y() until min(bottomRight.y(), size.height())).forEach { y ->
                     if (indexer[y.toLong(), x.toLong()] == 255) {
-                        img.floodFill(x to y, 64.0)
+                        img.floodFill(Coord(x, y), 64.0)
                     }
                 }
             }
@@ -164,11 +167,11 @@ internal object Extractor : KLogging() {
                 }
             }
 
-            img to ImageCorners(Point(top, left), Point(top, right), Point(bottom, right), Point(bottom, left))
+            ImageCorners(Coord(top, left), Coord(top, right), Coord(bottom, right), Coord(bottom, left))
         }
     }
 
-    fun extractAllDigits(img: Mat, squares: List<Pair<Point, Point>>, size: Int = 28) =
+    fun extractAllDigits(img: Mat, squares: List<Segment>, size: Int = 28) =
         squares.map { s -> extractDigit(img, s, size) }
 
     private fun floatToMat(data: Array<Array<Float>>): Mat {
