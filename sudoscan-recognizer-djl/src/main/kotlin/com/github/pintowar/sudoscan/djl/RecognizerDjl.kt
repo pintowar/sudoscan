@@ -31,7 +31,7 @@ class RecognizerDjl : Recognizer {
                 """
                 Input: ${it.describeOutput()}
                 Output: ${it.describeOutput()}
-            """.trimIndent()
+                """.trimIndent()
             }
         }
 

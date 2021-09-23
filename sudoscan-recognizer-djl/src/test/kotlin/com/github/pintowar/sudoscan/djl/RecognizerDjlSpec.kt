@@ -30,7 +30,7 @@ class RecognizerDjlSpec : StringSpec({
             row("eight", 8),
             row("nine", 9)
         ) { file: String, digit: Int ->
-            val img = cvRead("imgs/digits/${file}.png")
+            val img = cvRead("imgs/digits/$file.png")
             recognizer.predict(img) shouldBe digit
         }
     }

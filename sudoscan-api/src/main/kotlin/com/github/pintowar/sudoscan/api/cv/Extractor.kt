@@ -61,7 +61,7 @@ internal object Extractor : KLogging() {
 
         return if (polygons.isNotEmpty()) {
             val polygon = polygons.maxByOrNull { it.contourArea() }!!
-            val points = polygon.createIndexer<IntIndexer>().use { idx ->
+            val points = polygon.createIndexer<IntIndexer>(direct).use { idx ->
                 (0 until idx.size(0)).map { Coord(idx.get(it, 0, 0), idx.get(it, 0, 1)) }
             }
 
@@ -209,7 +209,7 @@ internal object Extractor : KLogging() {
     ): ImageCorners {
         val img = inputImg.clone()
         val (black, gray, white) = listOf(0, 64, 255)
-        return img.createIndexer<UByteIndexer>().use { indexer ->
+        return img.createIndexer<UByteIndexer>(direct).use { indexer ->
             val size = img.size()
 
             (diagonal.begin.x until min(diagonal.end.x, size.width())).forEach { x ->
@@ -288,7 +288,7 @@ internal object Extractor : KLogging() {
      */
     private fun floatToMat(data: Array<Array<Float>>): Mat {
         val mat = Mat(data.size, data[0].size, CV_32FC1)
-        mat.createIndexer<FloatIndexer>().use { idx ->
+        mat.createIndexer<FloatIndexer>(direct).use { idx ->
             data.forEachIndexed { i, it ->
                 idx.put(longArrayOf(i.toLong(), 0, 0), it[0])
                 idx.put(longArrayOf(i.toLong(), 1, 0), it[1])

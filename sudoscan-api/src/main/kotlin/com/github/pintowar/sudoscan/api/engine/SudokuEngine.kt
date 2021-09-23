@@ -70,5 +70,4 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         logger.debug { "Solution:\n" + printableSol(solution) }
         return solution
     }
-
 }

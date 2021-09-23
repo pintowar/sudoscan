@@ -87,5 +87,4 @@ class SudokuCamera(
         if (record) recorder.stop()
         grabber.stop()
     }
-
 }

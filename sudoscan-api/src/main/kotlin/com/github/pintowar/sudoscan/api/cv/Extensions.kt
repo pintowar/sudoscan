@@ -1,11 +1,14 @@
 package com.github.pintowar.sudoscan.api.cv
 
+import org.bytedeco.javacpp.Loader
 import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_imgcodecs
 import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.opencv_core.*
 import org.opencv.imgcodecs.Imgcodecs
 import kotlin.math.pow
+
+internal val direct = !Loader.getPlatform().startsWith("android")
 
 internal data class Area(val width: Int, val height: Int) {
     fun toSize() = Size(width, height)
@@ -20,7 +23,10 @@ internal data class Segment(val begin: Coord, val end: Coord) {
 }
 
 internal data class ImageCorners(
-    val topLeft: Coord, val topRight: Coord, val bottomRight: Coord, val bottomLeft: Coord
+    val topLeft: Coord,
+    val topRight: Coord,
+    val bottomRight: Coord,
+    val bottomLeft: Coord
 ) {
 
     companion object {
@@ -69,7 +75,11 @@ internal fun Mat.gaussianBlur(area: Area, sigmaX: Double): Mat = Mat().also { ds
 }
 
 internal fun Mat.adaptiveThreshold(
-    maxValue: Double, adaptiveMethod: Int, thresholdType: Int, blockSize: Int, c: Double
+    maxValue: Double,
+    adaptiveMethod: Int,
+    thresholdType: Int,
+    blockSize: Int,
+    c: Double
 ) = Mat().also { dst ->
     opencv_imgproc.adaptiveThreshold(this, dst, maxValue, adaptiveMethod, thresholdType, blockSize, c)
 }

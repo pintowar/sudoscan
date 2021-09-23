@@ -22,5 +22,4 @@ interface Recognizer {
     val name: String
 
     fun predict(cells: List<SudokuCell>): List<Int>
-
 }

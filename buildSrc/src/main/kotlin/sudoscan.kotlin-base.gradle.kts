@@ -38,9 +38,6 @@ ktlint {
         reporter(ReporterType.JSON)
         reporter(ReporterType.HTML)
     }
-//    filter {
-//        exclude("**/style-violations.kt")
-//    }
 }
 
 tasks {

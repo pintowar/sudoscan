@@ -36,5 +36,4 @@ class PlotterSpec : StringSpec({
         result.arrayHeight() shouldBe sudokuFinalSolution.arrayHeight()
         result.channels() shouldBe sudokuFinalSolution.channels()
     }
-
 })

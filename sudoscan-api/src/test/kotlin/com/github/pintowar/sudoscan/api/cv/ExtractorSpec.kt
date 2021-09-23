@@ -110,5 +110,4 @@ class ExtractorSpec : StringSpec({
         result.data.arrayWidth() shouldBe 28
         result.data.arrayHeight() shouldBe 28
     }
-
 })

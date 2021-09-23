@@ -76,5 +76,4 @@ internal object Plotter : KLogging() {
     fun combineSolutionToOriginal(original: Mat, solution: Mat): Mat {
         return solution.bitwiseAnd(original)
     }
-
 }
