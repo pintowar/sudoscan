@@ -91,20 +91,20 @@ class ExtractorSpec : StringSpec({
         result.arrayHeight() shouldBe finalSize
     }
 
-    "test extract digit - eight" {
+    "test extract cell - eight" {
         val eightSquare = Segment(Coord(0, 0), Coord(43, 43))
         val finalSize = 28
-        val result = Extractor.extractDigit(frontalSudoku, eightSquare, finalSize)
+        val result = Extractor.extractCell(frontalSudoku, eightSquare, finalSize)
 
         result.empty shouldBe false
         result.data.arrayWidth() shouldBe 28
         result.data.arrayHeight() shouldBe 28
     }
 
-    "test extract digit - empty" {
+    "test extract cell - empty" {
         val eightSquare = Segment(Coord(43, 0), Coord(86, 43))
         val finalSize = 28
-        val result = Extractor.extractDigit(frontalSudoku, eightSquare, finalSize)
+        val result = Extractor.extractCell(frontalSudoku, eightSquare, finalSize)
 
         result.empty shouldBe true
         result.data.arrayWidth() shouldBe 28

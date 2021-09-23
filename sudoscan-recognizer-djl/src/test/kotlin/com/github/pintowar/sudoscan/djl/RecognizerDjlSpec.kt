@@ -1,21 +1,20 @@
-package com.github.pintowar.sudoscan.dl4j
+package com.github.pintowar.sudoscan.djl
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 import org.bytedeco.opencv.global.opencv_imgcodecs
-import org.nd4j.linalg.api.ndarray.INDArray
+import org.bytedeco.opencv.opencv_core.Mat
 import java.io.File
 
-class RecognizerDl4jTest : StringSpec({
-    val recognizer = RecognizerDl4j()
+class RecognizerDjlSpec : StringSpec({
+    val recognizer = RecognizerDjl()
 
-    fun cvRead(path: String): INDArray {
+    fun cvRead(path: String): Mat {
         val cl = Thread.currentThread().contextClassLoader
         val filename = File(cl.getResource(path)!!.toURI()).absolutePath
-        val mat = opencv_imgcodecs.imread(filename, opencv_imgcodecs.IMREAD_GRAYSCALE)
-        return mat.toNdArray()
+        return opencv_imgcodecs.imread(filename, opencv_imgcodecs.IMREAD_GRAYSCALE)
     }
 
     "should recognize sample digits" {
@@ -31,7 +30,7 @@ class RecognizerDl4jTest : StringSpec({
             row("nine", 9)
         ) { file: String, digit: Int ->
             val img = cvRead("imgs/digits/${file}.png")
-            recognizer.predict(img.reshape(1, 28, 28, 1))[0] shouldBe digit
+            recognizer.predict(img) shouldBe digit
         }
     }
 })

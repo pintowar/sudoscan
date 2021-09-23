@@ -1,6 +1,6 @@
 package com.github.pintowar.sudoscan.api.spi
 
-import com.github.pintowar.sudoscan.api.Digit
+import com.github.pintowar.sudoscan.api.SudokuCell
 import java.util.*
 
 interface Recognizer {
@@ -21,6 +21,6 @@ interface Recognizer {
 
     val name: String
 
-    fun predict(digits: List<Digit>): List<Int>
+    fun predict(cells: List<SudokuCell>): List<Int>
 
 }

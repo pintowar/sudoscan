@@ -1,6 +1,6 @@
 package com.github.pintowar.sudoscan.api.cv
 
-import com.github.pintowar.sudoscan.api.Digit
+import com.github.pintowar.sudoscan.api.SudokuCell
 import mu.KLogging
 import org.bytedeco.javacpp.indexer.FloatIndexer
 import org.bytedeco.javacpp.indexer.IntIndexer
@@ -249,7 +249,7 @@ internal object Extractor : KLogging() {
      * @param size final (and resized) size of the image extracted.
      * @return an object with the image extracted and additional information about the cell.
      */
-    fun extractDigit(img: Mat, segment: Segment, size: Int): Digit {
+    fun extractCell(img: Mat, segment: Segment, size: Int): SudokuCell {
         val digit = rectFromSegment(img, segment)
 
         val margin = ((digit.arrayWidth() + digit.arrayHeight()) / 5.0).toInt()
@@ -265,8 +265,8 @@ internal object Extractor : KLogging() {
         val percentFill = if (area > 0) (noBorder.sumElements() / 255) / area else 0.0
         logger.debug { "Percent: %.2f".format(percentFill) }
 
-        return if (percentFill > 0.1) Digit(scaleAndCenter(noBorder, size, 4), false)
-        else Digit(Mat.zeros(size, size, CV_8UC1).asMat(), true)
+        return if (percentFill > 0.1) SudokuCell(scaleAndCenter(noBorder, size, 4), false)
+        else SudokuCell(Mat.zeros(size, size, CV_8UC1).asMat(), true)
     }
 
     /**
@@ -279,7 +279,7 @@ internal object Extractor : KLogging() {
      * @return an object with the image extracted and additional information about the cell.
      */
     fun extractAllDigits(img: Mat, squares: List<Segment>, size: Int = 28) =
-        squares.map { s -> extractDigit(img, s, size) }
+        squares.map { s -> extractCell(img, s, size) }
 
     /**
      * Convert a 2d array into an image.

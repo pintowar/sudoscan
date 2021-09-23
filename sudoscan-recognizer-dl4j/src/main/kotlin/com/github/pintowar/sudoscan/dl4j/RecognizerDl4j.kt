@@ -1,6 +1,6 @@
 package com.github.pintowar.sudoscan.dl4j
 
-import com.github.pintowar.sudoscan.api.Digit
+import com.github.pintowar.sudoscan.api.SudokuCell
 import com.github.pintowar.sudoscan.api.spi.Recognizer
 import mu.KLogging
 import org.deeplearning4j.nn.modelimport.keras.KerasModelImport
@@ -19,7 +19,7 @@ class RecognizerDl4j : Recognizer {
         logger.debug { it.summary() }
     }
 
-    fun validateImages(digits: INDArray) {
+    private fun validateImages(digits: INDArray) {
         val shape = digits.shape()
         assert(shape.size == 4)
         assert(shape[0] >= 0L)
@@ -28,10 +28,10 @@ class RecognizerDl4j : Recognizer {
 
     override val name: String = "Recognizer Dl4j"
 
-    override fun predict(digits: List<Digit>): List<Int> {
-        val digitArray = digits.map { it.data.toNdArray() }.toTypedArray()
+    override fun predict(cells: List<SudokuCell>): List<Int> {
+        val digitArray = cells.map { it.data.toNdArray() }.toTypedArray()
         val stackDigits = Nd4j.stack(0, *digitArray)
-        return predict(stackDigits).zip(digits).map { (rec, dig) -> if (dig.empty) 0 else rec }
+        return predict(stackDigits).zip(cells).map { (rec, dig) -> if (dig.empty) 0 else rec }
     }
 
     fun predict(digits: INDArray): List<Int> {

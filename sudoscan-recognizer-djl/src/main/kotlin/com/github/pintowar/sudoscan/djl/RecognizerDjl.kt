@@ -10,7 +10,7 @@ import ai.djl.repository.zoo.Criteria
 import ai.djl.translate.Batchifier
 import ai.djl.translate.Translator
 import ai.djl.translate.TranslatorContext
-import com.github.pintowar.sudoscan.api.Digit
+import com.github.pintowar.sudoscan.api.SudokuCell
 import com.github.pintowar.sudoscan.api.spi.Recognizer
 import mu.KLogging
 import org.bytedeco.opencv.opencv_core.Mat
@@ -38,8 +38,8 @@ class RecognizerDjl : Recognizer {
 
     override val name: String = "Recognizer DJL"
 
-    override fun predict(digits: List<Digit>): List<Int> {
-        return digits.map {
+    override fun predict(cells: List<SudokuCell>): List<Int> {
+        return cells.map {
             if (it.empty) 0 else predict(it.data)
         }
     }
