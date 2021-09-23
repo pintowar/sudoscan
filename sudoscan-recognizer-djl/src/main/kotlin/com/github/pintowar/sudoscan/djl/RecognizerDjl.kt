@@ -13,7 +13,6 @@ import ai.djl.translate.TranslatorContext
 import com.github.pintowar.sudoscan.api.SudokuCell
 import com.github.pintowar.sudoscan.api.spi.Recognizer
 import mu.KLogging
-import org.bytedeco.opencv.opencv_core.Mat
 
 class RecognizerDjl : Recognizer {
 
