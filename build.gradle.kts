@@ -67,7 +67,6 @@ tasks {
             }
         }
     }
-
 }
 
 sonarqube {
