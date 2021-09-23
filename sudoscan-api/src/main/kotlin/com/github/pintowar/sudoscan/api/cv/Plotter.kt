@@ -23,7 +23,6 @@ internal object Plotter : KLogging() {
         var y = -1
 
         val font = FONT_HERSHEY_DUPLEX
-
         val textColor = Scalar((255.0 - color.blue), (255.0 - color.green), (255.0 - color.red), 0.0)
 
         solution.forEach {
@@ -44,11 +43,6 @@ internal object Plotter : KLogging() {
         return squareImage
     }
 
-    fun changePerspectiveAndPasteToOriginal(dst: Mat, src: Mat, sudokuResult: Mat, original: Mat): Mat {
-        val sol = changePerspectiveToOriginalSize(dst, src, sudokuResult, original)
-        return combineSolutionToOriginal(original, sol)
-    }
-
     fun changePerspectiveToOriginalSize(dst: Mat, src: Mat, sudokuResult: Mat, original: Mat): Mat {
         val m = dst.getPerspectiveTransform(src)
         val img = sudokuResult.warpPerspective(m, Area(original.size(1), original.size(0)))
@@ -59,11 +53,4 @@ internal object Plotter : KLogging() {
         return solution.bitwiseAnd(original)
     }
 
-    fun plotResultOnOriginalSource(
-        original: Mat, cropped: CroppedImage, solution: List<Int>,
-        color: Color = Color.GREEN
-    ): Mat {
-        val result = plotSolution(cropped, solution, color)
-        return changePerspectiveAndPasteToOriginal(cropped.dst, cropped.src, result, original)
-    }
 }

@@ -15,7 +15,9 @@ internal data class Coord(val x: Int, val y: Int) {
     fun toPoint() = Point(x, y)
 }
 
-internal data class Segment(val begin: Coord, val end: Coord)
+internal data class Segment(val begin: Coord, val end: Coord) {
+    fun isBackSlash() = begin.x <= end.x && begin.y <= end.y
+}
 
 internal data class ImageCorners(
     val topLeft: Coord, val topRight: Coord, val bottomRight: Coord, val bottomLeft: Coord

@@ -43,7 +43,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         val squareSize = 28
 
         val cropped = cropImage(img)
-        val processedCrop = preProcessGrayImage(cropped.img, true)
+        val processedCrop = preProcessGrayImage(cropped.img, false)
 
         val squares = splitSquares(processedCrop)
         val cells = extractAllDigits(processedCrop, squares, squareSize)

@@ -9,16 +9,29 @@ import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.global.opencv_imgproc.COLOR_RGB2GRAY
 import org.bytedeco.opencv.opencv_core.Mat
-import org.bytedeco.opencv.opencv_core.Point
 import kotlin.math.max
 import kotlin.math.min
 
 internal object Extractor : KLogging() {
 
+    /**
+     * Convert image to gray scale.
+     *
+     * @param img image to be converted.
+     * @return gray scale image (Mat).
+     */
     fun toGrayScale(img: Mat) = img.cvtColor(COLOR_RGB2GRAY)
 
-    fun preProcessGrayImage(img: Mat, skipDilate: Boolean = false): Mat {
-        assert(img.channels() == 1)
+    /**
+     * Pre-process a gray scale image. Basically uses a gaussian blur + adaptive threshold.
+     * It also can dilate the image (true by default).
+     *
+     * @param img image to pre-process.
+     * @param dilate dilate flag (true by default).
+     * @return pre processed image (Mat).
+     */
+    fun preProcessGrayImage(img: Mat, dilate: Boolean = true): Mat {
+        assert(img.channels() == 1) { "Image must be in gray scale." }
         val proc = img.gaussianBlur(Area(9, 9), 0.0)
 
         val threshold = proc.adaptiveThreshold(
@@ -27,13 +40,22 @@ internal object Extractor : KLogging() {
 
         val thresholdNot = threshold.bitwiseNot()
 
-        return if (!skipDilate) {
+        return if (dilate) {
             val kernel = getStructuringElement(opencv_imgproc.MORPH_DILATE, Area(3, 3))
             thresholdNot.dilate(kernel)
         } else thresholdNot
     }
 
+    /**
+     * Find corners of the biggest square found in the image.
+     * The input image must be in grayscale.
+     *
+     * @param img gray scale image to find the biggest square corners.
+     * @return the biggest square coordinates.
+     */
     fun findCorners(img: Mat): ImageCorners {
+        assert(img.channels() == 1) { "Image must be in gray scale." }
+
         val contours = img.findContours(Mat(), opencv_imgproc.RETR_EXTERNAL, opencv_imgproc.CHAIN_APPROX_SIMPLE)
         val polygons = contours.get()
 
@@ -52,7 +74,14 @@ internal object Extractor : KLogging() {
         } else ImageCorners.EMPTY_CORNERS
     }
 
-    fun cropSudoku(img: Mat, corners: ImageCorners): CroppedImage {
+    /**
+     * This function changes an image perspective to a frontal view given a square corners coordinates.
+     *
+     * @param img original image.
+     * @param corners square coordinates of the desired object.
+     * @return img with a frontal view.
+     */
+    private fun frontalPerspective(img: Mat, corners: ImageCorners): CroppedImage {
         val sides = corners.sides()
         val side = sides.maxOrNull()!!.toFloat()
 
@@ -67,6 +96,30 @@ internal object Extractor : KLogging() {
         return CroppedImage(result, src, dst)
     }
 
+    /**
+     * This function has the objective to find the "biggest square" in the image, crop it and changes its perspective
+     * so that the view is frontal.
+     *
+     * This function is a pipe the goes through other functions [toGrayScale] -> [preProcessGrayImage] -> [findCorners]
+     * -> [frontalPerspective]
+     *
+     * @param img original image to be processed.
+     * @return original image with a frontal view.
+     */
+    fun cropImage(img: Mat): CroppedImage {
+        val gray = toGrayScale(img)
+        val proc = preProcessGrayImage(gray)
+        val corners = findCorners(proc)
+        return frontalPerspective(gray, corners)
+    }
+
+    /**
+     * Splits the image into a 9x9 (81) grid. Assuming an image with a frontal perspective of a Sudoku is provided,
+     * a list of diagonal segments (top left to bottom right) is returned.
+     *
+     * @param img original image (for better function, assume an image with a frontal perspective of a Sudoku puzzle).
+     * @return list of diagonal segments (top left to bottom right) of every sudoku piece.
+     */
     fun splitSquares(img: Mat): List<Segment> {
         assert(img.arrayHeight() == img.arrayWidth())
 
@@ -83,6 +136,15 @@ internal object Extractor : KLogging() {
         }
     }
 
+    /**
+     * Rescale image given a new size and centralize the middle object (number).
+     *
+     * @param img image to adjust.
+     * @param size new size (width and height) to be scaled.
+     * @param margin margin to help on centralization.
+     * @param background background color.
+     * @return transformed image.
+     */
     fun scaleAndCenter(img: Mat, size: Int, margin: Int = 0, background: Int = 0): Mat {
 
         fun centrePad(length: Int): Pair<Int, Int> {
@@ -109,44 +171,51 @@ internal object Extractor : KLogging() {
         return aux2.resize(Area(size, size))
     }
 
-    fun cutFromRect(img: Mat, segment: Segment) =
-        if (segment.begin.x <= segment.end.x && segment.begin.y <= segment.end.y)
-            img.colRange(segment.begin.x, segment.end.x)
-                .rowRange(segment.begin.y, segment.end.y)
-        else img.colRange(0, 0).rowRange(0, 0)
+    /**
+     * Cut a rectangle from an original image based on a back slash segment (top left to bottom right) or an empty
+     * matrix in case of a **non** back slash informed.
+     *
+     * @param img original image.
+     * @param segment a back slashed segment.
+     * @return the cut image.
+     */
+    fun rectFromSegment(img: Mat, segment: Segment): Mat =
+        if (segment.isBackSlash())
+            img.colRange(segment.begin.x, segment.end.x).rowRange(segment.begin.y, segment.end.y)
+        else
+            img.colRange(0, 0).rowRange(0, 0)
 
-    fun extractDigit(img: Mat, segment: Segment, size: Int): Digit {
-        val digit = cutFromRect(img, segment)
-
-        val margin = ((digit.arrayWidth() + digit.arrayHeight()) / 5.0).toInt()
-
-        val box = findLargestFeature(
-            digit,
-            Point(margin, margin), Point(digit.arrayWidth() - margin, digit.arrayHeight() - margin)
-        )
-
-        val noBorder = cutFromRect(digit, box.diagonal())
-
-        val dim = noBorder.size(0) * noBorder.size(1)
-        val percentFill = if (dim > 0) (noBorder.sumElements() / 255) / dim else 0.0
-        logger.debug { "Percent: %.2f".format(percentFill) }
-
-        return if (percentFill > 0.1) Digit(scaleAndCenter(noBorder, size, 4), false)
-        else Digit(Mat.zeros(size, size, CV_8UC1).asMat(), true)
-    }
-
+    /**
+     * Scans the image in search of any relevant data (on the sudoku context, it searches for a number in a cell).
+     * The process assumes that invalid pixel is BLACK and valid pixel is white (for instance, imagine a black image
+     * with a white eight in the middle).
+     *
+     * The scan uses a diagonal parameter that inform it the start area. This start area is a secure area with a
+     * safe distance from the borders. For the sudoku context, when it scans a cell this is used to exclude its borders.
+     * With the safe area informed, it marks all valid (white) data as gray.
+     *
+     * After the first step, it will then scan the full square (this time without the secure margin) and change all not
+     * gray pixel to an invalid pixel (black) and all gray pixel to a valid (white) pixel.
+     *
+     * After this process it will detect the valid bounds of the final white object found.
+     *
+     * @param inputImg gray scale image to be scanned.
+     * @param diagonal initial area with a safe margin from the borders.
+     * @return a square containing the bounds of an object (number on sudoku context).
+     */
     fun findLargestFeature(
-        inputImg: Mat, topLeft: Point = Point(0, 0),
-        bottomRight: Point = Point(inputImg.arrayWidth(), inputImg.arrayHeight())
+        inputImg: Mat,
+        diagonal: Segment = Segment(Coord(0, 0), Coord(inputImg.arrayWidth(), inputImg.arrayHeight()))
     ): ImageCorners {
         val img = inputImg.clone()
+        val (black, gray, white) = listOf(0, 64, 255)
         return img.createIndexer<UByteIndexer>().use { indexer ->
             val size = img.size()
 
-            (topLeft.x() until min(bottomRight.x(), size.width())).forEach { x ->
-                (topLeft.y() until min(bottomRight.y(), size.height())).forEach { y ->
-                    if (indexer[y.toLong(), x.toLong()] == 255) {
-                        img.floodFill(Coord(x, y), 64.0)
+            (diagonal.begin.x until min(diagonal.end.x, size.width())).forEach { x ->
+                (diagonal.begin.y until min(diagonal.end.y, size.height())).forEach { y ->
+                    if (indexer[y.toLong(), x.toLong()] == white) {
+                        img.floodFill(Coord(x, y), gray.toDouble())
                     }
                 }
             }
@@ -155,10 +224,10 @@ internal object Extractor : KLogging() {
 
             (0 until size.width()).forEach { x ->
                 (0 until size.height()).forEach { y ->
-                    val color = if (indexer[y.toLong(), x.toLong()] != 64) 0 else 255
+                    val color = if (indexer[y.toLong(), x.toLong()] != gray) black else white
                     indexer.put(y.toLong(), x.toLong(), color)
 
-                    if (indexer[y.toLong(), x.toLong()] == 255) {
+                    if (indexer[y.toLong(), x.toLong()] == white) {
                         top = min(x, top)
                         bottom = max(x, bottom)
                         left = min(y, left)
@@ -171,9 +240,52 @@ internal object Extractor : KLogging() {
         }
     }
 
+    /**
+     * Extract sudoku cell information from an input image. For proper extraction, this must be a frontal view
+     * of the sudoku puzzle.
+     *
+     * @param img input image (for proper extraction, this must be a frontal view of the sudoku puzzle).
+     * @param segment back slash diagonal of the area to be extracted from the original image.
+     * @param size final (and resized) size of the image extracted.
+     * @return an object with the image extracted and additional information about the cell.
+     */
+    fun extractDigit(img: Mat, segment: Segment, size: Int): Digit {
+        val digit = rectFromSegment(img, segment)
+
+        val margin = ((digit.arrayWidth() + digit.arrayHeight()) / 5.0).toInt()
+
+        val box = findLargestFeature(
+            digit,
+            Segment(Coord(margin, margin), Coord(digit.arrayWidth() - margin, digit.arrayHeight() - margin))
+        )
+
+        val noBorder = rectFromSegment(digit, box.diagonal())
+
+        val area = noBorder.size(0) * noBorder.size(1)
+        val percentFill = if (area > 0) (noBorder.sumElements() / 255) / area else 0.0
+        logger.debug { "Percent: %.2f".format(percentFill) }
+
+        return if (percentFill > 0.1) Digit(scaleAndCenter(noBorder, size, 4), false)
+        else Digit(Mat.zeros(size, size, CV_8UC1).asMat(), true)
+    }
+
+    /**
+     * Extract sudoku cells information from an input image. This function uses a list of segments as parameter.
+     * For proper extraction, this must be a frontal view of the sudoku puzzle.
+     *
+     * @param img input image (for proper extraction, this must be a frontal view of the sudoku puzzle).
+     * @param squares a list of back slash diagonals of the areas to be extracted from the original image.
+     * @param size final (and resized) size of the image extracted.
+     * @return an object with the image extracted and additional information about the cell.
+     */
     fun extractAllDigits(img: Mat, squares: List<Segment>, size: Int = 28) =
         squares.map { s -> extractDigit(img, s, size) }
 
+    /**
+     * Convert a 2d array into an image.
+     * @param data original 2d array.
+     * @return converted matrix.
+     */
     private fun floatToMat(data: Array<Array<Float>>): Mat {
         val mat = Mat(data.size, data[0].size, CV_32FC1)
         mat.createIndexer<FloatIndexer>().use { idx ->
@@ -183,12 +295,5 @@ internal object Extractor : KLogging() {
             }
         }
         return mat
-    }
-
-    fun cropImage(img: Mat): CroppedImage {
-        val gray = toGrayScale(img)
-        val proc = preProcessGrayImage(gray)
-        val corners = findCorners(proc)
-        return cropSudoku(gray, corners)
     }
 }
