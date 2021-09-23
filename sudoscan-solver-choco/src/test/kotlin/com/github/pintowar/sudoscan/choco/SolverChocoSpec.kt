@@ -5,7 +5,7 @@ import io.kotest.data.forAll
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 
-class SolverChocoTest : StringSpec({
+class SolverChocoSpec : StringSpec({
 
     val solver = SolverChoco()
 
