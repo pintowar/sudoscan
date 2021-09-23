@@ -39,24 +39,23 @@ class RecognizerDjl : Recognizer {
     override val name: String = "Recognizer DJL"
 
     override fun predict(cells: List<SudokuCell>): List<Int> {
-        return cells.map {
-            if (it.empty) 0 else predict(it.data)
-        }
+        return cells.map { predict(it) }
     }
 
-    fun predict(digit: Mat): Int {
-        model.newPredictor(translator).use { predictor ->
-            val prediction = predictor.predict(digit)
-            return prediction.best<Classifications.Classification>().className.toInt()
-        }
+    fun predict(digit: SudokuCell): Int {
+        return if (digit.empty) 0 else
+            model.newPredictor(translator).use { predictor ->
+                val prediction = predictor.predict(digit)
+                prediction.best<Classifications.Classification>().className.toInt()
+            }
     }
 
-    internal class MatTranslator : Translator<Mat, Classifications> {
+    internal class MatTranslator : Translator<SudokuCell, Classifications> {
         private val digits = (0..9).map { "$it" }
         private val size = 28
         private val lSize = size.toLong()
 
-        override fun processInput(ctx: TranslatorContext, input: Mat): NDList {
+        override fun processInput(ctx: TranslatorContext, input: SudokuCell): NDList {
             val array = input.toNDArray(ctx.ndManager)
             return NDList(NDImageUtils.resize(array, size).reshape(lSize, lSize, 1).div(255).neg().add(1))
         }

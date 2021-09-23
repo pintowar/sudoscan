@@ -4,24 +4,11 @@ import ai.djl.ndarray.NDArray
 import ai.djl.ndarray.NDManager
 import ai.djl.ndarray.types.DataType
 import ai.djl.ndarray.types.Shape
-import org.bytedeco.javacpp.indexer.UByteIndexer
-import org.bytedeco.opencv.opencv_core.Mat
+import com.github.pintowar.sudoscan.api.SudokuCell
 
-fun Mat.toNDArray(manager: NDManager): NDArray {
-    val width = this.arrayWidth().toLong()
-    val height = this.arrayHeight().toLong()
-    val channels = this.channels().toLong()
-
+fun SudokuCell.toNDArray(manager: NDManager): NDArray {
     val bb = manager.allocateDirect((channels * height * width).toInt())
-    this.createIndexer<UByteIndexer>().use { idx ->
-        for (c in 0 until channels) {
-            for (h in 0 until height) {
-                for (w in 0 until width) {
-                    bb.put(idx.get(h, w, c).toByte())
-                }
-            }
-        }
-    }
+    this.scanMatrix { _, value -> bb.put(value.toByte()) }
     bb.rewind()
     return manager.create(bb, Shape(height, width, channels), DataType.UINT8)
 }

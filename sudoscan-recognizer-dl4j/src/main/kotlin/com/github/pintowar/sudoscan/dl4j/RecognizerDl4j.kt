@@ -29,7 +29,7 @@ class RecognizerDl4j : Recognizer {
     override val name: String = "Recognizer Dl4j"
 
     override fun predict(cells: List<SudokuCell>): List<Int> {
-        val digitArray = cells.map { it.data.toNdArray() }.toTypedArray()
+        val digitArray = cells.map { it.toNdArray() }.toTypedArray()
         val stackDigits = Nd4j.stack(0, *digitArray)
         return predict(stackDigits).zip(cells).map { (rec, dig) -> if (dig.empty) 0 else rec }
     }
