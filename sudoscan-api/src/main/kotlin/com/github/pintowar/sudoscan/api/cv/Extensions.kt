@@ -46,7 +46,7 @@ internal data class ImageCorners(
     fun isEmptyCorners() = this == EMPTY_CORNERS
 }
 
-internal data class CroppedImage(val img: Mat, val src: Mat, val dst: Mat)
+internal class FrontalPerspective(val img: Mat, val src: Mat, val dst: Mat)
 
 internal fun zeros(area: Area, type: Int = CV_8U): Mat = Mat.zeros(area.toSize(), type).asMat()
 
@@ -108,5 +108,7 @@ internal fun Mat.copyMakeBorder(top: Int, bottom: Int, left: Int, right: Int, bo
         copyMakeBorder(this, dst, top, bottom, left, right, borderType, Scalar(value))
     }
 }
+
+internal fun Mat.area() = Area(this.arrayWidth(), this.arrayHeight())
 
 internal fun Mat.sumElements() = sumElems(this).get()

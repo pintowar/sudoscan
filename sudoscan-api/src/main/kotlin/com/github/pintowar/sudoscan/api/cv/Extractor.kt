@@ -81,7 +81,7 @@ internal object Extractor : KLogging() {
      * @param corners square coordinates of the desired object.
      * @return img with a frontal view.
      */
-    private fun frontalPerspective(img: Mat, corners: ImageCorners): CroppedImage {
+    private fun frontalPerspective(img: Mat, corners: ImageCorners): FrontalPerspective {
         val sides = corners.sides()
         val side = sides.maxOrNull()!!.toFloat()
 
@@ -93,7 +93,7 @@ internal object Extractor : KLogging() {
         )
         val m = src.getPerspectiveTransform(dst)
         val result = img.warpPerspective(m, Area(side.toInt(), side.toInt()))
-        return CroppedImage(result, src, dst)
+        return FrontalPerspective(result, src, dst)
     }
 
     /**
@@ -106,7 +106,7 @@ internal object Extractor : KLogging() {
      * @param img original image to be processed.
      * @return original image with a frontal view.
      */
-    fun cropImage(img: Mat): CroppedImage {
+    fun cropImage(img: Mat): FrontalPerspective {
         val gray = toGrayScale(img)
         val proc = preProcessGrayImage(gray)
         val corners = findCorners(proc)

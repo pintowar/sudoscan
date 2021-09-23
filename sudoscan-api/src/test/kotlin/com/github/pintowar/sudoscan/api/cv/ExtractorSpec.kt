@@ -1,26 +1,15 @@
 package com.github.pintowar.sudoscan.api.cv
 
+import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.croppedSudoku
+import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.dirtyEight
+import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.frontalSudoku
+import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.preProcessedSudoku
+import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.sudoku
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
-import org.bytedeco.opencv.global.opencv_imgcodecs
-import org.bytedeco.opencv.opencv_core.Mat
-import java.io.File
 
-class ExtractorTest : StringSpec({
-
-    fun cvRead(path: String, gray: Boolean = false): Mat {
-        val flag = if (gray) opencv_imgcodecs.IMREAD_GRAYSCALE else opencv_imgcodecs.IMREAD_COLOR
-        val cl = Thread.currentThread().contextClassLoader
-        val filename = File(cl.getResource(path)!!.toURI()).absolutePath
-        return opencv_imgcodecs.imread(filename, flag)
-    }
-
-    val sudoku = cvRead("imgs/sudoku01.jpg")
-    val preProcessedSudoku = cvRead("imgs/pre-processed-sudoku01.jpg", true)
-    val croppedSudoku = cvRead("imgs/cropped-sudoku-image01.jpg", true)
-    val frontalSudoku = cvRead("imgs/frontal-processed-sudoku01.jpg", true)
-    val dirtyEight = cvRead("imgs/dirty-eight.jpg", true)
+class ExtractorSpec : StringSpec({
 
     "test grayscale" {
         val graySudoku = Extractor.toGrayScale(sudoku)

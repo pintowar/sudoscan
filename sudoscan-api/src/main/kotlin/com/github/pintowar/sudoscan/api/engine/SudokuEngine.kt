@@ -8,6 +8,7 @@ import com.github.pintowar.sudoscan.api.cv.Extractor.splitSquares
 import com.github.pintowar.sudoscan.api.cv.Plotter.changePerspectiveToOriginalSize
 import com.github.pintowar.sudoscan.api.cv.Plotter.combineSolutionToOriginal
 import com.github.pintowar.sudoscan.api.cv.Plotter.plotSolution
+import com.github.pintowar.sudoscan.api.cv.area
 import com.github.pintowar.sudoscan.api.cv.bytesToMat
 import com.github.pintowar.sudoscan.api.cv.matToBytes
 import com.github.pintowar.sudoscan.api.spi.Recognizer
@@ -51,7 +52,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         if (digits.sum() > 0) {
             val solution = cache.get(digits)!!
             val result = plotSolution(cropped, solution, color)
-            if (solution.isNotEmpty()) changePerspectiveToOriginalSize(cropped.dst, cropped.src, result, img)
+            if (solution.isNotEmpty()) changePerspectiveToOriginalSize(cropped, result, img.area())
             else null
         } else null
     } catch (e: Exception) {
