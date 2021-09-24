@@ -10,6 +10,9 @@ import org.bytedeco.opencv.opencv_core.Scalar
 import java.awt.Color
 import kotlin.math.ceil
 
+/**
+ * Object containing general functions plot the solution to the original image.
+ */
 internal object Plotter : KLogging() {
 
     /**

@@ -4,7 +4,14 @@ import com.github.pintowar.sudoscan.api.cv.direct
 import org.bytedeco.javacpp.indexer.UByteIndexer
 import org.bytedeco.opencv.opencv_core.Mat
 
-class SudokuCell(val data: Mat, val empty: Boolean) {
+/**
+ * This class represents the image (and shape metadata) of a Sudoku cell.
+ * This must be a grayscale (1 channel) and squared (width = height) image.
+ *
+ * @property data image in Mat (OpenCV) format.
+ * @property empty flag the indicates if a cell is empty (without number)
+ */
+class SudokuCell(private val data: Mat, val empty: Boolean) {
     val width = data.arrayWidth().toLong()
     val height = data.arrayHeight().toLong()
     val channels = data.channels().toLong()
@@ -14,6 +21,12 @@ class SudokuCell(val data: Mat, val empty: Boolean) {
         if (width != height) throw IllegalArgumentException("Sudoku Cell must be a square (in size).")
     }
 
+    /**
+     * This function encapsulates the full scan of the image (height, width, channel) and uses a void callback function
+     * to process avery point of the image. This is useful to change the Mat (OpenCV) format to other formats.
+     *
+     * @param callBack the void function to process every data of the image.
+     */
     fun scanMatrix(callBack: (idx: CellIndex, value: Int) -> Unit) {
         data.createIndexer<UByteIndexer>(direct).use { idx ->
             for (c in 0 until channels) {

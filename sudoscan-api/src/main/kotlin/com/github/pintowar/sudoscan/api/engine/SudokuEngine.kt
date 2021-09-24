@@ -18,32 +18,72 @@ import org.bytedeco.opencv.opencv_core.Mat
 import java.awt.Color
 import java.time.Duration
 
+/**
+ * Main class responsible for the complete solution of the puzzle. This class is responsible for glue all components
+ * (CV, Recognizer and Solver) to read an image, identify a Sudoku puzzle, recognize the visible  numbers, solve the
+ * puzzle and plot back the solution to the original image.
+ *
+ * @property recognizer recognizer implementation to be used on the pipe.
+ * @property solver solver implementation to be used on the pipe.
+ */
 class SudokuEngine(private val recognizer: Recognizer, private val solver: Solver) : KLogging() {
 
+    /**
+     * Cache to maintain a solution already solved. This cache expires in 5 minutes.
+     * After the expiration the puzzle will be solver again.
+     */
     private val cache = Caffeine
         .newBuilder()
-        .expireAfterWrite(Duration.ofMinutes(1))
+        .expireAfterWrite(Duration.ofMinutes(5))
         .build { it: List<Int>? ->
             if (it != null) solvePuzzle(it) else emptyList()
         }
 
-    fun solveAndCombineSolution(bytes: ByteArray, color: Color = Color.GREEN, type: String = ".jpg"): ByteArray {
-        val mat = bytes.bytesToMat()
+    /**
+     * This function uses a byte array representing the input and output solution.
+     * It's a wrap of the [solve] function (the function of the entire pipe).
+     *
+     * @param image byte array of the input image.
+     * @param color the color of the plotted solution.
+     * @param ext the extension (jpg, png, etc...) of the output image.
+     * @return final solution as byte array.
+     */
+    fun solveAndCombineSolution(image: ByteArray, color: Color = Color.GREEN, ext: String = ".jpg"): ByteArray {
+        val mat = image.bytesToMat()
         val sol = solveAndCombineSolution(mat, color)
-        return sol.matToBytes(type)
+        return sol.matToBytes(ext)
     }
 
-    fun solveAndCombineSolution(img: Mat, color: Color = Color.GREEN): Mat {
-        val sol = solve(img, color)
+    /**
+     * This function uses a Mat (from OpenCV) representing the input and output solution.
+     * It's a wrap of the [solve] function (the function of the entire pipe).
+     *
+     * @param image Mat of the input image.
+     * @param color the color of the plotted solution.
+     * @return final solution as Mat.
+     */
+    fun solveAndCombineSolution(image: Mat, color: Color = Color.GREEN): Mat {
+        val sol = solve(image, color)
         return if (sol != null) {
-            combineSolutionToOriginal(img, sol)
-        } else img
+            combineSolutionToOriginal(image, sol)
+        } else image
     }
 
-    private fun solve(img: Mat, color: Color = Color.GREEN) = try {
+    /**
+     * The main function responsible to glue all components (CV, Recognizer and Solver) to read an image,
+     * identify a Sudoku puzzle, recognize the visible  numbers, solve the puzzle and plot back the solution
+     * to the original image.
+     *
+     * This function throws no Exception, however in case of any failure it will return the original input image.
+     *
+     * @param image Mat of the input image.
+     * @param color the color of the plotted solution.
+     * @return final solution as Mat.
+     */
+    private fun solve(image: Mat, color: Color = Color.GREEN) = try {
         val squareSize = 28
 
-        val cropped = cropImage(img)
+        val cropped = cropImage(image)
         val processedCrop = preProcessGrayImage(cropped.img, false)
 
         val squares = splitSquares(processedCrop)
@@ -52,7 +92,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         if (digits.sum() > 0) {
             val solution = cache.get(digits)!!
             val result = plotSolution(cropped, solution, color)
-            if (solution.isNotEmpty()) changePerspectiveToOriginalSize(cropped, result, img.area())
+            if (solution.isNotEmpty()) changePerspectiveToOriginalSize(cropped, result, image.area())
             else null
         } else null
     } catch (e: Exception) {
@@ -60,13 +100,20 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         null
     }
 
-    private fun solvePuzzle(digits: List<Int>): List<Int> {
+    /**
+     * Just solves the puzzle, uses a list of integers (where zero is an empty cell) to represent it's input and output
+     * form.
+     *
+     * @param puzzle list of integers (where zero is an empty cell) to represent the puzzle.
+     * @return a list of integers to represent the puzzle solution.
+     */
+    private fun solvePuzzle(puzzle: List<Int>): List<Int> {
         fun printableSol(prob: List<Int>) = prob.chunked(9).joinToString("\n") {
             it.joinToString("|").replace("0", " ")
         }
 
-        val solution = solver.solve(digits, false)
-        logger.debug { "Digital Sudoku:\n" + printableSol(digits) }
+        val solution = solver.solve(puzzle, false)
+        logger.debug { "Digital Sudoku:\n" + printableSol(puzzle) }
         logger.debug { "Solution:\n" + printableSol(solution) }
         return solution
     }

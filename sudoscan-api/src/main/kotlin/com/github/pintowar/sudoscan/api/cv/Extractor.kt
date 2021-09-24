@@ -12,6 +12,9 @@ import org.bytedeco.opencv.opencv_core.Mat
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * Object containing general functions to extract and transform the input image.
+ */
 internal object Extractor : KLogging() {
 
     /**

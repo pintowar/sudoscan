@@ -97,8 +97,8 @@ class ExtractorSpec : StringSpec({
         val result = Extractor.extractCell(frontalSudoku, eightSquare, finalSize)
 
         result.empty shouldBe false
-        result.data.arrayWidth() shouldBe 28
-        result.data.arrayHeight() shouldBe 28
+        result.width shouldBe 28
+        result.height shouldBe 28
     }
 
     "test extract cell - empty" {
@@ -107,7 +107,7 @@ class ExtractorSpec : StringSpec({
         val result = Extractor.extractCell(frontalSudoku, eightSquare, finalSize)
 
         result.empty shouldBe true
-        result.data.arrayWidth() shouldBe 28
-        result.data.arrayHeight() shouldBe 28
+        result.width shouldBe 28
+        result.height shouldBe 28
     }
 })
