@@ -9,7 +9,7 @@ import org.bytedeco.opencv.opencv_core.Mat
  * This must be a grayscale (1 channel) and squared (width = height) image.
  *
  * @property data image in Mat (OpenCV) format.
- * @property empty flag the indicates if a cell is empty (without number)
+ * @property empty flag that indicates if a cell is empty (without number)
  */
 class SudokuCell(private val data: Mat, val empty: Boolean) {
     val width = data.arrayWidth().toLong()
