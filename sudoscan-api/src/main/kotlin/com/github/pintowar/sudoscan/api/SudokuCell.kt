@@ -9,6 +9,11 @@ class SudokuCell(val data: Mat, val empty: Boolean) {
     val height = data.arrayHeight().toLong()
     val channels = data.channels().toLong()
 
+    init {
+        if (channels > 1) throw IllegalArgumentException("Number fo channels must be 1.")
+        if (width != height) throw IllegalArgumentException("Sudoku Cell must be a square (in size).")
+    }
+
     fun scanMatrix(callBack: (idx: CellIndex, value: Int) -> Unit) {
         data.createIndexer<UByteIndexer>(direct).use { idx ->
             for (c in 0 until channels) {

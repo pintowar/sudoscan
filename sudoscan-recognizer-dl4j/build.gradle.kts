@@ -1,4 +1,5 @@
 import Libs.Dl4j.implementDl4j
+import Libs.JavaCv.testImplementOpenCv
 
 plugins {
     id("sudoscan.kotlin-kotest")
@@ -10,4 +11,5 @@ description = "Sudoscan Recognizer Dl4j"
 dependencies {
     api(projects.sudoscanApi)
     implementDl4j()
+    testImplementOpenCv()
 }
