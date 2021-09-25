@@ -25,6 +25,7 @@ jobs:
         env:
           USERNAME: ${{ secrets.USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
