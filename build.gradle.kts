@@ -86,6 +86,10 @@ sonarqube {
     }
 }
 
+release {
+    tagTemplate = "v$version"
+}
+
 tasks.afterReleaseBuild {
     dependsOn(
         ":sudoscan-api:publish", ":sudoscan-solver-choco:publish", ":sudoscan-recognizer-dl4j:publish",

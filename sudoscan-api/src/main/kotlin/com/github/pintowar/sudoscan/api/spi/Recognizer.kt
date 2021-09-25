@@ -16,6 +16,8 @@ interface Recognizer {
     companion object {
         /**
          * This function will load an implementation of this interface (found on classpath) via SPI.
+         *
+         * @return Recognizer implementation found in the classpath.
          */
         fun provider(): Recognizer {
             val loader = ServiceLoader.load(Recognizer::class.java)
@@ -30,12 +32,14 @@ interface Recognizer {
      * "sudoscan.recognizer.model.url" and by default, can be found on the sudoscan-recognizer.properties file.
      *
      * This function restores the url configured on this property file.
+     *
+     * @return url there model can be downloaded.
      */
     fun modelUrl(): String = Thread.currentThread().contextClassLoader.let { cl ->
         val urlProperty = "sudoscan.recognizer.model.url"
-        Properties().also {
+        System.getProperty(urlProperty) ?: Properties().also {
             cl.getResourceAsStream("sudoscan-recognizer.properties")?.let { res -> it.load(res) }
-        }.getProperty(urlProperty, System.getProperty(urlProperty))!!
+        }.getProperty(urlProperty)!!
     }
 
     /**
@@ -47,7 +51,7 @@ interface Recognizer {
      * Predict the number provided by a list images of sudoku cells.
      *
      * @param cells list of sudoku cells to have a number recognized.
-     * @return list of integer equivalent to it sudoku cell. If an empty sudoku cell is provided,
+     * @return list of integer with the number found on each sudoku cell. If an empty sudoku cell is provided,
      * a number 0 (zero) is returned.
      */
     fun predict(cells: List<SudokuCell>): List<Int>

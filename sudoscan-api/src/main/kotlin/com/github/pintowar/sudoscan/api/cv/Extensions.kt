@@ -7,51 +7,96 @@ import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.opencv_core.*
 import org.opencv.imgcodecs.Imgcodecs
 import kotlin.math.pow
+import kotlin.math.sqrt
 
-internal val direct = !Loader.getPlatform().startsWith("android")
+internal val isNotAndroid = !Loader.getPlatform().startsWith("android")
 
+/**
+ * Represents the area of an image.
+ *
+ * @property width
+ * @property height
+ */
 internal data class Area(val width: Int, val height: Int) {
+
+    /**
+     * Converts to OpenCV Size object.
+     */
     fun toSize() = Size(width, height)
 }
 
-internal data class Coord(val x: Int, val y: Int) {
+/**
+ * Represents a cartesian coordinate with its x (for width) and y for (height) values.
+ *
+ * @property x
+ * @property y
+ */
+internal data class Coordinate(val x: Int, val y: Int) {
+
+    constructor(x: Long, y: Long) : this(x.toInt(), y.toInt())
+
+    /**
+     * Converts to OpenCV Point object (x, y).
+     */
     fun toPoint() = Point(x, y)
+
+    /**
+     * Convert this coordinate to a float array (x, y).
+     */
+    fun toFloatArray() = floatArrayOf(x.toFloat(), y.toFloat())
 }
 
-internal data class Segment(val begin: Coord, val end: Coord) {
+/**
+ * Represents a line segment between two coordinates.
+ *
+ * @property begin
+ * @property end
+ */
+internal data class Segment(val begin: Coordinate, val end: Coordinate) {
+
+    /**
+     * Checks if this segment has a backslash (like a '\') format.
+     */
     fun isBackSlash() = begin.x <= end.x && begin.y <= end.y
 }
 
-internal data class ImageCorners(
-    val topLeft: Coord,
-    val topRight: Coord,
-    val bottomRight: Coord,
-    val bottomLeft: Coord
+/**
+ * Represents the four coordinates that forms a selected rectangle of an image.
+ * This rectangle is usually the bounds of a detected object.
+ */
+internal data class RectangleCorners(
+    val topLeft: Coordinate,
+    val topRight: Coordinate,
+    val bottomRight: Coordinate,
+    val bottomLeft: Coordinate
 ) {
 
     companion object {
-        val EMPTY_CORNERS = ImageCorners(Coord(0, 0), Coord(0, 0), Coord(0, 0), Coord(0, 0))
+        val EMPTY_CORNERS = RectangleCorners(Coordinate(0, 0), Coordinate(0, 0), Coordinate(0, 0), Coordinate(0, 0))
     }
 
-    fun sides() = listOf(
-        bottomRight to topRight, topLeft to bottomLeft,
-        bottomRight to bottomLeft, topLeft to topRight
-    ).map { (a, b) ->
-        kotlin.math.sqrt((a.x - b.x).toDouble().pow(2) + (a.y - b.y).toDouble().pow(2))
-    }
+    /**
+     * The euclidean distance fo the sides of the rectangle.
+     */
+    fun sides() = listOf(bottomRight to topRight, topLeft to bottomLeft, bottomRight to bottomLeft, topLeft to topRight)
+        .map { (a, b) -> sqrt((a.x - b.x).toDouble().pow(2) + (a.y - b.y).toDouble().pow(2)) }
 
+    /**
+     * The diagonal segment of that square.
+     */
     fun diagonal() = Segment(topLeft, bottomRight)
 
+    /**
+     * Convert to a 2d float array.
+     */
     fun toFloatArray() = arrayOf(
-        arrayOf(topLeft.x.toFloat(), topLeft.y.toFloat()),
-        arrayOf(topRight.x.toFloat(), topRight.y.toFloat()),
-        arrayOf(bottomRight.x.toFloat(), bottomRight.y.toFloat()),
-        arrayOf(bottomLeft.x.toFloat(), bottomLeft.y.toFloat())
+        topLeft.toFloatArray(), topRight.toFloatArray(), bottomRight.toFloatArray(), bottomLeft.toFloatArray()
     )
-
-    fun isEmptyCorners() = this == EMPTY_CORNERS
 }
 
+/**
+ * Represents an image from a frontal perspective.
+ */
 internal class FrontalPerspective(val img: Mat, val src: Mat, val dst: Mat)
 
 internal fun zeros(area: Area, type: Int = CV_8U): Mat = Mat.zeros(area.toSize(), type).asMat()
@@ -84,7 +129,7 @@ internal fun Mat.adaptiveThreshold(
     opencv_imgproc.adaptiveThreshold(this, dst, maxValue, adaptiveMethod, thresholdType, blockSize, c)
 }
 
-internal fun Mat.floodFill(seed: Coord, newVal: Double) =
+internal fun Mat.floodFill(seed: Coordinate, newVal: Double) =
     opencv_imgproc.floodFill(this, seed.toPoint(), Scalar(newVal))
 
 internal fun Mat.bitwiseNot(): Mat = Mat().also { dst -> bitwise_not(this, dst) }

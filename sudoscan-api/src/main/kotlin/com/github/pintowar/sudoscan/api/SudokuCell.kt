@@ -1,6 +1,6 @@
 package com.github.pintowar.sudoscan.api
 
-import com.github.pintowar.sudoscan.api.cv.direct
+import com.github.pintowar.sudoscan.api.cv.isNotAndroid
 import org.bytedeco.javacpp.indexer.UByteIndexer
 import org.bytedeco.opencv.opencv_core.Mat
 
@@ -28,7 +28,7 @@ class SudokuCell(private val data: Mat, val empty: Boolean) {
      * @param callBack the void function to process every data of the image.
      */
     fun scanMatrix(callBack: (idx: CellIndex, value: Int) -> Unit) {
-        data.createIndexer<UByteIndexer>(direct).use { idx ->
+        data.createIndexer<UByteIndexer>(isNotAndroid).use { idx ->
             for (c in 0 until channels) {
                 for (h in 0 until height) {
                     for (w in 0 until width) {

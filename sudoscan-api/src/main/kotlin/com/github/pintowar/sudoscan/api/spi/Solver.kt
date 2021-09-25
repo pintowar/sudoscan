@@ -15,6 +15,8 @@ interface Solver {
     companion object {
         /**
          * This function will load an implementation of this interface (found on classpath) via SPI.
+         *
+         * @return Solver implementation found in the classpath.
          */
         fun provider(): Solver {
             val loader = ServiceLoader.load(Solver::class.java)
@@ -23,8 +25,13 @@ interface Solver {
         }
     }
 
-    fun solve(problem: String, entireSol: Boolean = true): String {
-        val prob = problem.toList().map(Character::getNumericValue)
+    /**
+     * @param puzzle flatten sudoku puzzle encoded as String. Empty cells are represented as zero (0).
+     * @param entireSol the solution must be the entire problem or just the initial empty cells.
+     * @return flatten sudoku solution as a string.
+     */
+    fun solve(puzzle: String, entireSol: Boolean = true): String {
+        val prob = puzzle.toList().map(Character::getNumericValue)
         return solve(prob, entireSol).joinToString("")
     }
 
@@ -36,7 +43,7 @@ interface Solver {
     /**
      * Solves a sudoku puzzle.
      *
-     * @param puzzle flatten sudoku puzzle provided as a list of integers. Empty cells are represented as zero (0).
+     * @param puzzle flatten sudoku puzzle encoded as a list of integers. Empty cells are represented as zero (0).
      * @param entireSol the solution must be the entire problem or just the initial empty cells.
      * @return flatten sudoku solution as a list of integers.
      */

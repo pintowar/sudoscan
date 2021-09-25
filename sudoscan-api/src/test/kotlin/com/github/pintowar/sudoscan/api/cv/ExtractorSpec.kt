@@ -58,13 +58,13 @@ class ExtractorSpec : StringSpec({
     }
 
     "test rect from segment" {
-        val validSquare = Segment(Coord(0, 0), Coord(43, 43))
+        val validSquare = Segment(Coordinate(0, 0), Coordinate(43, 43))
         val valid = Extractor.rectFromSegment(frontalSudoku, validSquare)
 
         valid.arrayHeight() shouldBe 43
         valid.arrayWidth() shouldBe 43
 
-        val invalidSquare = Segment(Coord(43, 43), Coord(0, 0))
+        val invalidSquare = Segment(Coordinate(43, 43), Coordinate(0, 0))
         val invalid = Extractor.rectFromSegment(frontalSudoku, invalidSquare)
 
         invalid.arrayHeight() shouldBe 0
@@ -74,13 +74,13 @@ class ExtractorSpec : StringSpec({
     "test find largest feature" {
         val (size, margin) = 43 to 17
 
-        val diagonal = Segment(Coord(margin, margin), Coord(size - margin, size - margin))
+        val diagonal = Segment(Coordinate(margin, margin), Coordinate(size - margin, size - margin))
         val corners = Extractor.findLargestFeature(dirtyEight, diagonal)
 
-        corners.topLeft shouldBe Coord(17, 15)
-        corners.topRight shouldBe Coord(17, 25)
-        corners.bottomLeft shouldBe Coord(30, 15)
-        corners.bottomRight shouldBe Coord(30, 25)
+        corners.topLeft shouldBe Coordinate(17, 15)
+        corners.topRight shouldBe Coordinate(17, 25)
+        corners.bottomLeft shouldBe Coordinate(30, 15)
+        corners.bottomRight shouldBe Coordinate(30, 25)
     }
 
     "test scale and center" {
@@ -92,7 +92,7 @@ class ExtractorSpec : StringSpec({
     }
 
     "test extract cell - eight" {
-        val eightSquare = Segment(Coord(0, 0), Coord(43, 43))
+        val eightSquare = Segment(Coordinate(0, 0), Coordinate(43, 43))
         val finalSize = 28
         val result = Extractor.extractCell(frontalSudoku, eightSquare, finalSize)
 
@@ -102,7 +102,7 @@ class ExtractorSpec : StringSpec({
     }
 
     "test extract cell - empty" {
-        val eightSquare = Segment(Coord(43, 0), Coord(86, 43))
+        val eightSquare = Segment(Coordinate(43, 0), Coordinate(86, 43))
         val finalSize = 28
         val result = Extractor.extractCell(frontalSudoku, eightSquare, finalSize)
 

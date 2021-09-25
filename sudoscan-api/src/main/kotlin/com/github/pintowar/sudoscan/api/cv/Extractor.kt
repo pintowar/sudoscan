@@ -56,7 +56,7 @@ internal object Extractor : KLogging() {
      * @param img gray scale image to find the biggest square corners.
      * @return the biggest square coordinates.
      */
-    fun findCorners(img: Mat): ImageCorners {
+    fun findCorners(img: Mat): RectangleCorners {
         assert(img.channels() == 1) { "Image must be in gray scale." }
 
         val contours = img.findContours(Mat(), opencv_imgproc.RETR_EXTERNAL, opencv_imgproc.CHAIN_APPROX_SIMPLE)
@@ -64,17 +64,17 @@ internal object Extractor : KLogging() {
 
         return if (polygons.isNotEmpty()) {
             val polygon = polygons.maxByOrNull { it.contourArea() }!!
-            val points = polygon.createIndexer<IntIndexer>(direct).use { idx ->
-                (0 until idx.size(0)).map { Coord(idx.get(it, 0, 0), idx.get(it, 0, 1)) }
+            val points = polygon.createIndexer<IntIndexer>(isNotAndroid).use { idx ->
+                (0 until idx.size(0)).map { Coordinate(idx.get(it, 0, 0), idx.get(it, 0, 1)) }
             }
 
-            ImageCorners(
+            RectangleCorners(
                 bottomRight = points.maxByOrNull { it.x + it.y }!!,
                 topLeft = points.minByOrNull { it.x + it.y }!!,
                 bottomLeft = points.minByOrNull { it.x - it.y }!!,
                 topRight = points.maxByOrNull { it.x - it.y }!!
             )
-        } else ImageCorners.EMPTY_CORNERS
+        } else RectangleCorners.EMPTY_CORNERS
     }
 
     /**
@@ -84,14 +84,17 @@ internal object Extractor : KLogging() {
      * @param corners square coordinates of the desired object.
      * @return img with a frontal view.
      */
-    private fun frontalPerspective(img: Mat, corners: ImageCorners): FrontalPerspective {
+    private fun frontalPerspective(img: Mat, corners: RectangleCorners): FrontalPerspective {
         val sides = corners.sides()
         val side = sides.maxOrNull()!!.toFloat()
 
         val src = floatToMat(corners.toFloatArray())
         val dst = floatToMat(
             arrayOf(
-                arrayOf(0.0f, 0.0f), arrayOf(side - 1, 0.0f), arrayOf(side - 1, side - 1), arrayOf(0.0f, side - 1)
+                floatArrayOf(0.0f, 0.0f),
+                floatArrayOf(side - 1, 0.0f),
+                floatArrayOf(side - 1, side - 1),
+                floatArrayOf(0.0f, side - 1)
             )
         )
         val m = src.getPerspectiveTransform(dst)
@@ -132,8 +135,8 @@ internal object Extractor : KLogging() {
         return (0 until numPieces).flatMap { i ->
             (0 until numPieces).map { j ->
                 Segment(
-                    Coord((j * side).toInt(), (i * side).toInt()),
-                    Coord(((j + 1) * side).toInt(), ((i + 1) * side).toInt())
+                    Coordinate((j * side).toInt(), (i * side).toInt()),
+                    Coordinate(((j + 1) * side).toInt(), ((i + 1) * side).toInt())
                 )
             }
         }
@@ -208,29 +211,30 @@ internal object Extractor : KLogging() {
      */
     fun findLargestFeature(
         inputImg: Mat,
-        diagonal: Segment = Segment(Coord(0, 0), Coord(inputImg.arrayWidth(), inputImg.arrayHeight()))
-    ): ImageCorners {
+        diagonal: Segment = Segment(Coordinate(0, 0), Coordinate(inputImg.arrayWidth(), inputImg.arrayHeight()))
+    ): RectangleCorners {
         val img = inputImg.clone()
         val (black, gray, white) = listOf(0, 64, 255)
-        return img.createIndexer<UByteIndexer>(direct).use { indexer ->
+        return img.createIndexer<UByteIndexer>(isNotAndroid).use { indexer ->
             val size = img.size()
 
             (diagonal.begin.x until min(diagonal.end.x, size.width())).forEach { x ->
                 (diagonal.begin.y until min(diagonal.end.y, size.height())).forEach { y ->
                     if (indexer[y.toLong(), x.toLong()] == white) {
-                        img.floodFill(Coord(x, y), gray.toDouble())
+                        img.floodFill(Coordinate(x, y), gray.toDouble())
                     }
                 }
             }
 
-            var (top, bottom, left, right) = listOf(size.height(), 0, size.width(), 0)
+            var (top, bottom, left, right) = listOf(size.height(), 0, size.width(), 0).map { it.toLong() }
+            val (width, height) = listOf(size.width(), size.height()).map { it.toLong() }
 
-            (0 until size.width()).forEach { x ->
-                (0 until size.height()).forEach { y ->
-                    val color = if (indexer[y.toLong(), x.toLong()] != gray) black else white
-                    indexer.put(y.toLong(), x.toLong(), color)
+            (0 until width).forEach { x ->
+                (0 until height).forEach { y ->
+                    val color = if (indexer[y, x] != gray) black else white
+                    indexer.put(y, x, color)
 
-                    if (indexer[y.toLong(), x.toLong()] == white) {
+                    if (indexer[y, x] == white) {
                         top = min(x, top)
                         bottom = max(x, bottom)
                         left = min(y, left)
@@ -239,7 +243,9 @@ internal object Extractor : KLogging() {
                 }
             }
 
-            ImageCorners(Coord(top, left), Coord(top, right), Coord(bottom, right), Coord(bottom, left))
+            RectangleCorners(
+                Coordinate(top, left), Coordinate(top, right), Coordinate(bottom, right), Coordinate(bottom, left)
+            )
         }
     }
 
@@ -259,7 +265,7 @@ internal object Extractor : KLogging() {
 
         val box = findLargestFeature(
             digit,
-            Segment(Coord(margin, margin), Coord(digit.arrayWidth() - margin, digit.arrayHeight() - margin))
+            Segment(Coordinate(margin, margin), Coordinate(digit.arrayWidth() - margin, digit.arrayHeight() - margin))
         )
 
         val noBorder = rectFromSegment(digit, box.diagonal())
@@ -289,9 +295,9 @@ internal object Extractor : KLogging() {
      * @param data original 2d array.
      * @return converted matrix.
      */
-    private fun floatToMat(data: Array<Array<Float>>): Mat {
+    private fun floatToMat(data: Array<FloatArray>): Mat {
         val mat = Mat(data.size, data[0].size, CV_32FC1)
-        mat.createIndexer<FloatIndexer>(direct).use { idx ->
+        mat.createIndexer<FloatIndexer>(isNotAndroid).use { idx ->
             data.forEachIndexed { i, it ->
                 idx.put(longArrayOf(i.toLong(), 0, 0), it[0])
                 idx.put(longArrayOf(i.toLong(), 1, 0), it[1])
