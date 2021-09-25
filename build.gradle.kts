@@ -87,7 +87,11 @@ sonarqube {
 }
 
 release {
-    tagTemplate = "v$version"
+    tagTemplate = "v\$version"
+
+    git {
+        requireBranch = "master"
+    }
 }
 
 tasks.afterReleaseBuild {
