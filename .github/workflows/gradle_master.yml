@@ -30,7 +30,7 @@ jobs:
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
           gradle-version: wrapper
-          arguments: clean assembleApps release codeCoverageReport sonarqube -Pweb-cli -Prelease.useAutomaticVersion=true
+          arguments: clean assembleApps codeCoverageReport sonarqube release -Pweb-cli -Prelease.useAutomaticVersion=true
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
