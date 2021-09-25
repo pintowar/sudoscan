@@ -1,14 +1,17 @@
 package com.github.pintowar.sudoscan.dl4j
 
-import com.github.pintowar.sudoscan.dl4j.loader.NativeImageLoader
-import org.bytedeco.opencv.opencv_core.Mat
+import com.github.pintowar.sudoscan.api.SudokuCell
 import org.nd4j.linalg.api.ndarray.INDArray
+import org.nd4j.linalg.factory.Nd4j
 
-fun Mat.toNdArray(): INDArray {
-    return NativeImageLoader(
-        this.arrayHeight().toLong(),
-        this.arrayWidth().toLong(),
-        this.channels().toLong()
-    )
-        .asMatrix(this).reshape(this.arrayHeight().toLong(), this.arrayWidth().toLong(), this.elemSize())
+/**
+ * Extension function to convert a SudokuCell into a INDArray.
+ * INDArray is the default format used by the Dl4j/Nd4j framework.
+ *
+ * @return INDArray representation of the sudoku cell image.
+ */
+fun SudokuCell.toNdArray(): INDArray {
+    val ret = Nd4j.create(channels, height, width)
+    scanMatrix { (w, h, c), value -> ret.putScalar(longArrayOf(c, h, w), value) }
+    return ret.reshape(height, width, channels)
 }

@@ -3,17 +3,24 @@ package com.github.pintowar.sudoscan.choco
 import com.github.pintowar.sudoscan.api.spi.Solver
 import org.chocosolver.solver.Model
 
+/**
+ * Solver implementation that uses Choco Solver (CSP Solver) to solve a sudoku problem.
+ */
 class SolverChoco : Solver {
 
     override val name: String = "Choco Solver"
 
-    override fun solve(problem: List<Int>, entireSol: Boolean): List<Int> {
-        val prob = problem.chunked(9).map { it.toIntArray() }.toTypedArray()
+    override fun solve(puzzle: List<Int>, entireSol: Boolean): List<Int> {
+        val prob = puzzle.chunked(9).map { it.toIntArray() }.toTypedArray()
         return solveWithChoco(prob, entireSol).flatMap { it.toList() }
     }
 
-    fun solveWithChoco(problem: Array<IntArray>, entireSol: Boolean = true): Array<IntArray> {
-
+    /**
+     * @param puzzle 2d array representation of the sudoku puzzle. Zero (0) represents an empty cell.
+     * @param entireSol the solution must be the entire problem or just the initial empty cells.
+     * @return 2d array representation of the sudoku solution.
+     */
+    private fun solveWithChoco(puzzle: Array<IntArray>, entireSol: Boolean = true): Array<IntArray> {
         val gridSize = 9
         val regionSize = 3
         val model = Model("Sudoku")
@@ -22,7 +29,7 @@ class SolverChoco : Solver {
 
         (0 until gridSize).forEach { i ->
             (0 until gridSize).forEach { j ->
-                if (problem[i][j] != 0) x[i][j].eq(problem[i][j]).post()
+                if (puzzle[i][j] != 0) x[i][j].eq(puzzle[i][j]).post()
             }
         }
 
@@ -49,7 +56,7 @@ class SolverChoco : Solver {
         if (solution != null)
             return x.mapIndexed { i, row ->
                 row.mapIndexed { j, col ->
-                    col.value - (if (entireSol) 0 else problem[i][j])
+                    col.value - (if (entireSol) 0 else puzzle[i][j])
                 }.toIntArray()
             }.toTypedArray()
         else

@@ -20,5 +20,4 @@ class SudokuService : KLogging() {
     }
 
     fun info(): Map<String, String> = mapOf("solver" to solver.name, "recognizer" to recognizer.name)
-
 }

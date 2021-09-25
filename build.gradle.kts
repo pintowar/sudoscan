@@ -67,7 +67,6 @@ tasks {
             }
         }
     }
-
 }
 
 sonarqube {
@@ -85,6 +84,10 @@ sonarqube {
         property("sonar.github.repository", "pintowar/sudoscan")
         property("sonar.coverage.jacoco.xmlReportPaths", "$jacocoReportPath/codeCoverageReport.xml")
     }
+}
+
+release {
+    tagTemplate = "v$version"
 }
 
 tasks.afterReleaseBuild {

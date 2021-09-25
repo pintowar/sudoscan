@@ -1,6 +1,7 @@
 import Libs.AwtColorFactory.implementAwtColorFactory
-import Libs.JavaCv.apiFfmpeg
-import Libs.JavaCv.apiJavaCv
+import Libs.JavaCv.implementFfmpeg
+import Libs.JavaCv.implementJavaCv
+import Libs.JavaCv.implementOpenCv
 import Libs.Micronaut.implementMicronautPicocli
 
 plugins {
@@ -28,9 +29,10 @@ tasks.nativeImage {
 val hasDjl = project.hasProperty("djl")
 dependencies {
     implementation(projects.sudoscanSolverChoco)
-    implementation(if(hasDjl) projects.sudoscanRecognizerDjl else projects.sudoscanRecognizerDl4j)
-    apiJavaCv()
-    apiFfmpeg()
+    implementation(if (hasDjl) projects.sudoscanRecognizerDjl else projects.sudoscanRecognizerDl4j)
+    implementJavaCv()
+    implementOpenCv()
+    implementFfmpeg()
 
     implementMicronautPicocli()
     implementAwtColorFactory()
