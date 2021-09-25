@@ -127,13 +127,10 @@ object Libs {
 
     object Micronaut {
         const val picocliCodegen = "info.picocli:picocli-codegen"
-        const val openApi = "io.micronaut.openapi:micronaut-openapi"
 
         const val micronautPicocli = "io.micronaut.picocli:micronaut-picocli"
 
         const val swagger = "io.swagger.core.v3:swagger-annotations"
-        const val kotlinJackson = "com.fasterxml.jackson.module:jackson-module-kotlin"
-        const val annotationApi = "javax.annotation:javax.annotation-api"
 
         const val micronautKotlinRuntime = "io.micronaut.kotlin:micronaut-kotlin-runtime"
         const val graalvm = "org.graalvm.nativeimage:svm"
@@ -144,17 +141,6 @@ object Libs {
             add("implementation", micronautKotlinRuntime)
             add("implementation", micronautPicocli)
             add("compileOnly", graalvm)
-        }
-
-        fun DependencyHandler.implementMicronautWeb() {
-            add("kapt", openApi)
-
-            add("implementation", micronautKotlinRuntime)
-            add("implementation", swagger)
-            add("implementation", annotationApi)
-
-            add("compileOnly", graalvm)
-            add("runtimeOnly", kotlinJackson)
         }
     }
 

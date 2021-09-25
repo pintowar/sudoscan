@@ -1,9 +1,0 @@
-micronaut:
-  application:
-    name: sudoscan-deskapp
-  router:
-    static-resources:
-      default:
-        enabled: true
-        mapping: "/**"
-        paths: "classpath:public"

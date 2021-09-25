@@ -33,8 +33,8 @@ class SudokuCamera(
         const val FRAME_HEIGHT = 480
     }
 
-    private val recognizer = Recognizer.provider()
-    private val solver = Solver.provider()
+    private val recognizer: Recognizer = Recognizer.provider()
+    private val solver: Solver = Solver.provider()
     private val engine = SudokuEngine(recognizer, solver)
     private val grabber = OpenCVFrameGrabber(0)
     private val recorder: FFmpegFrameRecorder

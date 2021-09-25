@@ -38,33 +38,18 @@ tasks {
     }
 
     register("assembleApps") {
-        dependsOn(":sudoscan-deskapp:shadowJar", ":sudoscan-webserver:build")
+        dependsOn(":sudoscan-deskapp:shadowJar")
         group = "build"
         description = "Build desktop app"
         doLast {
             copy {
-                from(
-                    files(
-                        "${project(":sudoscan-deskapp").buildDir}/libs/",
-                        "${project(":sudoscan-webserver").buildDir}/libs/"
-                    )
-                ) { include("*-all.jar") }
+                from(files("${project(":sudoscan-deskapp").buildDir}/libs/")) {
+                    include("*-all.jar")
+                }
                 into("$rootDir/build/")
             }
 
             logger.quiet("JAR generated at $rootDir/build/. It combines the server and client projects.")
-        }
-    }
-
-    register("copyClientResources") {
-        dependsOn(":sudoscan-webclient:build")
-        group = "build"
-        description = "Copy client resources into server"
-        doLast {
-            copy {
-                from(project(":sudoscan-webclient").buildDir.absolutePath)
-                into("${project(":sudoscan-webserver").buildDir}/resources/main/public")
-            }
         }
     }
 }
@@ -91,13 +76,12 @@ release {
 
     git {
         requireBranch = "master"
-        signTag = true
     }
 }
 
 tasks.afterReleaseBuild {
     dependsOn(
         ":sudoscan-api:publish", ":sudoscan-solver-choco:publish", ":sudoscan-recognizer-dl4j:publish",
-        ":sudoscan-recognizer-djl:publish", ":sudoscan-deskapp:publish", ":sudoscan-webserver:publish"
+        ":sudoscan-recognizer-djl:publish", ":sudoscan-deskapp:publish"
     )
 }
