@@ -2,7 +2,7 @@ import Libs.Djl.implementDjl
 import Libs.JavaCv.testImplementOpenCv
 
 plugins {
-    id("sudoscan.kotlin-kotest")
+    id("sudoscan.kotlin-publish")
     id("java-library")
 }
 

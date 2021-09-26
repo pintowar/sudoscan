@@ -1,15 +1,6 @@
 plugins {
     id("sudoscan.kotlin-base")
-    id("io.kotest")
     `maven-publish`
-}
-
-dependencies {
-    testImplementation(Libs.Kotest.junit) {
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    testImplementation(Libs.Kotest.assertionsCore)
-    testImplementation(Libs.Kotest.assertionsJson)
 }
 
 publishing {

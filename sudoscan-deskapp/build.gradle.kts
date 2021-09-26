@@ -5,9 +5,8 @@ import Libs.JavaCv.implementOpenCv
 import Libs.Micronaut.implementMicronautPicocli
 
 plugins {
-    id("sudoscan.kotlin-javacpp")
+    id("sudoscan.kotlin-app")
     id("io.micronaut.application")
-    id("application")
     id("com.github.johnrengelman.shadow")
 }
 

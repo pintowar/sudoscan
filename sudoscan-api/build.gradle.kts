@@ -2,7 +2,7 @@ import Libs.Caffeine.implementCaffeine
 import Libs.JavaCv.implementOpenCv
 
 plugins {
-    id("sudoscan.kotlin-kotest")
+    id("sudoscan.kotlin-publish")
     id("java-library")
 }
 

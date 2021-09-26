@@ -1,7 +1,7 @@
 import Libs.ChocoSolver.implementChocoSolver
 
 plugins {
-    id("sudoscan.kotlin-kotest")
+    id("sudoscan.kotlin-publish")
     id("java-library")
 }
 

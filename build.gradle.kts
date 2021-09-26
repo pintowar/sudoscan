@@ -37,7 +37,7 @@ tasks {
         }
     }
 
-    register("assembleApps") {
+    register("assembleDesktopApp") {
         dependsOn(":sudoscan-deskapp:shadowJar")
         group = "build"
         description = "Build desktop app"
@@ -49,7 +49,7 @@ tasks {
                 into("$rootDir/build/")
             }
 
-            logger.quiet("JAR generated at $rootDir/build/. It combines the server and client projects.")
+            logger.quiet("JAR generated at $rootDir/build/.")
         }
     }
 }

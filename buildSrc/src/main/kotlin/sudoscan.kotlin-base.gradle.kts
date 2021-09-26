@@ -4,6 +4,7 @@ import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 plugins {
     kotlin("jvm")
     id("org.jetbrains.dokka")
+    id("io.kotest")
     id("jacoco")
     id("idea")
     id("org.jlleitschuh.gradle.ktlint")
@@ -21,6 +22,12 @@ dependencies {
     implementation(Libs.Kotlin.logging)
 
     runtimeOnly(Libs.LogBack.logback)
+
+    testImplementation(Libs.Kotest.junit) {
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    testImplementation(Libs.Kotest.assertionsCore)
+    testImplementation(Libs.Kotest.assertionsJson)
     testImplementation(Libs.Mockk.mockk)
 }
 
