@@ -20,11 +20,6 @@ micronaut {
     }
 }
 
-tasks.nativeImage {
-    args("--verbose")
-    imageName.set("sudoscan-deskapp-app")
-}
-
 val hasDjl = project.hasProperty("djl")
 dependencies {
     implementation(projects.sudoscanSolverChoco)
@@ -42,7 +37,14 @@ application {
     mainClass.set("com.github.pintowar.sudoscan.viewer.SudoscanApplicationKt")
 }
 
-tasks.shadowJar {
-    archiveBaseName.set("sudoscan-desktop-app")
-    mergeServiceFiles()
+tasks {
+    nativeImage {
+        args("--verbose", "-Djava.awt.headless=false")
+        imageName.set("sudoscan-deskapp-app")
+    }
+
+    shadowJar {
+        archiveBaseName.set("sudoscan-desktop-app")
+        mergeServiceFiles()
+    }
 }

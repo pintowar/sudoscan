@@ -35,9 +35,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
     private val cache = Caffeine
         .newBuilder()
         .expireAfterWrite(Duration.ofMinutes(5))
-        .build { it: List<Int>? ->
-            if (it != null) solvePuzzle(it) else emptyList()
-        }
+        .build(CacheableSolver(solver))
 
     /**
      * This function uses a byte array representing the input and output solution.
@@ -98,23 +96,5 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
     } catch (e: Exception) {
         logger.trace(e) { "Problem found during solution!" }
         null
-    }
-
-    /**
-     * Just solves the puzzle, uses a list of integers (where zero is an empty cell) to represent it's input and output
-     * form.
-     *
-     * @param puzzle list of integers (where zero is an empty cell) to represent the puzzle.
-     * @return a list of integers to represent the puzzle solution.
-     */
-    private fun solvePuzzle(puzzle: List<Int>): List<Int> {
-        fun printableSol(prob: List<Int>) = prob.chunked(9).joinToString("\n") {
-            it.joinToString("|").replace("0", " ")
-        }
-
-        val solution = solver.solve(puzzle, false)
-        logger.debug { "Digital Sudoku:\n" + printableSol(puzzle) }
-        logger.debug { "Solution:\n" + printableSol(solution) }
-        return solution
     }
 }
