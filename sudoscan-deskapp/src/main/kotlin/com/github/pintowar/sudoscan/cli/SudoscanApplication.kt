@@ -1,17 +1,23 @@
-package com.github.pintowar.sudoscan.viewer
+package com.github.pintowar.sudoscan.cli
 
+import com.github.pintowar.sudoscan.api.engine.SudokuEngine
 import io.micronaut.configuration.picocli.PicocliRunner
+import io.micronaut.context.BeanContext
+import jakarta.inject.Inject
 import org.beryx.awt.color.ColorFactory
 import picocli.CommandLine.*
 import java.awt.Color
 import java.io.File
 
-@Command(name = "sudoscan-cli", version = ["Versioned Command 1.0"], mixinStandardHelpOptions = true)
+@Command(name = "sudoscan-cli", version = ["CLI Version 1.0"], mixinStandardHelpOptions = true)
 class SudoscanApplication : Runnable {
 
     internal class ColorConverter : ITypeConverter<Color> {
         override fun convert(value: String): Color = ColorFactory.valueOf(value)
     }
+
+    @Inject
+    lateinit var beanContext: BeanContext
 
     @Option(
         names = ["-c", "--color"], description = ["Solution color"],
@@ -35,7 +41,8 @@ class SudoscanApplication : Runnable {
     var file: File = File("${System.getProperty("java.io.tmpdir")}${System.getProperty("file.separator")}sudoku.mp4")
 
     override fun run() {
-        val camera = SudokuCamera(color, record, file.absolutePath)
+        val engine = beanContext.getBean(SudokuEngine::class.java)
+        val camera = SudokuCamera(engine, color, record, file.absolutePath)
         camera.startCapture()
     }
 }

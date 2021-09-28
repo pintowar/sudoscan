@@ -1,8 +1,6 @@
-package com.github.pintowar.sudoscan.viewer
+package com.github.pintowar.sudoscan.cli
 
 import com.github.pintowar.sudoscan.api.engine.SudokuEngine
-import com.github.pintowar.sudoscan.api.spi.Recognizer
-import com.github.pintowar.sudoscan.api.spi.Solver
 import mu.KLogging
 import org.bytedeco.ffmpeg.global.avcodec
 import org.bytedeco.ffmpeg.global.avutil
@@ -22,6 +20,7 @@ import kotlin.system.measureTimeMillis
  * @param videoPath in case of recording the video, this is the file where it must be saved (Default: /tmp/sudoku.mp4).
  */
 class SudokuCamera(
+    private val engine: SudokuEngine,
     private val color: Color = Color.BLUE,
     private val record: Boolean = false,
     videoPath: String = "/tmp/sudoku.mp4"
@@ -32,12 +31,9 @@ class SudokuCamera(
         const val FRAME_HEIGHT = 480
     }
 
-    private val recognizer: Recognizer = Recognizer.provider()
-    private val solver: Solver = Solver.provider()
-    private val engine = SudokuEngine(recognizer, solver)
     private val grabber = OpenCVFrameGrabber(0)
     private val recorder: FFmpegFrameRecorder
-    private val frame = CanvasFrame("SudoScan UI - ${recognizer.name} / ${solver.name}")
+    private val frame = CanvasFrame("SudoScan UI - ${engine.components()}")
     private val fps = 10.0
 
     init {

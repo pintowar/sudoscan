@@ -38,6 +38,11 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         .build(CacheableSolver(solver))
 
     /**
+     * Description of Recognizer and Solver component names.
+     */
+    fun components() = "${recognizer.name} / ${solver.name}"
+
+    /**
      * This function uses a byte array representing the input and output solution.
      * It's a wrap of the [solve] function (the function of the entire pipe).
      *

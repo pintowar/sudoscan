@@ -31,4 +31,12 @@ class SudokuEngineSpec : StringSpec({
         result.arrayHeight() shouldBe sudokuFinalSolution.arrayHeight()
         result.channels() shouldBe sudokuFinalSolution.channels()
     }
+
+    "test components" {
+        every { recognizer.name } returns "recognizerName"
+        every { solver.name } returns "solverName"
+
+        val result = engine.components()
+        result shouldBe "recognizerName / solverName"
+    }
 })

@@ -16,7 +16,7 @@ micronaut {
     testRuntime("kotest")
     processing {
         incremental(true)
-        annotations("com.github.pintowar.sudoscan.viewer.*")
+        annotations("com.github.pintowar.sudoscan.cli.*")
     }
 }
 
@@ -34,7 +34,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass.set("com.github.pintowar.sudoscan.viewer.SudoscanApplicationKt")
+    mainClass.set("com.github.pintowar.sudoscan.cli.SudoscanApplicationKt")
 }
 
 tasks {
