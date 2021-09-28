@@ -9,8 +9,7 @@ import org.bytedeco.ffmpeg.global.avutil
 import org.bytedeco.javacv.*
 import org.bytedeco.opencv.opencv_core.Mat
 import java.awt.Color
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
+import java.awt.Dimension
 import javax.swing.WindowConstants
 import kotlin.system.measureTimeMillis
 
@@ -55,14 +54,11 @@ class SudokuCamera(
         }
 
         with(frame) {
-            setLocationRelativeTo(null)
-            defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+            defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
             isVisible = true
-            addWindowListener(object : WindowAdapter() {
-                override fun windowClosing(e: WindowEvent?) {
-                    this@SudokuCamera.dispose()
-                }
-            })
+
+            size = Dimension(FRAME_WIDTH, FRAME_HEIGHT)
+            setLocationRelativeTo(null)
         }
     }
 
@@ -79,7 +75,7 @@ class SudokuCamera(
      * Executes the main loop that continuously grab images from a webcam, send it to the SudokuEngine
      * and plot its final image to the frame.
      */
-    fun run() {
+    fun startCapture() {
         grabber.start()
         if (record) recorder.start()
         var isGrabbing: Boolean = !grabber.isTriggerMode
@@ -99,12 +95,13 @@ class SudokuCamera(
                 false
             }
         }
+        stopCapture()
     }
 
     /**
-     * Function to close this the grabber and recorder.
+     * Function to stop the grabber and recorder.
      */
-    fun dispose() {
+    private fun stopCapture() {
         frame.isVisible = false
         if (record) recorder.stop()
         grabber.stop()
