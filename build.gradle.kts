@@ -37,13 +37,13 @@ tasks {
         }
     }
 
-    register("assembleDesktopApp") {
-        dependsOn(":sudoscan-deskapp:shadowJar")
+    register("assembleCliApp") {
+        dependsOn(":sudoscan-cli:shadowJar")
         group = "build"
-        description = "Build desktop app"
+        description = "Build cli app"
         doLast {
             copy {
-                from(files("${project(":sudoscan-deskapp").buildDir}/libs/")) {
+                from(files("${project(":sudoscan-cli").buildDir}/libs/")) {
                     include("*-all.jar")
                 }
                 into("$rootDir/build/")
@@ -82,6 +82,6 @@ release {
 tasks.afterReleaseBuild {
     dependsOn(
         ":sudoscan-api:publish", ":sudoscan-solver-choco:publish", ":sudoscan-recognizer-dl4j:publish",
-        ":sudoscan-recognizer-djl:publish", ":sudoscan-deskapp:publish"
+        ":sudoscan-recognizer-djl:publish", ":sudoscan-cli:publish"
     )
 }

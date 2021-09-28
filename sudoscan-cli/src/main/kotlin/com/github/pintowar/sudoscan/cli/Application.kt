@@ -9,8 +9,8 @@ import picocli.CommandLine.*
 import java.awt.Color
 import java.io.File
 
-@Command(name = "sudoscan-cli", version = ["CLI Version 1.0"], mixinStandardHelpOptions = true)
-class SudoscanApplication : Runnable {
+@Command(name = "sudoscan-cli", version = ["CLI Version 0.8"], mixinStandardHelpOptions = true)
+class Application : Runnable {
 
     internal class ColorConverter : ITypeConverter<Color> {
         override fun convert(value: String): Color = ColorFactory.valueOf(value)
@@ -48,5 +48,5 @@ class SudoscanApplication : Runnable {
 }
 
 fun main(args: Array<String>) {
-    PicocliRunner.run(SudoscanApplication::class.java, *args)
+    PicocliRunner.run(Application::class.java, *args)
 }

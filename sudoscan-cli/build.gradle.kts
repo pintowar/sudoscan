@@ -10,7 +10,7 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-description = "Sudoscan Desktop App"
+description = "Sudoscan CLI App"
 
 micronaut {
     testRuntime("kotest")
@@ -34,17 +34,17 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass.set("com.github.pintowar.sudoscan.cli.SudoscanApplicationKt")
+    mainClass.set("com.github.pintowar.sudoscan.cli.ApplicationKt")
 }
 
 tasks {
     nativeImage {
         args("--verbose", "-Djava.awt.headless=false")
-        imageName.set("sudoscan-deskapp-app")
+        imageName.set("sudoscan-cli-app")
     }
 
     shadowJar {
-        archiveBaseName.set("sudoscan-desktop-app")
+        archiveBaseName.set("sudoscan-cli-app")
         mergeServiceFiles()
     }
 }
