@@ -33,12 +33,12 @@ jobs:
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
           gradle-version: wrapper
-          arguments: clean assembleDesktopApp codeCoverageReport sonarqube release -Prelease.useAutomaticVersion=true
+          arguments: clean assembleCliApp codeCoverageReport sonarqube release -Prelease.useAutomaticVersion=true
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: sudoscan desktop app jar
+          name: sudoscan client app jar
           path: build/*.jar
 
   release:

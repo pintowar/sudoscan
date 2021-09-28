@@ -60,16 +60,11 @@ object Libs {
         private const val vTensorFlow = "2.4.1"
 
         const val djlTensorflowZoo = "ai.djl.tensorflow:tensorflow-model-zoo:$vDjl"
-        const val djlTensorflowEngine = "ai.djl.tensorflow:tensorflow-engine:$vDjl"
         const val djlTensorflowNative = "ai.djl.tensorflow:tensorflow-native-auto:$vTensorFlow"
 
         fun DependencyHandler.implementDjl() {
-            listOf(djlTensorflowZoo).forEach {
-                add("implementation", it)
-            }
-            listOf(djlTensorflowNative).forEach {
-                add("runtimeOnly", it)
-            }
+            add("implementation", djlTensorflowZoo)
+            add("runtimeOnly", djlTensorflowNative)
         }
     }
 

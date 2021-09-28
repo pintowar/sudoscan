@@ -1,0 +1,12 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": "sudoscan-recognizer.properties"
+      },
+      {
+        "pattern": "nd4j-native.properties"
+      }
+    ]
+  }
+}
