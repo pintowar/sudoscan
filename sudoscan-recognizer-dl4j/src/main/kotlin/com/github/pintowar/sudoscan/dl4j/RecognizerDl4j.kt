@@ -1,5 +1,6 @@
 package com.github.pintowar.sudoscan.dl4j
 
+import com.github.pintowar.sudoscan.api.Digit
 import com.github.pintowar.sudoscan.api.SudokuCell
 import com.github.pintowar.sudoscan.api.spi.Recognizer
 import mu.KLogging
@@ -34,21 +35,25 @@ class RecognizerDl4j : Recognizer {
 
     override val name: String = "Recognizer Dl4j"
 
-    override fun predict(cells: List<SudokuCell>): List<Int> {
+    override fun predict(cells: List<SudokuCell>): Sequence<Digit> {
         val digitArray = cells.map { it.toNdArray() }.toTypedArray()
         val stackDigits = Nd4j.stack(0, *digitArray)
-        return predict(stackDigits).zip(cells).map { (rec, dig) -> if (dig.empty) 0 else rec }
+        return predict(stackDigits).zip(cells).asSequence().map { (rec, dig) ->
+            if (dig.empty) Digit.Unknown else rec
+        }
     }
 
     /**
      * Predict the number provided by a list images of sudoku cells.
      *
      * @param cells list of sudoku cells to have a number recognized.
-     * @return list of integer with the number found on each sudoku cell. If an empty sudoku cell is provided,
-     * a number 0 (zero) is returned.
+     * @return list of valid digits with the number and probability found on each sudoku cell.
      */
-    private fun predict(cells: INDArray): List<Int> {
+    private fun predict(cells: INDArray): List<Digit> {
         validateImages(cells)
-        return model.predict(cells.div(255.0).neg().add(1)).toList()
+        val output = model.output(cells.div(255.0).neg().add(1))
+        val values = output.argMax(1).toIntVector().toList()
+        val probabilities = output.max(1).toDoubleVector().toList()
+        return values.zip(probabilities).map { (value, prob) -> Digit.Valid(value, prob) }
     }
 }

@@ -91,7 +91,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
 
         val squares = splitSquares(processedCrop)
         val cells = extractAllDigits(processedCrop, squares, squareSize)
-        val digits = recognizer.predict(cells)
+        val digits = recognizer.reliablePredict(cells).map { it.value }
         if (digits.sum() > 0) {
             val solution = cache.get(digits)!!
             val result = plotSolution(cropped, solution, color)

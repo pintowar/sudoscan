@@ -31,7 +31,8 @@ class RecognizerDl4jSpec : StringSpec({
             row("nine", 9)
         ) { file: String, digit: Int ->
             val img = cvRead("imgs/digits/$file.png")
-            recognizer.predict(listOf(img))[0] shouldBe digit
+            val predicted = recognizer.predict(listOf(img)).first()
+            predicted.value shouldBe digit
         }
     }
 })

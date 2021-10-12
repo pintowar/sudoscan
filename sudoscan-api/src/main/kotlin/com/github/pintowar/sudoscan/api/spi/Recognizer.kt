@@ -1,5 +1,6 @@
 package com.github.pintowar.sudoscan.api.spi
 
+import com.github.pintowar.sudoscan.api.Digit
 import com.github.pintowar.sudoscan.api.SudokuCell
 import com.github.pintowar.sudoscan.api.spi.Recognizer.Companion.provider
 import java.util.*
@@ -43,6 +44,21 @@ interface Recognizer {
     }
 
     /**
+     * Predict the number provided by a list images of sudoku cells. If the confidence/probability of the model
+     * prediction is lower than 0.8, it will return an unknown digit.
+     *
+     * @param cells list of sudoku cells to have a number recognized.
+     * @return sequence of digits with the number found on each sudoku cell. If an empty sudoku cell is provided or
+     * the confidence of the model prediction is lower than 0.8, an unknown digit is returned.
+     */
+    fun reliablePredict(cells: List<SudokuCell>) = predict(cells).map {
+        when (it) {
+            is Digit.Unknown -> Digit.Unknown
+            is Digit.Valid -> if (it.confidence >= 0.8) it else Digit.Unknown
+        }
+    }.toList()
+
+    /**
      * Name of Recognizer implementation.
      */
     val name: String
@@ -51,8 +67,8 @@ interface Recognizer {
      * Predict the number provided by a list images of sudoku cells.
      *
      * @param cells list of sudoku cells to have a number recognized.
-     * @return list of integer with the number found on each sudoku cell. If an empty sudoku cell is provided,
-     * a number 0 (zero) is returned.
+     * @return sequence of digits with the number found on each sudoku cell. If an empty sudoku cell is provided,
+     * an unknown digit is returned.
      */
-    fun predict(cells: List<SudokuCell>): List<Int>
+    fun predict(cells: List<SudokuCell>): Sequence<Digit>
 }
