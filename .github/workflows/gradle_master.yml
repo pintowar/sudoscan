@@ -64,6 +64,13 @@ jobs:
           repository: ${{ github.repository }}
           excludes: prerelease,draft
 
+      - name: Download Kaggle models
+        id: kaggle_download
+        run: |
+          mkdir recognizer-model
+          wget -O recognizer-model/sudoscan-djl.zip https://shorturl.at/jGHN5
+          wget -O recognizer-model/sudoscan-dl4j.h5 https://shorturl.at/ijD89
+
       - name: Release
         uses: softprops/action-gh-release@v1
         if: steps.get_latest_tag.outputs.latest_tag != steps.last_release.outputs.release
@@ -74,5 +81,5 @@ jobs:
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
           files: |
-            recognizer-model/chars74k-djl.zip
-            recognizer-model/chars74k-dl4j.h5
+            recognizer-model/sudoscan-djl.zip
+            recognizer-model/sudoscan-dl4j.h5
