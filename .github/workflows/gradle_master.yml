@@ -68,8 +68,8 @@ jobs:
         id: kaggle_download
         run: |
           mkdir recognizer-model
-          wget -O recognizer-model/sudoscan-djl.zip https://shorturl.at/jGHN5
-          wget -O recognizer-model/sudoscan-dl4j.h5 https://shorturl.at/ijD89
+          wget -O recognizer-model/sudoscan-djl.zip https://bit.ly/3mMOpon
+          wget -O recognizer-model/sudoscan-dl4j.h5 https://bit.ly/3Dz2Ent
 
       - name: Release
         uses: softprops/action-gh-release@v1
