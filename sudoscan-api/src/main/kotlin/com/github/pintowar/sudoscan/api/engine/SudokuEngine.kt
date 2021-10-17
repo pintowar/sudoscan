@@ -1,6 +1,7 @@
 package com.github.pintowar.sudoscan.api.engine
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.pintowar.sudoscan.api.Puzzle
 import com.github.pintowar.sudoscan.api.cv.Extractor.cropImage
 import com.github.pintowar.sudoscan.api.cv.Extractor.extractAllDigits
 import com.github.pintowar.sudoscan.api.cv.Extractor.preProcessGrayImage
@@ -35,7 +36,21 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
     private val cache = Caffeine
         .newBuilder()
         .expireAfterWrite(Duration.ofMinutes(5))
-        .build(CacheableSolver(solver))
+        .build<String, Puzzle>()
+
+    /**
+     * Returns puzzle solution if key (puzzle encoded description) is found in cache.
+     * Otherwise, uses solver to solve puzzle and puts the solution on cache associated with puzzle key.
+     *
+     * @param puzzle puzzle to be solved
+     * @return puzzle solution
+     */
+    private fun solveWithCache(puzzle: Puzzle) = cache.get(puzzle.describe()) {
+        logger.debug { "Digital Sudoku:\n ${puzzle.describe(false)}" }
+        val solution = solver.solve(puzzle)
+        logger.debug { "Solution:\n ${solution.describe(false)}" }
+        solution
+    }
 
     /**
      * Description of Recognizer and Solver component names.
@@ -59,7 +74,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
 
     /**
      * This function uses a Mat (from OpenCV) representing the input and output solution.
-     * It's a wrap of the [solve] function (the function of the entire pipe).
+     * It's a wrap of the [solveAndCombineSolution] function (the function of the entire pipe).
      *
      * @param image Mat of the input image.
      * @param color the color of the plotted solution.
@@ -91,12 +106,17 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
 
         val squares = splitSquares(processedCrop)
         val cells = extractAllDigits(processedCrop, squares, squareSize)
-        val digits = recognizer.reliablePredict(cells).map { it.value }
-        if (digits.sum() > 0) {
-            val solution = cache.get(digits)!!
-            val result = plotSolution(cropped, solution, color)
-            if (solution.isNotEmpty()) changePerspectiveToOriginalSize(cropped, result, image.area())
-            else null
+        val digits = recognizer.reliablePredict(cells)
+        val puzzle = Puzzle.Unsolved(digits)
+        if (puzzle.isValid()) {
+            when (val solution = solveWithCache(puzzle)) {
+                is Puzzle.Unsolved -> null
+                is Puzzle.Solved -> {
+                    val result = plotSolution(cropped, solution, color)
+                    changePerspectiveToOriginalSize(cropped, result, image.area())
+                }
+                else -> null
+            }
         } else null
     } catch (e: Exception) {
         logger.trace(e) { "Problem found during solution!" }
