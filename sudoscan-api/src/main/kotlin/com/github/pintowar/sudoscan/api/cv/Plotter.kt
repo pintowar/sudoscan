@@ -1,6 +1,7 @@
 package com.github.pintowar.sudoscan.api.cv
 
 import com.github.pintowar.sudoscan.api.Digit
+import com.github.pintowar.sudoscan.api.Plottable
 import com.github.pintowar.sudoscan.api.Puzzle
 import mu.KLogging
 import org.bytedeco.opencv.global.opencv_core.CV_8UC3
@@ -24,8 +25,14 @@ internal object Plotter : KLogging() {
      * @param image the frontal image of a sudoku puzzle.
      * @param solution a given puzzle solution.
      * @param color the color of the solution to be plotted.
+     * @param plottable witch numbers will be plotted on result image. Default value is SOLUTION.
      */
-    fun plotSolution(image: FrontalPerspective, solution: Puzzle, color: Color = Color.GREEN): Mat {
+    fun plotSolution(
+        image: FrontalPerspective,
+        solution: Puzzle,
+        color: Color = Color.GREEN,
+        plottable: Plottable = Plottable.SOLUTION
+    ): Mat {
         val base = image.img
         val squareImage = zeros(Area(base.arrayWidth(), base.arrayHeight()), CV_8UC3)
 
@@ -34,15 +41,21 @@ internal object Plotter : KLogging() {
 
         val font = FONT_HERSHEY_DUPLEX
         val solutionColor = Scalar((255.0 - color.blue), (255.0 - color.green), (255.0 - color.red), 0.0)
+        val recognizedColor = Color.BLACK.let { Scalar((255.0 - it.blue), (255.0 - it.green), (255.0 - it.red), 0.0) }
 
         (0 until solution.gridSize).forEach { i ->
             (0 until solution.gridSize).forEach { j ->
                 val textX = ceil(factor * j + factor / 2.0 - 15).toInt()
                 val textY = ceil(factor * i + factor / 2.0 + factor / 3.0).toInt()
 
-                if (solution[i, j] is Digit.Found) {
-                    logger.debug { "$i, $j : $textX | $textY" }
+                if (plottable in listOf(Plottable.SOLUTION, Plottable.FULL) && solution[i, j] is Digit.Found) {
+                    logger.debug { "Found(${solution[i, j].value}) ($i, $j) : $textX | $textY" }
                     putText(squareImage, "${solution[i, j].value}", Point(textX, textY), font, fSize, solutionColor)
+                }
+
+                if (plottable in listOf(Plottable.RECOGNIZED, Plottable.FULL) && solution[i, j] is Digit.Valid) {
+                    logger.debug { "Valid(${solution[i, j].value}) ($i, $j) : $textX | $textY" }
+                    putText(squareImage, "${solution[i, j].value}", Point(textX, textY), font, fSize, recognizedColor)
                 }
             }
         }

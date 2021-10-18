@@ -1,5 +1,6 @@
 package com.github.pintowar.sudoscan.cli
 
+import com.github.pintowar.sudoscan.api.Plottable
 import com.github.pintowar.sudoscan.api.engine.SudokuEngine
 import io.micronaut.configuration.picocli.PicocliRunner
 import io.micronaut.context.BeanContext
@@ -32,6 +33,16 @@ class Application : Runnable {
     var record: Boolean = false
 
     @Option(
+        names = ["-p", "--plottable"],
+        description = [
+            "Witch numbers will be plotted on the final solution. " +
+                "The final SOLUTION, only the RECOGNIZED numbers or all numbers with FULL numbers."
+        ],
+        defaultValue = "SOLUTION"
+    )
+    var plottable: Plottable = Plottable.SOLUTION
+
+    @Option(
         names = ["-f", "--file"],
         description = [
             "File path to record the solution with solution " +
@@ -42,7 +53,7 @@ class Application : Runnable {
 
     override fun run() {
         val engine = beanContext.getBean(SudokuEngine::class.java)
-        val camera = SudokuCamera(engine, color, record, file.absolutePath)
+        val camera = SudokuCamera(engine, color, plottable, record, file.absolutePath)
         camera.startCapture()
     }
 }

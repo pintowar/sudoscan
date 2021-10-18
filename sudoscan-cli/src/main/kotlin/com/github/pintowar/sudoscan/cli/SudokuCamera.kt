@@ -1,5 +1,6 @@
 package com.github.pintowar.sudoscan.cli
 
+import com.github.pintowar.sudoscan.api.Plottable
 import com.github.pintowar.sudoscan.api.engine.SudokuEngine
 import mu.KLogging
 import org.bytedeco.ffmpeg.global.avcodec
@@ -22,6 +23,7 @@ import kotlin.system.measureTimeMillis
 class SudokuCamera(
     private val engine: SudokuEngine,
     private val color: Color = Color.BLUE,
+    private val plottable: Plottable = Plottable.SOLUTION,
     private val record: Boolean = false,
     videoPath: String = "/tmp/sudoku.mp4"
 ) {
@@ -80,7 +82,7 @@ class SudokuCamera(
                 val img = Java2DFrameUtils.toMat(grabber.grab())
                 if (img != null) {
                     val time = measureTimeMillis {
-                        val sol = engine.solveAndCombineSolution(img, color)
+                        val sol = engine.solveAndCombineSolution(img, color, plottable)
                         showAndRecord(sol)
                     }
                     logger.debug { "Processing took: $time ms" }
