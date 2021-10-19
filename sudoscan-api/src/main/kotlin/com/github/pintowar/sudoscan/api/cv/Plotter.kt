@@ -1,7 +1,6 @@
 package com.github.pintowar.sudoscan.api.cv
 
 import com.github.pintowar.sudoscan.api.Digit
-import com.github.pintowar.sudoscan.api.Plottable
 import com.github.pintowar.sudoscan.api.Puzzle
 import mu.KLogging
 import org.bytedeco.opencv.global.opencv_core.CV_8UC3
@@ -24,14 +23,14 @@ internal object Plotter : KLogging() {
      *
      * @param image the frontal image of a sudoku puzzle.
      * @param solution a given puzzle solution.
-     * @param color the color of the solution to be plotted.
-     * @param plottable witch numbers will be plotted on result image. Default value is SOLUTION.
+     * @param solutionColor the color of the solution digits to be plotted.
+     * @param recognizedColor the color of the recognized digits to be plotted.
      */
     fun plotSolution(
         image: FrontalPerspective,
         solution: Puzzle,
-        color: Color = Color.GREEN,
-        plottable: Plottable = Plottable.SOLUTION
+        solutionColor: Color = Color.GREEN,
+        recognizedColor: Color = Color.RED
     ): Mat {
         val base = image.img
         val squareImage = zeros(Area(base.arrayWidth(), base.arrayHeight()), CV_8UC3)
@@ -40,23 +39,22 @@ internal object Plotter : KLogging() {
         val fSize = base.arrayHeight() / 350.0
 
         val font = FONT_HERSHEY_DUPLEX
-        val solutionColor = Scalar((255.0 - color.blue), (255.0 - color.green), (255.0 - color.red), 0.0)
-        val recognizedColor = Color.BLACK.let { Scalar((255.0 - it.blue), (255.0 - it.green), (255.0 - it.red), 0.0) }
+        val solColor = solutionColor.let {
+            Scalar((255.0 - it.blue), (255.0 - it.green), (255.0 - it.red), (255.0 - it.alpha))
+        }
+        val predictedColor = recognizedColor.let {
+            Scalar((255.0 - it.blue), (255.0 - it.green), (255.0 - it.red), (255.0 - it.alpha))
+        }
 
         (0 until solution.gridSize).forEach { i ->
             (0 until solution.gridSize).forEach { j ->
                 val textX = ceil(factor * j + factor / 2.0 - 15).toInt()
                 val textY = ceil(factor * i + factor / 2.0 + factor / 3.0).toInt()
+                val color = if (solution[i, j] is Digit.Found) solColor else predictedColor
+                val digit = if (solution[i, j] is Digit.Found) "Found" else "Valid"
 
-                if (plottable in listOf(Plottable.SOLUTION, Plottable.FULL) && solution[i, j] is Digit.Found) {
-                    logger.debug { "Found(${solution[i, j].value}) ($i, $j) : $textX | $textY" }
-                    putText(squareImage, "${solution[i, j].value}", Point(textX, textY), font, fSize, solutionColor)
-                }
-
-                if (plottable in listOf(Plottable.RECOGNIZED, Plottable.FULL) && solution[i, j] is Digit.Valid) {
-                    logger.debug { "Valid(${solution[i, j].value}) ($i, $j) : $textX | $textY" }
-                    putText(squareImage, "${solution[i, j].value}", Point(textX, textY), font, fSize, recognizedColor)
-                }
+                logger.debug { "$digit(${solution[i, j].value}) ($i, $j) : $textX | $textY" }
+                putText(squareImage, "${solution[i, j].value}", Point(textX, textY), font, fSize, color)
             }
         }
 

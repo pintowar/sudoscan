@@ -1,6 +1,5 @@
 package com.github.pintowar.sudoscan.cli
 
-import com.github.pintowar.sudoscan.api.Plottable
 import com.github.pintowar.sudoscan.api.engine.SudokuEngine
 import mu.KLogging
 import org.bytedeco.ffmpeg.global.avcodec
@@ -16,14 +15,16 @@ import kotlin.system.measureTimeMillis
  * Responsible to maintain the application desktop window, grab images from a webcam, send it to the SudokuEngine
  * and plot its final image to the frame (the application desktop window).
  *
- * @property color color to plot the Sudoku solution (Default: blue).
+ * @param engine the Sudoku engine to read the problem and generate the solution.
+ * @param solutionColor the color of solution digits to be plotted on solution (Default: blue).
+ * @param recognizedColor the color of recognized digits to be plotted on solution (Default: red).
  * @property record flag to record or not the grabbed video (Default: false).
  * @param videoPath in case of recording the video, this is the file where it must be saved (Default: /tmp/sudoku.mp4).
  */
 class SudokuCamera(
     private val engine: SudokuEngine,
-    private val color: Color = Color.BLUE,
-    private val plottable: Plottable = Plottable.SOLUTION,
+    private val solutionColor: Color = Color.BLUE,
+    private val recognizedColor: Color = Color.RED,
     private val record: Boolean = false,
     videoPath: String = "/tmp/sudoku.mp4"
 ) {
@@ -82,7 +83,7 @@ class SudokuCamera(
                 val img = Java2DFrameUtils.toMat(grabber.grab())
                 if (img != null) {
                     val time = measureTimeMillis {
-                        val sol = engine.solveAndCombineSolution(img, color, plottable)
+                        val sol = engine.solveAndCombineSolution(img, solutionColor, recognizedColor)
                         showAndRecord(sol)
                     }
                     logger.debug { "Processing took: $time ms" }

@@ -1,7 +1,6 @@
 package com.github.pintowar.sudoscan.api.engine
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.pintowar.sudoscan.api.Plottable
 import com.github.pintowar.sudoscan.api.Puzzle
 import com.github.pintowar.sudoscan.api.cv.Extractor.cropImage
 import com.github.pintowar.sudoscan.api.cv.Extractor.extractAllDigits
@@ -63,19 +62,19 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
      * It's a wrap of the [solve] function (the function of the entire pipe).
      *
      * @param image byte array of the input image.
-     * @param color the color of the plotted solution.
-     * @param plottable witch numbers will be plotted on result image. Default value is SOLUTION.
+     * @param solutionColor the color of solution digits to be plotted on solution.
+     * @param recognizedColor the color of recognized digits to be plotted on solution.
      * @param ext the extension (jpg, png, etc...) of the output image.
      * @return final solution as byte array.
      */
     fun solveAndCombineSolution(
         image: ByteArray,
-        color: Color = Color.GREEN,
-        plottable: Plottable = Plottable.SOLUTION,
+        solutionColor: Color = Color.GREEN,
+        recognizedColor: Color = Color.RED,
         ext: String = ".jpg"
     ): ByteArray {
         val mat = image.bytesToMat()
-        val sol = solveAndCombineSolution(mat, color, plottable)
+        val sol = solveAndCombineSolution(mat, solutionColor, recognizedColor)
         return sol.matToBytes(ext)
     }
 
@@ -84,16 +83,16 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
      * It's a wrap of the [solveAndCombineSolution] function (the function of the entire pipe).
      *
      * @param image Mat of the input image.
-     * @param color the color of the plotted solution.
-     * @param plottable witch numbers will be plotted on result image. Default value is SOLUTION.
+     * @param solutionColor the color of solution digits to be plotted on solution.
+     * @param recognizedColor the color of recognized digits to be plotted on solution.
      * @return final solution as Mat.
      */
     fun solveAndCombineSolution(
         image: Mat,
-        color: Color = Color.GREEN,
-        plottable: Plottable = Plottable.SOLUTION
+        solutionColor: Color = Color.GREEN,
+        recognizedColor: Color = Color.RED
     ): Mat {
-        val sol = solve(image, color, plottable)
+        val sol = solve(image, solutionColor, recognizedColor)
         return if (sol != null) {
             combineSolutionToOriginal(image, sol)
         } else image
@@ -107,11 +106,11 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
      * This function throws no Exception, however in case of any failure it will return the original input image.
      *
      * @param image Mat of the input image.
-     * @param color the color of the plotted solution.
-     * @param plottable witch numbers will be plotted on result image. Default value is SOLUTION.
+     * @param solutionColor the color of solution digits to be plotted on solution.
+     * @param recognizedColor the color of recognized digits to be plotted on solution.
      * @return final solution as Mat.
      */
-    private fun solve(image: Mat, color: Color = Color.GREEN, plottable: Plottable = Plottable.SOLUTION) = try {
+    private fun solve(image: Mat, solutionColor: Color = Color.GREEN, recognizedColor: Color = Color.RED) = try {
         val squareSize = 28
 
         val cropped = cropImage(image)
@@ -125,7 +124,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
             when (val solution = solveWithCache(puzzle)) {
                 is Puzzle.Unsolved -> null
                 is Puzzle.Solved -> {
-                    val result = plotSolution(cropped, solution, color, plottable)
+                    val result = plotSolution(cropped, solution, solutionColor, recognizedColor)
                     changePerspectiveToOriginalSize(cropped, result, image.area())
                 }
                 else -> null
