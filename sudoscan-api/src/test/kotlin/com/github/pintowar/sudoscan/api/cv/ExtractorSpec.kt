@@ -39,11 +39,11 @@ class ExtractorSpec : StringSpec({
     }
 
     "test crop image" {
-        val cropped = Extractor.cropImage(sudoku)
+        val frontal = Extractor.preProcessPhases(sudoku).frontal
 
-        cropped.img.arrayHeight() shouldBe croppedSudoku.arrayHeight()
-        cropped.img.arrayWidth() shouldBe croppedSudoku.arrayWidth()
-        cropped.img.channels() shouldBe croppedSudoku.channels()
+        frontal.img.arrayHeight() shouldBe croppedSudoku.arrayHeight()
+        frontal.img.arrayWidth() shouldBe croppedSudoku.arrayWidth()
+        frontal.img.channels() shouldBe croppedSudoku.channels()
     }
 
     "test split squares" {

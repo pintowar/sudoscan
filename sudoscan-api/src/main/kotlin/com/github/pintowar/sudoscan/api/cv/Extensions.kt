@@ -23,6 +23,8 @@ internal data class Area(val width: Int, val height: Int) {
      * Converts to OpenCV Size object.
      */
     fun toSize() = Size(width, height)
+
+    operator fun times(scale: Double) = Area((width * scale).toInt(), (height * scale).toInt())
 }
 
 /**
@@ -99,20 +101,31 @@ internal data class RectangleCorners(
  */
 internal class FrontalPerspective(val img: Mat, val src: Mat, val dst: Mat)
 
+/**
+ * Stores image versions on the pre-processing phase
+ */
+internal class PreProcessPhases(val grayScale: Mat, val preProcessedGrayImage: Mat, val frontal: FrontalPerspective)
+
 internal fun zeros(area: Area, type: Int = CV_8U): Mat = Mat.zeros(area.toSize(), type).asMat()
 
 internal fun ByteArray.bytesToMat(): Mat {
     return opencv_imgcodecs.imdecode(Mat(*this), Imgcodecs.IMREAD_UNCHANGED)
 }
 
-internal fun Mat.matToBytes(type: String = ".jpg"): ByteArray {
+internal fun Mat.matToBytes(type: String = "jpg"): ByteArray {
     return ByteArray(this.channels() * this.cols() * this.rows()).also { bytes ->
-        opencv_imgcodecs.imencode(type, this, bytes)
+        opencv_imgcodecs.imencode(".$type", this, bytes)
     }
 }
 
 internal fun Mat.cvtColor(code: Int): Mat = Mat().also { dst ->
     opencv_imgproc.cvtColor(this, dst, code)
+}
+
+internal fun Mat.concat(mat: Mat, horizontal: Boolean = true): Mat = Mat().also { dst ->
+    val a = if (this.channels() < 3) Mat().also { merge(MatVector(this, this, this), it) } else this
+    val b = if (mat.channels() < 3) Mat().also { merge(MatVector(mat, mat, mat), it) } else mat
+    if (horizontal) hconcat(a, b, dst) else vconcat(a, b, dst)
 }
 
 internal fun Mat.gaussianBlur(area: Area, sigmaX: Double): Mat = Mat().also { dst ->

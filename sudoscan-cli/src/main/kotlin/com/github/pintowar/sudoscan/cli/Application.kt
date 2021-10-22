@@ -40,6 +40,9 @@ class Application : Runnable {
     )
     var record: Boolean = false
 
+    @Option(names = ["-d", "--debug"], description = ["Debug mode"], defaultValue = "false")
+    var debug: Boolean = false
+
     @Option(
         names = ["-f", "--file"],
         description = [
@@ -51,7 +54,7 @@ class Application : Runnable {
 
     override fun run() {
         val engine = beanContext.getBean(SudokuEngine::class.java)
-        val camera = SudokuCamera(engine, solutionColor, recognizedColor, record, file.absolutePath)
+        val camera = SudokuCamera(engine, solutionColor, recognizedColor, debug, record, file.absolutePath)
         camera.startCapture()
     }
 }

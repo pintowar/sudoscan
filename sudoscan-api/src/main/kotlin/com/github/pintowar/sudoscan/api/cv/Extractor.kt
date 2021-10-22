@@ -107,16 +107,18 @@ internal object Extractor : KLogging() {
      * so that the view is frontal.
      *
      * This function is a pipe the goes through other functions [toGrayScale] -> [preProcessGrayImage] -> [findCorners]
-     * -> [frontalPerspective]
+     * -> [frontalPerspective].  This function returns an [PreProcessPhases], that stores some images of the pipe.
      *
      * @param img original image to be processed.
      * @return original image with a frontal view.
      */
-    fun cropImage(img: Mat): FrontalPerspective {
+    fun preProcessPhases(img: Mat): PreProcessPhases {
         val gray = toGrayScale(img)
         val proc = preProcessGrayImage(gray)
         val corners = findCorners(proc)
-        return frontalPerspective(gray, corners)
+        val frontal = frontalPerspective(gray, corners)
+
+        return PreProcessPhases(gray, proc, frontal)
     }
 
     /**
@@ -283,12 +285,13 @@ internal object Extractor : KLogging() {
      * For proper extraction, this must be a frontal view of the sudoku puzzle.
      *
      * @param img input image (for proper extraction, this must be a frontal view of the sudoku puzzle).
-     * @param squares a list of back slash diagonals of the areas to be extracted from the original image.
      * @param size final (and resized) size of the image extracted.
      * @return an object with the image extracted and additional information about the cell.
      */
-    fun extractAllDigits(img: Mat, squares: List<Segment>, size: Int = 28) =
-        squares.map { s -> extractCell(img, s, size) }
+    fun extractAllDigits(img: Mat, size: Int = 28): List<SudokuCell> {
+        val squares = splitSquares(img)
+        return squares.map { s -> extractCell(img, s, size) }
+    }
 
     /**
      * Convert a 2d array into an image.
