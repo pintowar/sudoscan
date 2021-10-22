@@ -9,7 +9,7 @@ import picocli.CommandLine.*
 import java.awt.Color
 import java.io.File
 
-@Command(name = "sudoscan-cli", version = ["CLI Version 0.8"], mixinStandardHelpOptions = true)
+@Command(name = "sudoscan-cli", version = ["CLI Version 0.9"], mixinStandardHelpOptions = true)
 class Application : Runnable {
 
     internal class ColorConverter : ITypeConverter<Color> {

@@ -4,6 +4,7 @@ import com.github.pintowar.sudoscan.api.Digit
 import com.github.pintowar.sudoscan.api.Puzzle
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.sudoku
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.sudokuFinalSolution
+import com.github.pintowar.sudoscan.api.cv.matToBytes
 import com.github.pintowar.sudoscan.api.spi.Recognizer
 import com.github.pintowar.sudoscan.api.spi.Solver
 import io.kotest.core.spec.style.StringSpec
@@ -29,11 +30,9 @@ class SudokuEngineSpec : StringSpec({
         every { recognizer.reliablePredict(any()) } returns digits
         every { solver.solve(any<Puzzle>()) } returns puzzleSol
 
-        val result = engine.solveAndCombineSolution(sudoku)
+        val result = engine.solveAndCombineSolution(sudoku.matToBytes("jpg"))
 
-        result.arrayWidth() shouldBe sudokuFinalSolution.arrayWidth()
-        result.arrayHeight() shouldBe sudokuFinalSolution.arrayHeight()
-        result.channels() shouldBe sudokuFinalSolution.channels()
+        result.size shouldBe sudokuFinalSolution.matToBytes("jpg").size
     }
 
     "test components" {
