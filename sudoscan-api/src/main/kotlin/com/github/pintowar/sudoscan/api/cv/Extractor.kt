@@ -31,7 +31,7 @@ internal object Extractor : KLogging() {
      *
      * @param img image to pre-process.
      * @param dilate dilate flag (true by default).
-     * @return pre processed image (Mat).
+     * @return preprocessed image (Mat).
      */
     fun preProcessGrayImage(img: Mat, dilate: Boolean = true): Mat {
         assert(img.channels() == 1) { "Image must be in gray scale." }

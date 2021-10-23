@@ -26,13 +26,6 @@ class RecognizerDl4j : Recognizer {
         logger.debug { it.summary() }
     }
 
-    private fun validateImages(digits: INDArray) {
-        val shape = digits.shape()
-        assert(shape.size == 4)
-        assert(shape[0] >= 0L)
-        assert(shape[3] == 1L)
-    }
-
     override val name: String = "Recognizer Dl4j"
 
     override fun predict(cells: List<SudokuCell>): Sequence<Digit> {
@@ -50,8 +43,7 @@ class RecognizerDl4j : Recognizer {
      * @return list of valid digits with the number and probability found on each sudoku cell.
      */
     private fun predict(cells: INDArray): List<Digit> {
-        validateImages(cells)
-        val output = model.output(cells.div(255.0).neg().add(1))
+        val output = model.output(cells)
         val values = output.argMax(1).toIntVector().toList()
         val probabilities = output.max(1).toDoubleVector().toList()
         return values.zip(probabilities).map { (value, prob) -> Digit.Valid(value, prob) }

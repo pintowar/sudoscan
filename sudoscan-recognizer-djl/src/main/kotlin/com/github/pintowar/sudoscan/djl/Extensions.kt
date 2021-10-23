@@ -7,7 +7,7 @@ import ai.djl.ndarray.types.Shape
 import com.github.pintowar.sudoscan.api.SudokuCell
 
 /**
- * Extension function to convert a SudokuCell into a NDArray.
+ * Extension function to convert a SudokuCell into a normalized (0 - 1) NDArray.
  * NDArray is the default format used by the DJL framework.
  *
  * @param manager NDArray managers are used to create NDArrays (n-dimensional array on native engine).
@@ -18,4 +18,5 @@ fun SudokuCell.toNDArray(manager: NDManager): NDArray {
     this.scanMatrix { _, value -> bb.put(value.toByte()) }
     bb.rewind()
     return manager.create(bb, Shape(height, width, channels), DataType.UINT8)
+        .toType(DataType.FLOAT32, true).div(255)
 }

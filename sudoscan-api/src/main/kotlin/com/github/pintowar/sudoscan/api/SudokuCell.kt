@@ -1,6 +1,10 @@
 package com.github.pintowar.sudoscan.api
 
+import com.github.pintowar.sudoscan.api.cv.Area
+import com.github.pintowar.sudoscan.api.cv.Extractor.toGrayScale
+import com.github.pintowar.sudoscan.api.cv.bitwiseNot
 import com.github.pintowar.sudoscan.api.cv.isNotAndroid
+import com.github.pintowar.sudoscan.api.cv.resize
 import org.bytedeco.javacpp.indexer.UByteIndexer
 import org.bytedeco.opencv.opencv_core.Mat
 
@@ -8,18 +12,17 @@ import org.bytedeco.opencv.opencv_core.Mat
  * This class represents the image (and shape metadata) of a Sudoku cell.
  * This must be a grayscale (1 channel) and squared (width = height) image.
  *
- * @property data image in Mat (OpenCV) format.
+ * @param mat image in Mat (OpenCV) format.
  * @property empty flag that indicates if a cell is empty (without number)
  */
-class SudokuCell(private val data: Mat, val empty: Boolean) {
+class SudokuCell(mat: Mat, val empty: Boolean) {
+    private val cellSize = 28
+    private val data = mat.resize(Area(cellSize, cellSize)).let {
+        (if (it.channels() > 1) toGrayScale(it) else it).bitwiseNot()
+    }
     val width = data.arrayWidth().toLong()
     val height = data.arrayHeight().toLong()
     val channels = data.channels().toLong()
-
-    init {
-        if (channels > 1) throw IllegalArgumentException("Number fo channels must be 1.")
-        if (width != height) throw IllegalArgumentException("Sudoku Cell must be a square (in size).")
-    }
 
     /**
      * This function encapsulates the full scan of the image (height, width, channel) and uses a void callback function
