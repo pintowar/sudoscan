@@ -19,10 +19,14 @@ internal val isNotAndroid = !Loader.getPlatform().startsWith("android")
  */
 internal data class Area(val width: Int, val height: Int) {
 
+    constructor(size: Int) : this(size, size)
+
     /**
      * Converts to OpenCV Size object.
      */
     fun toSize() = Size(width, height)
+
+    fun value() = width * height
 
     operator fun times(scale: Double) = Area((width * scale).toInt(), (height * scale).toInt())
 }

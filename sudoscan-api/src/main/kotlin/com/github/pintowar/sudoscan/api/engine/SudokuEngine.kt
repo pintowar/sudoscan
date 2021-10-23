@@ -3,7 +3,7 @@ package com.github.pintowar.sudoscan.api.engine
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.pintowar.sudoscan.api.Puzzle
 import com.github.pintowar.sudoscan.api.cv.*
-import com.github.pintowar.sudoscan.api.cv.Extractor.extractAllDigits
+import com.github.pintowar.sudoscan.api.cv.Extractor.extractSudokuCells
 import com.github.pintowar.sudoscan.api.cv.Extractor.preProcessGrayImage
 import com.github.pintowar.sudoscan.api.cv.Extractor.preProcessPhases
 import com.github.pintowar.sudoscan.api.cv.Plotter.changePerspectiveToOriginalSize
@@ -163,14 +163,12 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
      * @return a list of images from different phases during the solution process.
      */
     private fun solve(image: Mat, solutionColor: Color = Color.GREEN, recognizedColor: Color = Color.RED): List<Mat> {
-        val squareSize = 28
-
         val prePhases = preProcessPhases(image)
         val cropped = prePhases.frontal
         val processedCrop = preProcessGrayImage(cropped.img, false)
 
         return try {
-            val cells = extractAllDigits(processedCrop, squareSize)
+            val cells = extractSudokuCells(processedCrop)
             val digits = recognizer.reliablePredict(cells)
             val puzzle = Puzzle.Unsolved(digits)
             val finalSolution = if (puzzle.isValid()) {

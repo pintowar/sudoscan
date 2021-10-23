@@ -1,11 +1,10 @@
 package com.github.pintowar.sudoscan.api
 
-import com.github.pintowar.sudoscan.api.cv.Area
+import com.github.pintowar.sudoscan.api.cv.*
+import com.github.pintowar.sudoscan.api.cv.Extractor.scaleAndCenter
 import com.github.pintowar.sudoscan.api.cv.Extractor.toGrayScale
-import com.github.pintowar.sudoscan.api.cv.bitwiseNot
-import com.github.pintowar.sudoscan.api.cv.isNotAndroid
-import com.github.pintowar.sudoscan.api.cv.resize
 import org.bytedeco.javacpp.indexer.UByteIndexer
+import org.bytedeco.opencv.global.opencv_core
 import org.bytedeco.opencv.opencv_core.Mat
 
 /**
@@ -13,16 +12,36 @@ import org.bytedeco.opencv.opencv_core.Mat
  * This must be a grayscale (1 channel) and squared (width = height) image.
  *
  * @param mat image in Mat (OpenCV) format.
- * @property empty flag that indicates if a cell is empty (without number)
  */
-class SudokuCell(mat: Mat, val empty: Boolean) {
+class SudokuCell(mat: Mat) {
     private val cellSize = 28
-    private val data = mat.resize(Area(cellSize, cellSize)).let {
-        (if (it.channels() > 1) toGrayScale(it) else it).bitwiseNot()
-    }
+    private val centeredEmpty = scaleAndCenter(mat)
+    private val data = revertColors(centeredEmpty.first)
+
+    val isEmpty = centeredEmpty.second
     val width = data.arrayWidth().toLong()
     val height = data.arrayHeight().toLong()
     val channels = data.channels().toLong()
+
+    /**
+     * Checks if the informed image has more than 10% of data or else it assumes it's an empty cell.
+     */
+    private fun scaleAndCenter(cleanedImage: Mat): Pair<Mat, Boolean> {
+        val area = cleanedImage.area().value()
+        val percentFill = if (area > 0) (cleanedImage.sumElements() / 255) / area else 0.0
+
+        return if (percentFill > 0.1)
+            scaleAndCenter(cleanedImage, cellSize, 4) to false
+        else
+            zeros(Area(cellSize), opencv_core.CV_8UC1) to true
+    }
+
+    /**
+     * Transform image from black-white to white-black.
+     */
+    private fun revertColors(mat: Mat): Mat {
+        return (if (mat.channels() > 1) toGrayScale(mat) else mat).bitwiseNot()
+    }
 
     /**
      * This function encapsulates the full scan of the image (height, width, channel) and uses a void callback function

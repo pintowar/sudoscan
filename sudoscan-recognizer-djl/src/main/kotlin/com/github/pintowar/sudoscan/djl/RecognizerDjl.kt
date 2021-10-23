@@ -54,7 +54,7 @@ class RecognizerDjl : Recognizer {
      * @return the digit found on the image. If an empty sudoku cell is provided, an unknown digit is returned.
      */
     fun predict(cell: SudokuCell): Digit {
-        return if (cell.empty) Digit.Unknown else
+        return if (cell.isEmpty) Digit.Unknown else
             model.newPredictor(translator).use { predictor ->
                 val prediction = predictor.predict(cell)
                 val best = prediction.best<Classifications.Classification>()

@@ -1,7 +1,6 @@
 package com.github.pintowar.sudoscan.api.cv
 
 import com.github.pintowar.sudoscan.api.SudokuCell
-import mu.KLogging
 import org.bytedeco.javacpp.indexer.FloatIndexer
 import org.bytedeco.javacpp.indexer.IntIndexer
 import org.bytedeco.javacpp.indexer.UByteIndexer
@@ -15,7 +14,7 @@ import kotlin.math.min
 /**
  * Object containing general functions to extract and transform the input image.
  */
-internal object Extractor : KLogging() {
+internal object Extractor {
 
     /**
      * Convert image to gray scale.
@@ -35,7 +34,7 @@ internal object Extractor : KLogging() {
      */
     fun preProcessGrayImage(img: Mat, dilate: Boolean = true): Mat {
         assert(img.channels() == 1) { "Image must be in gray scale." }
-        val proc = img.gaussianBlur(Area(9, 9), 0.0)
+        val proc = img.gaussianBlur(Area(9), 0.0)
 
         val threshold = proc.adaptiveThreshold(
             255.0, opencv_imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, opencv_imgproc.THRESH_BINARY, 11, 2.0
@@ -44,7 +43,7 @@ internal object Extractor : KLogging() {
         val thresholdNot = threshold.bitwiseNot()
 
         return if (dilate) {
-            val kernel = getStructuringElement(opencv_imgproc.MORPH_DILATE, Area(3, 3))
+            val kernel = getStructuringElement(opencv_imgproc.MORPH_DILATE, Area(3))
             thresholdNot.dilate(kernel)
         } else thresholdNot
     }
@@ -98,7 +97,7 @@ internal object Extractor : KLogging() {
             )
         )
         val m = src.getPerspectiveTransform(dst)
-        val result = img.warpPerspective(m, Area(side.toInt(), side.toInt()))
+        val result = img.warpPerspective(m, Area(side.toInt()))
         return FrontalPerspective(result, src, dst)
     }
 
@@ -176,7 +175,7 @@ internal object Extractor : KLogging() {
 
         val aux = img.resize(Area(w, h))
         val aux2 = aux.copyMakeBorder(tPad, bPad, lPad, rPad, BORDER_CONSTANT, background.toDouble())
-        return aux2.resize(Area(size, size))
+        return aux2.resize(Area(size))
     }
 
     /**
@@ -260,9 +259,8 @@ internal object Extractor : KLogging() {
      * @param size final (and resized) size of the image extracted.
      * @return an object with the image extracted and additional information about the cell.
      */
-    fun extractCell(img: Mat, segment: Segment, size: Int): SudokuCell {
+    fun extractCell(img: Mat, segment: Segment): SudokuCell {
         val digit = rectFromSegment(img, segment)
-
         val margin = ((digit.arrayWidth() + digit.arrayHeight()) / 5.0).toInt()
 
         val box = findLargestFeature(
@@ -271,13 +269,7 @@ internal object Extractor : KLogging() {
         )
 
         val noBorder = rectFromSegment(digit, box.diagonal())
-
-        val area = noBorder.size(0) * noBorder.size(1)
-        val percentFill = if (area > 0) (noBorder.sumElements() / 255) / area else 0.0
-        logger.debug { "Percent: %.2f".format(percentFill) }
-
-        return if (percentFill > 0.1) SudokuCell(scaleAndCenter(noBorder, size, 4), false)
-        else SudokuCell(Mat.zeros(size, size, CV_8UC1).asMat(), true)
+        return SudokuCell(noBorder)
     }
 
     /**
@@ -288,9 +280,9 @@ internal object Extractor : KLogging() {
      * @param size final (and resized) size of the image extracted.
      * @return an object with the image extracted and additional information about the cell.
      */
-    fun extractAllDigits(img: Mat, size: Int = 28): List<SudokuCell> {
+    fun extractSudokuCells(img: Mat): List<SudokuCell> {
         val squares = splitSquares(img)
-        return squares.map { s -> extractCell(img, s, size) }
+        return squares.map { s -> extractCell(img, s) }
     }
 
     /**

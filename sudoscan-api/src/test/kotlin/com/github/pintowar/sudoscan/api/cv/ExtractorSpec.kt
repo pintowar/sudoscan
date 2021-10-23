@@ -93,20 +93,18 @@ class ExtractorSpec : StringSpec({
 
     "test extract cell - eight" {
         val eightSquare = Segment(Coordinate(0, 0), Coordinate(43, 43))
-        val finalSize = 28
-        val result = Extractor.extractCell(frontalSudoku, eightSquare, finalSize)
+        val result = Extractor.extractCell(frontalSudoku, eightSquare)
 
-        result.empty shouldBe false
+        result.isEmpty shouldBe false
         result.width shouldBe 28
         result.height shouldBe 28
     }
 
     "test extract cell - empty" {
         val eightSquare = Segment(Coordinate(43, 0), Coordinate(86, 43))
-        val finalSize = 28
-        val result = Extractor.extractCell(frontalSudoku, eightSquare, finalSize)
+        val result = Extractor.extractCell(frontalSudoku, eightSquare)
 
-        result.empty shouldBe true
+        result.isEmpty shouldBe true
         result.width shouldBe 28
         result.height shouldBe 28
     }

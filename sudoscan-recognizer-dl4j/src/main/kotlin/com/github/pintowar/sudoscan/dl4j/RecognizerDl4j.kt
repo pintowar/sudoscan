@@ -32,7 +32,7 @@ class RecognizerDl4j : Recognizer {
         val digitArray = cells.map { it.toNdArray() }.toTypedArray()
         val stackDigits = Nd4j.stack(0, *digitArray)
         return predict(stackDigits).zip(cells).asSequence().map { (rec, dig) ->
-            if (dig.empty) Digit.Unknown else rec
+            if (dig.isEmpty) Digit.Unknown else rec
         }
     }
 
