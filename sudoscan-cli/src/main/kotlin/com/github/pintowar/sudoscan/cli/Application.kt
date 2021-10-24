@@ -9,7 +9,7 @@ import picocli.CommandLine.*
 import java.awt.Color
 import java.io.File
 
-@Command(name = "sudoscan-cli", version = ["CLI Version 0.9"], mixinStandardHelpOptions = true)
+@Command(name = "sudoscan-cli", version = ["CLI Version 1.0"], mixinStandardHelpOptions = true)
 class Application : Runnable {
 
     internal class ColorConverter : ITypeConverter<Color> {
@@ -28,14 +28,14 @@ class Application : Runnable {
     lateinit var solutionColor: Color
 
     @Option(
-        names = ["-p", "--predicted"],
+        names = ["-r", "--recognized"],
         description = ["Recognized color (An AWT color name or NONE to result recognized numbers)"],
         defaultValue = "NONE", converter = [ColorConverter::class]
     )
     lateinit var recognizedColor: Color
 
     @Option(
-        names = ["-r", "--record"], description = ["In case the solution must be recorded on a video file"],
+        names = ["-v", "--video"], description = ["In case the solution must be recorded on a video file"],
         defaultValue = "false"
     )
     var record: Boolean = false
