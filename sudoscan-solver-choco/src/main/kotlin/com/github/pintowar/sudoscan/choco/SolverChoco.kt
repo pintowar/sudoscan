@@ -13,7 +13,7 @@ class SolverChoco : Solver {
     override val name: String = "Choco Solver"
 
     /**
-     * @param puzzle 2d array representation of the sudoku puzzle. Zero (0) represents an empty cell.
+     * @param puzzle 2d array representation of the sudoku puzzle.
      * @return 2d array representation of the sudoku solution.
      */
     override fun solve(puzzle: Puzzle): Puzzle {
