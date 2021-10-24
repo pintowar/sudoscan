@@ -10,13 +10,15 @@ import org.ojalgo.optimisation.ExpressionsBasedModel
  */
 class SolverOjAlgo : Solver {
 
-    override val name: String = "OjAlgo Solver"
+    override val name: String = "OjAlgo Solver (Minimum digits: ${minimumValidDigits()})"
+
+    override fun minimumValidDigits(): Int = 25
 
     /**
      * @param puzzle 2d array representation of the sudoku puzzle.
      * @return 2d array representation of the sudoku solution.
      */
-    override fun solve(puzzle: Puzzle): Puzzle {
+    override fun solveWithSolver(puzzle: Puzzle): Puzzle {
         val model = ExpressionsBasedModel()
 
         val x = (0 until puzzle.gridSize).map { i ->
@@ -31,6 +33,7 @@ class SolverOjAlgo : Solver {
         (0 until puzzle.gridSize).forEach { i ->
             (0 until puzzle.gridSize).forEach { j ->
                 if (puzzle[i, j].value != 0) {
+//                    x[i][j][puzzle[i, j].value - 1].setValue(1)
                     model.addExpression().set(x[i][j][puzzle[i, j].value - 1], 1).level(1)
                 }
             }

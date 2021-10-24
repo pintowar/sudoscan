@@ -43,7 +43,11 @@ The project was broken into the following modules (using java SPI):
 default recognizer);
 * sudoscan-cli: cli application using other modules to solve sudoku problems using a webcam as user interface.
 
-Both recognizers (dlf4 and djl) ara implementations that use a pre-trained model. The model creation and training can be
+Both solvers (choco-solver and ojalgo) are implementations that use different discrete optimizations approaches. To
+learn more about MIP and CSP approaches on Sudoku problems, take a look at the following 
+[Kaggle Notebook](https://www.kaggle.com/pintowar/modeling-a-sudoku-solver-with-or-tools).
+
+Both recognizers (dlf4 and djl) are implementations that use a pre-trained model. The model creation and training can be
 found on the following [Kaggle Notebook](https://www.kaggle.com/pintowar/sudoscan-number-recognizer).
 
 ## Building Project

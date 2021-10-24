@@ -5,5 +5,5 @@ import com.github.pintowar.sudoscan.api.Puzzle
 class MockSolver : Solver {
     override val name = "MockSolver"
 
-    override fun solve(puzzle: Puzzle) = puzzle
+    override fun solveWithSolver(puzzle: Puzzle) = puzzle
 }

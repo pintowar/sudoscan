@@ -10,13 +10,15 @@ import org.chocosolver.solver.Model
  */
 class SolverChoco : Solver {
 
-    override val name: String = "Choco Solver"
+    override val name: String = "Choco Solver (Minimum digits: ${minimumValidDigits()})"
+
+    override fun minimumValidDigits(): Int = 20
 
     /**
      * @param puzzle 2d array representation of the sudoku puzzle.
      * @return 2d array representation of the sudoku solution.
      */
-    override fun solve(puzzle: Puzzle): Puzzle {
+    override fun solveWithSolver(puzzle: Puzzle): Puzzle {
         val model = Model("Sudoku")
 
         val x = model.intVarMatrix("x", puzzle.gridSize, puzzle.gridSize, 1, puzzle.gridSize)

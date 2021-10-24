@@ -32,6 +32,7 @@ sealed class Puzzle(protected open val cells: List<Digit>) {
 
     val gridSize = 9
     val regionSize = 3
+    val numValidDigits by lazy { cells.count { it is Digit.Valid } }
 
     /**
      * Returns a cell value of a 2d representation.
@@ -63,11 +64,6 @@ sealed class Puzzle(protected open val cells: List<Digit>) {
         else
             cells.toList().chunked(gridSize).joinToString("\n") { it.joinToString("|") { dig -> format(dig) } }
     }
-
-    /**
-     * Returns if a minimum size of Valid Digits are found in the puzzle.
-     */
-    fun isValid() = cells.sumOf { (if (it is Digit.Valid) 1L else 0L) } > 1
 
     class Unsolved(override val cells: List<Digit>) : Puzzle(cells)
 
