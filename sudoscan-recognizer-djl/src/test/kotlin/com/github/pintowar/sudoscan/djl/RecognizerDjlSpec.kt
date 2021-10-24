@@ -1,5 +1,6 @@
 package com.github.pintowar.sudoscan.djl
 
+import com.github.pintowar.sudoscan.api.Digit
 import com.github.pintowar.sudoscan.api.SudokuCell
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
@@ -34,5 +35,10 @@ class RecognizerDjlSpec : StringSpec({
             val predicted = recognizer.predict(img)
             predicted.value shouldBe digit
         }
+    }
+
+    "unknown digit predict" {
+        val predicted = recognizer.predict(listOf(SudokuCell.EMPTY))
+        predicted.first() shouldBe Digit.Unknown
     }
 })

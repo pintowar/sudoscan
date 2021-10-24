@@ -209,5 +209,5 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         .chunked(9)
         .map { it.reduce { acc, mat -> acc.concat(mat) } }
         .reduce { acc, mat -> acc.concat(mat, false) }
-    else zeros(Area(9 * 28))
+    else zeros(Area(9 * SudokuCell.CELL_SIZE))
 }

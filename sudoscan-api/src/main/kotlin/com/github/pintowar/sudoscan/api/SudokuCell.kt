@@ -14,7 +14,6 @@ import org.bytedeco.opencv.opencv_core.Mat
  * @param mat image in Mat (OpenCV) format.
  */
 class SudokuCell(mat: Mat) {
-    private val cellSize = 28
     private val centeredEmpty = scaleAndCenter(mat)
     private val data = revertColors(centeredEmpty.first)
 
@@ -22,6 +21,11 @@ class SudokuCell(mat: Mat) {
     val width = data.arrayWidth().toLong()
     val height = data.arrayHeight().toLong()
     val channels = data.channels().toLong()
+
+    companion object {
+        const val CELL_SIZE = 28
+        val EMPTY = SudokuCell(zeros(Area(CELL_SIZE), opencv_core.CV_8UC1))
+    }
 
     /**
      * Checks if the informed image has more than 10% of data or else it assumes it's an empty cell.
@@ -31,9 +35,9 @@ class SudokuCell(mat: Mat) {
         val percentFill = if (area > 0) (cleanedImage.sumElements() / 255) / area else 0.0
 
         return if (percentFill > 0.1)
-            scaleAndCenter(cleanedImage, cellSize, cellSize / 7) to false
+            scaleAndCenter(cleanedImage, CELL_SIZE, CELL_SIZE / 7) to false
         else
-            zeros(Area(cellSize), opencv_core.CV_8UC1) to true
+            zeros(Area(CELL_SIZE), opencv_core.CV_8UC1) to true
     }
 
     /**
