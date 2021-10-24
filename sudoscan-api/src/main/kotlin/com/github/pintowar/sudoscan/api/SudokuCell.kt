@@ -31,7 +31,7 @@ class SudokuCell(mat: Mat) {
         val percentFill = if (area > 0) (cleanedImage.sumElements() / 255) / area else 0.0
 
         return if (percentFill > 0.1)
-            scaleAndCenter(cleanedImage, cellSize, 4) to false
+            scaleAndCenter(cleanedImage, cellSize, cellSize / 7) to false
         else
             zeros(Area(cellSize), opencv_core.CV_8UC1) to true
     }

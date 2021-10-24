@@ -2,6 +2,7 @@ package com.github.pintowar.sudoscan.api.engine
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.pintowar.sudoscan.api.Puzzle
+import com.github.pintowar.sudoscan.api.SudokuCell
 import com.github.pintowar.sudoscan.api.cv.*
 import com.github.pintowar.sudoscan.api.cv.Extractor.extractSudokuCells
 import com.github.pintowar.sudoscan.api.cv.Extractor.preProcessGrayImage
@@ -138,7 +139,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         recognizedColor: Color = Color.RED,
         debugScale: Double? = null
     ): Mat {
-        val solution = solve(image, solutionColor, recognizedColor)
+        val solution = solve(image, solutionColor, recognizedColor, debugScale != null)
         return if (debugScale == null) solution.last() else {
             val rows = solution.asSequence()
                 .map { it.resize(image.area()) }
@@ -162,13 +163,25 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
      * @param recognizedColor the color of recognized digits to be plotted on solution.
      * @return a list of images from different phases during the solution process.
      */
-    private fun solve(image: Mat, solutionColor: Color = Color.GREEN, recognizedColor: Color = Color.RED): List<Mat> {
+    private fun solve(
+        image: Mat,
+        solutionColor: Color = Color.GREEN,
+        recognizedColor: Color = Color.RED,
+        debug: Boolean = false
+    ): List<Mat> {
         val prePhases = preProcessPhases(image)
         val cropped = prePhases.frontal
         val processedCrop = preProcessGrayImage(cropped.img, false)
 
+        val (cells, cleanImage) = try {
+            val extractedCells = extractSudokuCells(processedCrop)
+            extractedCells to cellsToMat(extractedCells, debug)
+        } catch (e: Exception) {
+            val cleanImage = cellsToMat(emptyList(), false)
+            return listOf(image, prePhases.grayScale, prePhases.preProcessedGrayImage, processedCrop, cleanImage, image)
+        }
+
         return try {
-            val cells = extractSudokuCells(processedCrop)
             val digits = recognizer.reliablePredict(cells)
             val puzzle = Puzzle.Unsolved(digits)
             val finalSolution = if (puzzle.isValid()) {
@@ -183,11 +196,18 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
             } else image
 
             listOf(
-                image, prePhases.grayScale, prePhases.preProcessedGrayImage, cropped.img, processedCrop, finalSolution
+                image, prePhases.grayScale, prePhases.preProcessedGrayImage, processedCrop, cleanImage, finalSolution
             )
         } catch (e: Exception) {
             logger.trace(e) { "Problem found during solution!" }
-            listOf(image, prePhases.grayScale, prePhases.preProcessedGrayImage, cropped.img, processedCrop, image)
+            listOf(image, prePhases.grayScale, prePhases.preProcessedGrayImage, processedCrop, cleanImage, image)
         }
     }
+
+    private fun cellsToMat(cells: List<SudokuCell>, debug: Boolean) = if (debug) cells
+        .map { it.toMat() }
+        .chunked(9)
+        .map { it.reduce { acc, mat -> acc.concat(mat) } }
+        .reduce { acc, mat -> acc.concat(mat, false) }
+    else zeros(Area(9 * 28))
 }
