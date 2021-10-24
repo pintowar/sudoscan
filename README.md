@@ -34,6 +34,8 @@ The project was broken into the following modules (using java SPI):
 * sudoscan-api: module containing domain classes, spi for solvers and recognizers and main engine.
 * sudoscan-solver-choco: module containing a spi implementation using 
 [choco solver](https://github.com/chocoteam/choco-solver) (a CSP solver) to solve to find the sudoku solution;
+* sudoscan-solver-ojalgo: module containing a spi implementation using 
+[ojAlgo](https://github.com/optimatika/ojAlgo) (a MIP solver) to solve to find the sudoku solution;
 * sudoscan-recognizer-djl: module containing a spi implementation using [djl](https://github.com/deepjavalibrary/djl) 
 (a deep learning framework) to recognize numeric images;  
 * sudoscan-recognizer-dl4j: module containing a spi implementation using 
@@ -57,8 +59,9 @@ To build a more optimized jar, just inform the desired platform, for instance:
 
 This second command will build a smaller jar, but it will run only on linux-x86_64 platforms.
 
-It is also possible to chose in compile time, which recognizer module to use. The commands above (by default) will 
-generate a jar using **sudoscan-recognizer-dl4j** as the main recognizer. To use **sudoscan-recognizer-djl** as 
-recognizer component, run the following command:
+It is also possible to chose in compile time, which solver/recognizer module to use. The commands above (by default) 
+will generate a jar using **sudoscan-solver-choco** and **sudoscan-recognizer-dl4j** as the main solver and recognizer. 
+To use **sudoscan-solver-ojalgo** and **sudoscan-recognizer-djl** as solver and recognizer components, 
+run the following command:
 
-`gradle -Pdjl -PjavacppPlatform=macosx-x86_64 clean assembleCliApp`
+`gradle -Pojalgo -Pdjl -PjavacppPlatform=macosx-x86_64 clean assembleCliApp`
