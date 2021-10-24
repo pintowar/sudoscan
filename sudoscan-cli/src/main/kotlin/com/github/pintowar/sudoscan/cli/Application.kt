@@ -9,27 +9,39 @@ import picocli.CommandLine.*
 import java.awt.Color
 import java.io.File
 
-@Command(name = "sudoscan-cli", version = ["CLI Version 0.8"], mixinStandardHelpOptions = true)
+@Command(name = "sudoscan-cli", version = ["CLI Version 1.0"], mixinStandardHelpOptions = true)
 class Application : Runnable {
 
     internal class ColorConverter : ITypeConverter<Color> {
-        override fun convert(value: String): Color = ColorFactory.valueOf(value)
+        override fun convert(value: String): Color =
+            if ("none" == value.lowercase()) ColorFactory.web("white", 0.0) else ColorFactory.valueOf(value)
     }
 
     @Inject
     lateinit var beanContext: BeanContext
 
     @Option(
-        names = ["-c", "--color"], description = ["Solution color"],
+        names = ["-s", "--solution"],
+        description = ["Solution color (An AWT color name or NONE to result solution numbers)"],
         defaultValue = "BLUE", converter = [ColorConverter::class]
     )
-    var color: Color = Color.BLUE
+    lateinit var solutionColor: Color
 
     @Option(
-        names = ["-r", "--record"], description = ["In case the solution must be recorded on a video file"],
+        names = ["-r", "--recognized"],
+        description = ["Recognized color (An AWT color name or NONE to result recognized numbers)"],
+        defaultValue = "NONE", converter = [ColorConverter::class]
+    )
+    lateinit var recognizedColor: Color
+
+    @Option(
+        names = ["-v", "--video"], description = ["In case the solution must be recorded on a video file"],
         defaultValue = "false"
     )
     var record: Boolean = false
+
+    @Option(names = ["-d", "--debug"], description = ["Debug mode"], defaultValue = "false")
+    var debug: Boolean = false
 
     @Option(
         names = ["-f", "--file"],
@@ -42,7 +54,7 @@ class Application : Runnable {
 
     override fun run() {
         val engine = beanContext.getBean(SudokuEngine::class.java)
-        val camera = SudokuCamera(engine, color, record, file.absolutePath)
+        val camera = SudokuCamera(engine, solutionColor, recognizedColor, debug, record, file.absolutePath)
         camera.startCapture()
     }
 }

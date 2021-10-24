@@ -15,7 +15,7 @@ class RecognizerDjlSpec : StringSpec({
         val cl = Thread.currentThread().contextClassLoader
         val filename = File(cl.getResource(path)!!.toURI()).absolutePath
         val mat = opencv_imgcodecs.imread(filename, opencv_imgcodecs.IMREAD_GRAYSCALE)
-        return SudokuCell(mat, false)
+        return SudokuCell(mat)
     }
 
     "should recognize sample digits" {

@@ -1,22 +1,25 @@
 package com.github.pintowar.sudoscan.api.engine
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.github.pintowar.sudoscan.api.cv.Extractor.cropImage
-import com.github.pintowar.sudoscan.api.cv.Extractor.extractAllDigits
+import com.github.pintowar.sudoscan.api.Puzzle
+import com.github.pintowar.sudoscan.api.SudokuCell
+import com.github.pintowar.sudoscan.api.cv.*
+import com.github.pintowar.sudoscan.api.cv.Extractor.extractSudokuCells
 import com.github.pintowar.sudoscan.api.cv.Extractor.preProcessGrayImage
-import com.github.pintowar.sudoscan.api.cv.Extractor.splitSquares
+import com.github.pintowar.sudoscan.api.cv.Extractor.preProcessPhases
 import com.github.pintowar.sudoscan.api.cv.Plotter.changePerspectiveToOriginalSize
 import com.github.pintowar.sudoscan.api.cv.Plotter.combineSolutionToOriginal
 import com.github.pintowar.sudoscan.api.cv.Plotter.plotSolution
-import com.github.pintowar.sudoscan.api.cv.area
-import com.github.pintowar.sudoscan.api.cv.bytesToMat
-import com.github.pintowar.sudoscan.api.cv.matToBytes
 import com.github.pintowar.sudoscan.api.spi.Recognizer
 import com.github.pintowar.sudoscan.api.spi.Solver
 import mu.KLogging
 import org.bytedeco.opencv.opencv_core.Mat
 import java.awt.Color
+import java.awt.image.BufferedImage
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.time.Duration
+import javax.imageio.ImageIO
 
 /**
  * Main class responsible for the complete solution of the puzzle. This class is responsible for glue all components
@@ -35,7 +38,21 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
     private val cache = Caffeine
         .newBuilder()
         .expireAfterWrite(Duration.ofMinutes(5))
-        .build(CacheableSolver(solver))
+        .build<String, Puzzle>()
+
+    /**
+     * Returns puzzle solution if key (puzzle encoded description) is found in cache.
+     * Otherwise, uses solver to solve puzzle and puts the solution on cache associated with puzzle key.
+     *
+     * @param puzzle puzzle to be solved
+     * @return puzzle solution
+     */
+    private fun solveWithCache(puzzle: Puzzle) = cache.get(puzzle.describe()) {
+        logger.debug { "Digital Sudoku:\n ${puzzle.describe(false)}" }
+        val solution = solver.solve(puzzle)
+        logger.debug { "Solution:\n ${solution.describe(false)}" }
+        solution
+    }
 
     /**
      * Description of Recognizer and Solver component names.
@@ -43,33 +60,32 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
     fun components() = "${recognizer.name} / ${solver.name}"
 
     /**
-     * This function uses a byte array representing the input and output solution.
-     * It's a wrap of the [solve] function (the function of the entire pipe).
+     * The main function responsible to glue all components (CV, Recognizer and Solver) to read an image,
+     * identify a Sudoku puzzle, recognize the visible  numbers, solve the puzzle and plot back the solution
+     * to the original image.
      *
-     * @param image byte array of the input image.
-     * @param color the color of the plotted solution.
+     * This function throws no Exception, however in case of any failure it will return the original input image.
+     *
+     * In case of debug, a [debugScale] value must be informed. This will generate a mosaic if images of different
+     * phases of the solution and resize the final image with the scale provided.
+     *
+     * @param image ByteArray of the input image.
+     * @param solutionColor the color of solution digits to be plotted on solution.
+     * @param recognizedColor the color of recognized digits to be plotted on solution.
      * @param ext the extension (jpg, png, etc...) of the output image.
-     * @return final solution as byte array.
+     * @param debugScale if any provided, it will generate a mosaic if images of different phases of the solution.
+     * @return final solution as ByteArray.
      */
-    fun solveAndCombineSolution(image: ByteArray, color: Color = Color.GREEN, ext: String = ".jpg"): ByteArray {
+    fun solveAndCombineSolution(
+        image: ByteArray,
+        solutionColor: Color = Color.GREEN,
+        recognizedColor: Color = Color.RED,
+        ext: String = "jpg",
+        debugScale: Double? = null
+    ): ByteArray {
         val mat = image.bytesToMat()
-        val sol = solveAndCombineSolution(mat, color)
+        val sol = solveAndCombineSolution(mat, solutionColor, recognizedColor, debugScale)
         return sol.matToBytes(ext)
-    }
-
-    /**
-     * This function uses a Mat (from OpenCV) representing the input and output solution.
-     * It's a wrap of the [solve] function (the function of the entire pipe).
-     *
-     * @param image Mat of the input image.
-     * @param color the color of the plotted solution.
-     * @return final solution as Mat.
-     */
-    fun solveAndCombineSolution(image: Mat, color: Color = Color.GREEN): Mat {
-        val sol = solve(image, color)
-        return if (sol != null) {
-            combineSolutionToOriginal(image, sol)
-        } else image
     }
 
     /**
@@ -79,27 +95,119 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
      *
      * This function throws no Exception, however in case of any failure it will return the original input image.
      *
+     * In case of debug, a [debugScale] value must be informed. This will generate a mosaic if images of different
+     * phases of the solution and resize the final image with the scale provided.
+     *
+     * @param image BufferedImage of the input image.
+     * @param solutionColor the color of solution digits to be plotted on solution.
+     * @param recognizedColor the color of recognized digits to be plotted on solution.
+     * @param ext the extension (jpg, png, etc...) of the output image.
+     * @param debugScale if any provided, it will generate a mosaic if images of different phases of the solution.
+     * @return final solution as BufferedImage.
+     */
+    fun solveAndCombineSolution(
+        image: BufferedImage,
+        solutionColor: Color = Color.GREEN,
+        recognizedColor: Color = Color.RED,
+        ext: String = "jpg",
+        debugScale: Double? = null
+    ): BufferedImage {
+        val bytes = ByteArrayOutputStream().also { ImageIO.write(image, ext, it) }.toByteArray()
+        val sol = solveAndCombineSolution(bytes, solutionColor, recognizedColor, ext, debugScale)
+        return ByteArrayInputStream(sol).let { ImageIO.read(it) }
+    }
+
+    /**
+     * The main function responsible to glue all components (CV, Recognizer and Solver) to read an image,
+     * identify a Sudoku puzzle, recognize the visible  numbers, solve the puzzle and plot back the solution
+     * to the original image.
+     *
+     * This function throws no Exception, however in case of any failure it will return the original input image.
+     *
+     * In case of debug, a [debugScale] value must be informed. This will generate a mosaic if images of different
+     * phases of the solution and resize the final image with the scale provided.
+     *
      * @param image Mat of the input image.
-     * @param color the color of the plotted solution.
+     * @param solutionColor the color of solution digits to be plotted on solution.
+     * @param recognizedColor the color of recognized digits to be plotted on solution.
+     * @param debugScale if any provided, it will generate a mosaic if images of different phases of the solution.
      * @return final solution as Mat.
      */
-    private fun solve(image: Mat, color: Color = Color.GREEN) = try {
-        val squareSize = 28
+    private fun solveAndCombineSolution(
+        image: Mat,
+        solutionColor: Color = Color.GREEN,
+        recognizedColor: Color = Color.RED,
+        debugScale: Double? = null
+    ): Mat {
+        val solution = solve(image, solutionColor, recognizedColor, debugScale != null)
+        return if (debugScale == null) solution.last() else {
+            val rows = solution.asSequence()
+                .map { it.resize(image.area()) }
+                .chunked(solution.size / 2)
+                .map { it.reduce { acc, mat -> acc.concat(mat) } }
 
-        val cropped = cropImage(image)
+            rows.reduce { acc, mat -> acc.concat(mat, false) }.resize(image.area() * debugScale)
+        }
+    }
+
+    /**
+     * The main function responsible to glue all components (CV, Recognizer and Solver) to read an image,
+     * identify a Sudoku puzzle, recognize the visible numbers, solve the puzzle and plot back the solution
+     * to the original image.
+     *
+     * This function returns a list of images from different phases during the solution process. Where the first image
+     * is the original image and the last is the final solution (if possible, otherwise returns the original image).
+     *
+     * @param image Mat of the input image.
+     * @param solutionColor the color of solution digits to be plotted on solution.
+     * @param recognizedColor the color of recognized digits to be plotted on solution.
+     * @return a list of images from different phases during the solution process.
+     */
+    private fun solve(
+        image: Mat,
+        solutionColor: Color = Color.GREEN,
+        recognizedColor: Color = Color.RED,
+        debug: Boolean = false
+    ): List<Mat> {
+        val prePhases = preProcessPhases(image)
+        val cropped = prePhases.frontal
         val processedCrop = preProcessGrayImage(cropped.img, false)
 
-        val squares = splitSquares(processedCrop)
-        val cells = extractAllDigits(processedCrop, squares, squareSize)
-        val digits = recognizer.reliablePredict(cells).map { it.value }
-        if (digits.sum() > 0) {
-            val solution = cache.get(digits)!!
-            val result = plotSolution(cropped, solution, color)
-            if (solution.isNotEmpty()) changePerspectiveToOriginalSize(cropped, result, image.area())
-            else null
-        } else null
-    } catch (e: Exception) {
-        logger.trace(e) { "Problem found during solution!" }
-        null
+        val (cells, cleanImage) = try {
+            val extractedCells = extractSudokuCells(processedCrop)
+            extractedCells to cellsToMat(extractedCells, debug)
+        } catch (e: Exception) {
+            val cleanImage = cellsToMat(emptyList(), false)
+            return listOf(image, prePhases.grayScale, prePhases.preProcessedGrayImage, processedCrop, cleanImage, image)
+        }
+
+        return try {
+            val digits = recognizer.reliablePredict(cells)
+            val puzzle = Puzzle.Unsolved(digits)
+            val finalSolution = if (puzzle.isValid()) {
+                when (val solution = solveWithCache(puzzle)) {
+                    is Puzzle.Unsolved -> image
+                    is Puzzle.Solved -> {
+                        val result = plotSolution(cropped, solution, solutionColor, recognizedColor)
+                        val sol = changePerspectiveToOriginalSize(cropped, result, image.area())
+                        combineSolutionToOriginal(image, sol)
+                    }
+                }
+            } else image
+
+            listOf(
+                image, prePhases.grayScale, prePhases.preProcessedGrayImage, processedCrop, cleanImage, finalSolution
+            )
+        } catch (e: Exception) {
+            logger.trace(e) { "Problem found during solution!" }
+            listOf(image, prePhases.grayScale, prePhases.preProcessedGrayImage, processedCrop, cleanImage, image)
+        }
     }
+
+    private fun cellsToMat(cells: List<SudokuCell>, debug: Boolean) = if (debug) cells
+        .map { it.toMat() }
+        .chunked(9)
+        .map { it.reduce { acc, mat -> acc.concat(mat) } }
+        .reduce { acc, mat -> acc.concat(mat, false) }
+    else zeros(Area(9 * 28))
 }

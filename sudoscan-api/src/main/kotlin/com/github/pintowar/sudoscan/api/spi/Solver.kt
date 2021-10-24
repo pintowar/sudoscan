@@ -1,6 +1,8 @@
 package com.github.pintowar.sudoscan.api.spi
 
+import com.github.pintowar.sudoscan.api.Puzzle
 import com.github.pintowar.sudoscan.api.spi.Recognizer.Companion.provider
+import com.github.pintowar.sudoscan.api.spi.Solver.Companion.provider
 import java.util.*
 
 /**
@@ -27,12 +29,11 @@ interface Solver {
 
     /**
      * @param puzzle flatten sudoku puzzle encoded as String. Empty cells are represented as zero (0).
-     * @param entireSol the solution must be the entire problem or just the initial empty cells.
+     * @param onlyFound the solution description must contain only digits found by solver.
      * @return flatten sudoku solution as a string.
      */
-    fun solve(puzzle: String, entireSol: Boolean = true): String {
-        val prob = puzzle.toList().map(Character::getNumericValue)
-        return solve(prob, entireSol).joinToString("")
+    fun solve(puzzle: String, onlyFound: Boolean = false): String {
+        return solve(Puzzle.unsolved(puzzle)).describe(onlyFound = onlyFound)
     }
 
     /**
@@ -44,8 +45,7 @@ interface Solver {
      * Solves a sudoku puzzle.
      *
      * @param puzzle flatten sudoku puzzle encoded as a list of integers. Empty cells are represented as zero (0).
-     * @param entireSol the solution must be the entire problem or just the initial empty cells.
      * @return flatten sudoku solution as a list of integers.
      */
-    fun solve(puzzle: List<Int>, entireSol: Boolean = true): List<Int>
+    fun solve(puzzle: Puzzle): Puzzle
 }

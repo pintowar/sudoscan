@@ -35,7 +35,7 @@ class SolverChocoSpec : StringSpec({
                 "072403560906020304130605082409030805020904030703080406290108053605070201041206970"
             )
         ) { input: String, output: String ->
-            solver.solve(input, false) shouldBe output
+            solver.solve(input, onlyFound = true) shouldBe output
         }
     }
 })

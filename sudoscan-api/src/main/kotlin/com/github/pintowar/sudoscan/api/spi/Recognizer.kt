@@ -53,8 +53,8 @@ interface Recognizer {
      */
     fun reliablePredict(cells: List<SudokuCell>) = predict(cells).map {
         when (it) {
-            is Digit.Unknown -> Digit.Unknown
             is Digit.Valid -> if (it.confidence >= 0.8) it else Digit.Unknown
+            else -> it
         }
     }.toList()
 
