@@ -1,8 +1,6 @@
 package com.github.pintowar.sudoscan.api.cv
 
-import com.github.pintowar.sudoscan.api.SudokuCell
 import org.bytedeco.javacpp.Loader
-import org.bytedeco.javacpp.indexer.UByteIndexer
 import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_imgcodecs
 import org.bytedeco.opencv.global.opencv_imgproc
@@ -186,13 +184,3 @@ internal fun Mat.copyMakeBorder(top: Int, bottom: Int, left: Int, right: Int, bo
 internal fun Mat.area() = Area(this.arrayWidth(), this.arrayHeight())
 
 internal fun Mat.sumElements() = sumElems(this).get()
-
-internal fun SudokuCell.toMat(): Mat {
-    return zeros(Area(width.toInt(), height.toInt())).also {
-        it.createIndexer<UByteIndexer>(isNotAndroid).use { indexer ->
-            this.scanMatrix { idx, value ->
-                indexer.put(longArrayOf(idx.height, idx.width, idx.channels), value)
-            }
-        }
-    }
-}

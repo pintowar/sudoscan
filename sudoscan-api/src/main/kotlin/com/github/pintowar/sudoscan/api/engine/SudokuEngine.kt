@@ -204,7 +204,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
     }
 
     private fun cellsToMat(cells: List<SudokuCell>, debug: Boolean) = if (debug) cells
-        .map { it.toMat() }
+        .map { it.data }
         .chunked(9)
         .map { it.reduce { acc, mat -> acc.concat(mat) } }
         .reduce { acc, mat -> acc.concat(mat, false) }

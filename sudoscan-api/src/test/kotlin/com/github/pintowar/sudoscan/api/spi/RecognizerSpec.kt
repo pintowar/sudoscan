@@ -15,5 +15,7 @@ class RecognizerSpec : StringSpec({
         withSystemProperties("sudoscan.recognizer.model.url" to "myModel") {
             Recognizer.provider().modelUrl() shouldBe "myModel"
         }
+
+        Recognizer.provider().modelUrl() shouldBe "myFileModel"
     }
 })

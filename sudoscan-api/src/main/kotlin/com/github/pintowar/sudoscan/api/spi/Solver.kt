@@ -22,8 +22,7 @@ interface Solver {
          */
         fun provider(): Solver {
             val loader = ServiceLoader.load(Solver::class.java)
-            val it = loader.iterator()
-            return if (it.hasNext()) it.next() else throw ClassNotFoundException("No Solver found in classpath.")
+            return loader.single()
         }
     }
 

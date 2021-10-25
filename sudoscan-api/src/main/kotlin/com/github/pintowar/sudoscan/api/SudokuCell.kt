@@ -15,7 +15,7 @@ import org.bytedeco.opencv.opencv_core.Mat
  */
 class SudokuCell(mat: Mat) {
     private val centeredEmpty = scaleAndCenter(mat)
-    private val data = revertColors(centeredEmpty.first)
+    internal val data = revertColors(centeredEmpty.first)
 
     val isEmpty = centeredEmpty.second
     val width = data.arrayWidth().toLong()
