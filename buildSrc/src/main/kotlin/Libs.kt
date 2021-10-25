@@ -46,6 +46,15 @@ object Libs {
         }
     }
 
+    object OjAlgo {
+        private const val vOjAlgo = "49.2.0"
+        const val ojAlgo = "org.ojalgo:ojalgo:$vOjAlgo"
+
+        fun DependencyHandler.implementOjAlgo() {
+            add("implementation", ojAlgo)
+        }
+    }
+
     object Caffeine {
         private const val vCaffeine = "3.0.4"
         const val caffeine = "com.github.ben-manes.caffeine:caffeine:$vCaffeine"

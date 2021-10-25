@@ -81,7 +81,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         solutionColor: Color = Color.GREEN,
         recognizedColor: Color = Color.RED,
         ext: String = "jpg",
-        debugScale: Double? = null
+        debugScale: Double = 1.0
     ): ByteArray {
         val mat = image.bytesToMat()
         val sol = solveAndCombineSolution(mat, solutionColor, recognizedColor, debugScale)
@@ -110,7 +110,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         solutionColor: Color = Color.GREEN,
         recognizedColor: Color = Color.RED,
         ext: String = "jpg",
-        debugScale: Double? = null
+        debugScale: Double = 1.0
     ): BufferedImage {
         val bytes = ByteArrayOutputStream().also { ImageIO.write(image, ext, it) }.toByteArray()
         val sol = solveAndCombineSolution(bytes, solutionColor, recognizedColor, ext, debugScale)
@@ -137,10 +137,11 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         image: Mat,
         solutionColor: Color = Color.GREEN,
         recognizedColor: Color = Color.RED,
-        debugScale: Double? = null
+        debugScale: Double = 1.0
     ): Mat {
-        val solution = solve(image, solutionColor, recognizedColor, debugScale != null)
-        return if (debugScale == null) solution.last() else {
+        val isDebug = debugScale > 1.0
+        val solution = solve(image, solutionColor, recognizedColor, isDebug)
+        return if (!isDebug) solution.last() else {
             val rows = solution.asSequence()
                 .map { it.resize(image.area()) }
                 .chunked(solution.size / 2)
@@ -184,16 +185,14 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         return try {
             val digits = recognizer.reliablePredict(cells)
             val puzzle = Puzzle.Unsolved(digits)
-            val finalSolution = if (puzzle.isValid()) {
-                when (val solution = solveWithCache(puzzle)) {
-                    is Puzzle.Unsolved -> image
-                    is Puzzle.Solved -> {
-                        val result = plotSolution(cropped, solution, solutionColor, recognizedColor)
-                        val sol = changePerspectiveToOriginalSize(cropped, result, image.area())
-                        combineSolutionToOriginal(image, sol)
-                    }
+            val finalSolution = when (val solution = solveWithCache(puzzle)) {
+                is Puzzle.Unsolved -> image
+                is Puzzle.Solved -> {
+                    val result = plotSolution(cropped, solution, solutionColor, recognizedColor)
+                    val sol = changePerspectiveToOriginalSize(cropped, result, image.area())
+                    combineSolutionToOriginal(image, sol)
                 }
-            } else image
+            }
 
             listOf(
                 image, prePhases.grayScale, prePhases.preProcessedGrayImage, processedCrop, cleanImage, finalSolution
@@ -205,7 +204,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
     }
 
     private fun cellsToMat(cells: List<SudokuCell>, debug: Boolean) = if (debug) cells
-        .map { it.toMat() }
+        .map { it.data }
         .chunked(9)
         .map { it.reduce { acc, mat -> acc.concat(mat) } }
         .reduce { acc, mat -> acc.concat(mat, false) }

@@ -1,13 +1,13 @@
-package com.github.pintowar.sudoscan.choco
+package com.github.pintowar.sudoscan.ojalgo
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 
-class SolverChocoSpec : StringSpec({
+class SolverOjAlgoSpec : StringSpec({
 
-    val solver = SolverChoco()
+    val solver = SolverOjAlgo()
 
     "solution must present all numbers" {
         forAll(

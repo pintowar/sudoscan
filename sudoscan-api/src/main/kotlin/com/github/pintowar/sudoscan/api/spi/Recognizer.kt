@@ -15,6 +15,13 @@ import java.util.*
 interface Recognizer {
 
     companion object {
+
+        private val properties = Thread.currentThread().contextClassLoader.let { cl ->
+            Properties().also {
+                cl.getResourceAsStream("sudoscan-recognizer.properties")?.let { res -> it.load(res) }
+            }
+        }
+
         /**
          * This function will load an implementation of this interface (found on classpath) via SPI.
          *
@@ -22,8 +29,7 @@ interface Recognizer {
          */
         fun provider(): Recognizer {
             val loader = ServiceLoader.load(Recognizer::class.java)
-            val it = loader.iterator()
-            return if (it.hasNext()) it.next() else throw ClassNotFoundException("No Recognizer found in classpath.")
+            return loader.single()
         }
     }
 
@@ -36,11 +42,8 @@ interface Recognizer {
      *
      * @return url there model can be downloaded.
      */
-    fun modelUrl(): String = Thread.currentThread().contextClassLoader.let { cl ->
-        val urlProperty = "sudoscan.recognizer.model.url"
-        System.getProperty(urlProperty) ?: Properties().also {
-            cl.getResourceAsStream("sudoscan-recognizer.properties")?.let { res -> it.load(res) }
-        }.getProperty(urlProperty)!!
+    fun modelUrl(): String = "sudoscan.recognizer.model.url".let { urlProperty ->
+        System.getProperty(urlProperty) ?: properties.getProperty(urlProperty)!!
     }
 
     /**

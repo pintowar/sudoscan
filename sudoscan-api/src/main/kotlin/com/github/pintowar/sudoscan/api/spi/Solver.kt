@@ -22,8 +22,7 @@ interface Solver {
          */
         fun provider(): Solver {
             val loader = ServiceLoader.load(Solver::class.java)
-            val it = loader.iterator()
-            return if (it.hasNext()) it.next() else throw ClassNotFoundException("No Solver found in classpath.")
+            return loader.single()
         }
     }
 
@@ -42,10 +41,19 @@ interface Solver {
     val name: String
 
     /**
+     * The minimum valid digits a solver can handle.
+     */
+    fun minimumValidDigits(): Int = 23
+
+    /**
      * Solves a sudoku puzzle.
      *
      * @param puzzle flatten sudoku puzzle encoded as a list of integers. Empty cells are represented as zero (0).
      * @return flatten sudoku solution as a list of integers.
      */
-    fun solve(puzzle: Puzzle): Puzzle
+    fun solve(puzzle: Puzzle): Puzzle {
+        return if (puzzle.numValidDigits >= minimumValidDigits()) solveWithSolver(puzzle) else puzzle
+    }
+
+    fun solveWithSolver(puzzle: Puzzle): Puzzle
 }
