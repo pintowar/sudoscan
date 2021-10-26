@@ -22,4 +22,12 @@ class PuzzleSpec : StringSpec({
             #9|2|3|6|8|7|1|5|4
         """.trimMargin("#")
     }
+
+    "test valid digits" {
+        val puzzle = Puzzle.unsolved(
+            "800010009050807010004090700060701020508060107010502090007040600080309040300050008"
+        )
+
+        puzzle.numValidDigits shouldBe 33
+    }
 })

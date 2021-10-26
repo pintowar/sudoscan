@@ -5,5 +5,6 @@ import com.github.pintowar.sudoscan.api.SudokuCell
 
 class MockRecognizer : Recognizer {
     override val name = "Mock"
-    override fun predict(cells: List<SudokuCell>) = cells.indices.asSequence().map { Digit.Valid(it, 1.0) }
+    override fun predict(cells: List<SudokuCell>): Sequence<Digit> =
+        cells.indices.asSequence().map { Digit.Valid(it, 1.0) }
 }

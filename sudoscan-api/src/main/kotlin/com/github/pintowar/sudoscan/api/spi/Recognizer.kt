@@ -18,7 +18,7 @@ interface Recognizer {
 
         private val properties = Thread.currentThread().contextClassLoader.let { cl ->
             Properties().also {
-                cl.getResourceAsStream("sudoscan-recognizer.properties")?.let { res -> it.load(res) }
+                cl.getResourceAsStream("sudoscan-recognizer.properties").let { res -> it.load(res) }
             }
         }
 

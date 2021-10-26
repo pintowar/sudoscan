@@ -11,6 +11,8 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import java.io.ByteArrayInputStream
+import javax.imageio.ImageIO
 
 class SudokuEngineSpec : StringSpec({
 
@@ -26,13 +28,28 @@ class SudokuEngineSpec : StringSpec({
         "072403560906020304130605082409030805020904030703080406290108053605070201041206970"
     )
 
-    "test solve" {
+    "test solve bytes" {
         every { recognizer.reliablePredict(any()) } returns digits
         every { solver.solve(any<Puzzle>()) } returns puzzleSol
 
         val result = engine.solveAndCombineSolution(sudoku.matToBytes("jpg"))
 
         result.size shouldBe sudokuFinalSolution.matToBytes("jpg").size
+    }
+
+    "test solve buffered image with debugScale" {
+        every { recognizer.reliablePredict(any()) } returns digits
+        every { solver.solve(any<Puzzle>()) } returns puzzleSol
+
+        val sol = sudoku.matToBytes("jpg")
+        val image = ImageIO.read(ByteArrayInputStream(sol))
+
+        listOf(1.0, 1.5, 2.0).forEach { scale ->
+            val result = engine.solveAndCombineSolution(image, debugScale = scale)
+
+            result.height shouldBe (sudokuFinalSolution.arrayHeight() * scale).toInt()
+            result.width shouldBe (sudokuFinalSolution.arrayWidth() * scale).toInt()
+        }
     }
 
     "test components" {
