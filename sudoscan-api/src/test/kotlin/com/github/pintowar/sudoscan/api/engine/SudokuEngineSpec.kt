@@ -9,6 +9,7 @@ import com.github.pintowar.sudoscan.api.spi.Recognizer
 import com.github.pintowar.sudoscan.api.spi.Solver
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import java.io.ByteArrayInputStream
@@ -32,6 +33,10 @@ class SudokuEngineSpec : StringSpec({
     val puzzleUnsol = Puzzle.unsolved(
         "800010009050807010004090700060701020508060107010502090007040600080309040300050008"
     )
+
+    beforeEach {
+        clearAllMocks()
+    }
 
     "test solve bytes with unexpected exception" {
         every { recognizer.reliablePredict(any()) } throws RuntimeException("Unexpected recognition exception")

@@ -39,13 +39,16 @@ application {
 }
 
 tasks {
+    val platform = project.properties["javacppPlatform"] ?: "multi"
+    val baseName = "${project.name}-app-$platform"
+
     nativeImage {
         args("--verbose", "-Djava.awt.headless=false")
-        imageName.set("sudoscan-cli-app")
+        imageName.set("$baseName-${project.version}")
     }
 
     shadowJar {
-        archiveBaseName.set("sudoscan-cli-app")
+        archiveBaseName.set(baseName)
         mergeServiceFiles()
     }
 }
