@@ -69,3 +69,17 @@ To use **sudoscan-solver-ojalgo** and **sudoscan-recognizer-djl** as solver and 
 run the following command:
 
 `gradle -Pojalgo -Pdjl -PjavacppPlatform=macosx-x86_64 clean assembleCliApp`
+
+### Native Image Build
+
+It is also possible to generate a native image of the sudoscan-cli, using a special JVM called the 
+[GraalVM](https://www.graalvm.org/).
+
+GraalVM provides this mechanism that helps to create a native image of the application which can be executed as a 
+standalone executable. The build process builds the executable with all the required dependencies such that 
+there is no need the JVM to run the application.
+
+The latest GraalVM version tested was GraalVM CE 21.2.0 (graalvm-21.2.0+java11) which is for Java 11. 
+To build the native image, run the following command on `sudoscan-cli` module:
+
+`gradle -PjavacppPlatform=linux-x86_64 clean nativeImage`

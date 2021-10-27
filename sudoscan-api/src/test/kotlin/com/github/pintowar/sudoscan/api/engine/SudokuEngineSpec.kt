@@ -13,6 +13,7 @@ import io.mockk.every
 import io.mockk.mockk
 import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
+import kotlin.math.max
 
 class SudokuEngineSpec : StringSpec({
 
@@ -28,7 +29,29 @@ class SudokuEngineSpec : StringSpec({
         "072403560906020304130605082409030805020904030703080406290108053605070201041206970"
     )
 
-    "test solve bytes" {
+    val puzzleUnsol = Puzzle.unsolved(
+        "800010009050807010004090700060701020508060107010502090007040600080309040300050008"
+    )
+
+    "test solve bytes with unexpected exception" {
+        every { recognizer.reliablePredict(any()) } throws RuntimeException("Unexpected recognition exception")
+        every { solver.solve(any<Puzzle>()) } returns puzzleSol
+
+        val result = engine.solveAndCombineSolution(sudoku.matToBytes("jpg"))
+
+        result.size shouldBe sudoku.matToBytes("jpg").size
+    }
+
+    "test solve bytes with no solution found" {
+        every { recognizer.reliablePredict(any()) } returns digits
+        every { solver.solve(any<Puzzle>()) } returns puzzleUnsol
+
+        val result = engine.solveAndCombineSolution(sudoku.matToBytes("jpg"))
+
+        result.size shouldBe sudoku.matToBytes("jpg").size
+    }
+
+    "test solve bytes with debugScale" {
         every { recognizer.reliablePredict(any()) } returns digits
         every { solver.solve(any<Puzzle>()) } returns puzzleSol
 
@@ -44,11 +67,11 @@ class SudokuEngineSpec : StringSpec({
         val sol = sudoku.matToBytes("jpg")
         val image = ImageIO.read(ByteArrayInputStream(sol))
 
-        listOf(1.0, 1.5, 2.0).forEach { scale ->
+        listOf(-1.0, 0.5, 1.0, 1.5, 2.0).forEach { scale ->
             val result = engine.solveAndCombineSolution(image, debugScale = scale)
 
-            result.height shouldBe (sudokuFinalSolution.arrayHeight() * scale).toInt()
-            result.width shouldBe (sudokuFinalSolution.arrayWidth() * scale).toInt()
+            result.height shouldBe (sudokuFinalSolution.arrayHeight() * max(scale, 1.0)).toInt()
+            result.width shouldBe (sudokuFinalSolution.arrayWidth() * max(scale, 1.0)).toInt()
         }
     }
 

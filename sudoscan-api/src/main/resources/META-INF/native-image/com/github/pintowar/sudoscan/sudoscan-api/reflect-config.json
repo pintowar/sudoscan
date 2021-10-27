@@ -89,12 +89,13 @@
     ]
   },
   {
-    "name": "com.github.pintowar.sudoscan.api.engine.CacheableSolver",
+    "name": "com.github.pintowar.sudoscan.api.engine.SudokuEngine",
     "methods": [
       {
-        "name": "loadAll",
+        "name": "<init>",
         "parameterTypes": [
-          "java.util.Set"
+          "com.github.pintowar.sudoscan.api.spi.Recognizer",
+          "com.github.pintowar.sudoscan.api.spi.Solver"
         ]
       }
     ]
