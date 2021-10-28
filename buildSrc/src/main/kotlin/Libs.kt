@@ -65,7 +65,7 @@ object Libs {
     }
 
     object Djl {
-        private const val vDjl = "0.12.0"
+        private const val vDjl = "0.13.0"
         private const val vTensorFlow = "2.4.1"
 
         const val djlTensorflowZoo = "ai.djl.tensorflow:tensorflow-model-zoo:$vDjl"
