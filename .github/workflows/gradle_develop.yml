@@ -10,8 +10,8 @@ on:
       - 'release/**'
       - 'support/**'
 jobs:
-  gradle_build:
-    name: Gradle Build
+  gradle_dev_build:
+    name: Gradle Dev Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -28,41 +28,8 @@ jobs:
         uses: eskatos/gradle-command-action@v1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
           gradle-version: wrapper
           arguments: clean codeCoverageReport sonarqube
-
-  gradle_build_artifacts:
-    name: Gradle Build Artifacts
-    needs: gradle_build
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Setting up JAVA
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-
-      - name: Running gradle task
-        uses: eskatos/gradle-command-action@v1
-        with:
-          dependencies-cache-enabled: true
-          configuration-cache-enabled: true
-          gradle-version: wrapper
-          arguments: clean assembleCliApp
-
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: sudoscan client app jar
-          path: build/*.jar

@@ -6,9 +6,12 @@ on:
       # Push events on master branch
       - master
 jobs:
-  gradle_build:
-    name: Gradle Build on master
-    runs-on: ubuntu-latest
+  gradle_test:
+    name: Gradle Test on master
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -26,19 +29,51 @@ jobs:
       - name: Running gradle task
         uses: eskatos/gradle-command-action@v1
         env:
-          USERNAME: ${{ secrets.USERNAME }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
           gradle-version: wrapper
-          arguments: clean assembleCliApp codeCoverageReport sonarqube release -Prelease.useAutomaticVersion=true
+          arguments: clean assembleCliApp codeCoverageReport sonarqube
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: sudoscan client app jar
+          name: sudoscan_cli_jars
+          path: build/*.jar
+
+  gradle_build:
+    name: Gradle Build on master
+    runs-on: ubuntu-latest
+    needs: gradle_test
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Seting up Git
+        run: git config user.email "${{ github.actor }}@users.noreply.github.com" && git config user.name "Github Actions"
+
+      - name: Setting up JAVA
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Running gradle task
+        uses: eskatos/gradle-command-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          dependencies-cache-enabled: true
+          configuration-cache-enabled: true
+          gradle-version: wrapper
+          arguments: clean build release -x test -Prelease.useAutomaticVersion=true
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: sudoscan_cli_jars
           path: build/*.jar
 
   release:
@@ -66,10 +101,20 @@ jobs:
 
       - name: Download Kaggle models
         id: kaggle_download
-        run: |
-          mkdir recognizer-model
-          wget -O recognizer-model/sudoscan-djl.zip https://bit.ly/3mMOpon
-          wget -O recognizer-model/sudoscan-dl4j.h5 https://bit.ly/3Dz2Ent
+        uses: Joel-hanson/kaggle-kernel-actions@master
+        with:
+          kaggle_username: ${{ secrets.KAGGLE_USERNAME }}
+          kaggle_key: ${{ secrets.KAGGLE_KEY }}
+          kaggle_make_new_kernel: false
+          deploy_kernel: false
+          kernel_id: pintowar/sudoscan-number-recognizer
+          collect_output_as_schedule: true
+
+      - name: Download compressed sources from artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: sudoscan_cli_jars
+          path: binaries/
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -81,5 +126,6 @@ jobs:
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
           files: |
-            recognizer-model/sudoscan-djl.zip
-            recognizer-model/sudoscan-dl4j.h5
+            outputs/models/sudoscan-djl.zip
+            outputs/models/sudoscan-dl4j.h5
+            binaries/*.jar
