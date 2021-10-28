@@ -44,11 +44,11 @@ tasks {
 
     nativeImage {
         args("--verbose", "-Djava.awt.headless=false")
-        imageName.set("$baseName-${project.version}")
+        imageName.set(baseName)
     }
 
     shadowJar {
-        archiveBaseName.set(baseName)
+        archiveFileName.set("$baseName-all.${archiveExtension.get()}")
         mergeServiceFiles()
     }
 }

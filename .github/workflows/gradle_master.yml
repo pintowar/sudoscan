@@ -71,12 +71,6 @@ jobs:
           gradle-version: wrapper
           arguments: clean build release -x test -Prelease.useAutomaticVersion=true
 
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: sudoscan_cli_jars
-          path: build/*.jar
-
   release:
     name: Create Release Tag
     runs-on: ubuntu-latest
