@@ -29,8 +29,10 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JFROG_USER: ${{ secrets.JFROG_USER }}
+          JFROG_PASS: ${{ secrets.JFROG_PASS }}
         with:
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
           gradle-version: wrapper
-          arguments: clean codeCoverageReport sonarqube
+          arguments: clean codeCoverageReport sonarqube publishGprPublicationToSudoscanLibsRepository

@@ -65,6 +65,8 @@ jobs:
         uses: eskatos/gradle-command-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JFROG_USER: ${{ secrets.JFROG_USER }}
+          JFROG_PASS: ${{ secrets.JFROG_PASS }}
         with:
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
