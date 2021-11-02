@@ -8,7 +8,6 @@ import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.global.opencv_imgproc.COLOR_RGB2GRAY
 import org.bytedeco.opencv.opencv_core.Mat
-import org.bytedeco.opencv.opencv_core.Rect
 import kotlin.math.max
 import kotlin.math.min
 
@@ -75,7 +74,7 @@ internal object Extractor {
                     bottomLeft = points.minByOrNull { it.x - it.y }!!,
                     topRight = points.maxByOrNull { it.x - it.y }!!
                 )
-            } catch(e: RuntimeException) {
+            } catch (e: RuntimeException) {
                 RectangleCorners.EMPTY_CORNERS
             }
         } else RectangleCorners.EMPTY_CORNERS
@@ -130,9 +129,9 @@ internal object Extractor {
      * a list of diagonal segments (top left to bottom right) is returned.
      *
      * @param img original image (for better function, assume an image with a frontal perspective of a Sudoku puzzle).
-     * @return list of diagonal segments (top left to bottom right) of every sudoku piece.
+     * @return list of bounding boxes of every sudoku piece (cell).
      */
-    fun splitSquares(img: Mat): List<Segment> {
+    fun splitSquares(img: Mat): List<BBox> {
         assert(img.arrayHeight() == img.arrayWidth())
 
         val numPieces = 9
@@ -140,7 +139,7 @@ internal object Extractor {
 
         return (0 until numPieces).flatMap { i ->
             (0 until numPieces).map { j ->
-                Segment(
+                BBox(
                     Coordinate((j * side).toInt(), (i * side).toInt()),
                     Coordinate(((j + 1) * side).toInt(), ((i + 1) * side).toInt())
                 )
@@ -184,16 +183,16 @@ internal object Extractor {
     }
 
     /**
-     * Cut a rectangle from an original image based on a back slash segment (top left to bottom right) or an empty
-     * matrix in case of a **non** back slash informed.
+     * Cut a rectangle from an original image based on a bounding box or an empty
+     * matrix in case of an empty bounding box informed.
      *
      * @param img original image.
-     * @param segment a back slashed segment.
+     * @param bBox a bounding box.
      * @return the cut image.
      */
-    fun rectFromSegment(img: Mat, segment: Segment): Mat =
-        if (segment.isBackSlash())
-            Mat(img, Rect(segment.begin.x, segment.begin.y, segment.width(), segment.height()))
+    fun rectFromSegment(img: Mat, bBox: BBox): Mat =
+        if (bBox.isNotEmpty())
+            Mat(img, bBox.toRect())
         else
             throw IllegalStateException("Segment is invalid.")
 
@@ -212,20 +211,20 @@ internal object Extractor {
      * After this process it will detect the valid bounds of the final white object found.
      *
      * @param inputImg gray scale image to be scanned.
-     * @param diagonal initial area with a safe margin from the borders.
+     * @param bBox initial bounding box with a safe margin from the borders.
      * @return a square containing the bounds of an object (number on sudoku context).
      */
     fun findLargestFeature(
         inputImg: Mat,
-        diagonal: Segment = Segment(Coordinate(0, 0), Coordinate(inputImg.arrayWidth(), inputImg.arrayHeight()))
+        bBox: BBox = BBox(Coordinate(0, 0), Coordinate(inputImg.arrayWidth(), inputImg.arrayHeight()))
     ): RectangleCorners {
         val img = inputImg.clone()
         val (black, gray, white) = listOf(0, 64, 255)
         return img.createIndexer<UByteIndexer>(isNotAndroid).use { indexer ->
             val size = img.size()
 
-            (diagonal.begin.x until min(diagonal.end.x, size.width())).forEach { x ->
-                (diagonal.begin.y until min(diagonal.end.y, size.height())).forEach { y ->
+            (bBox.origin.x until min(bBox.origin.x + bBox.width, size.width())).forEach { x ->
+                (bBox.origin.y until min(bBox.origin.y + bBox.height, size.height())).forEach { y ->
                     if (indexer[y.toLong(), x.toLong()] == white) {
                         img.floodFill(Coordinate(x, y), gray.toDouble())
                     }
@@ -260,20 +259,19 @@ internal object Extractor {
      * of the sudoku puzzle.
      *
      * @param img input image (for proper extraction, this must be a frontal view of the sudoku puzzle).
-     * @param segment back slash diagonal of the area to be extracted from the original image.
-     * @param size final (and resized) size of the image extracted.
+     * @param bBox bounding box of the area to be extracted from the original image.
      * @return an object with the image extracted and additional information about the cell.
      */
-    fun extractCell(img: Mat, segment: Segment): SudokuCell = try {
-        val digit = rectFromSegment(img, segment)
+    fun extractCell(img: Mat, bBox: BBox): SudokuCell = try {
+        val digit = rectFromSegment(img, bBox)
         val margin = ((digit.arrayWidth() + digit.arrayHeight()) / 5.0).toInt()
 
-        val box = findLargestFeature(
+        val rect = findLargestFeature(
             digit,
-            Segment(Coordinate(margin, margin), Coordinate(digit.arrayWidth() - margin, digit.arrayHeight() - margin))
+            BBox(Coordinate(margin, margin), Coordinate(digit.arrayWidth() - margin, digit.arrayHeight() - margin))
         )
 
-        val noBorder = rectFromSegment(digit, box.diagonal())
+        val noBorder = rectFromSegment(digit, rect.bBox())
         SudokuCell(noBorder)
     } catch (e: RuntimeException) {
         SudokuCell.EMPTY
@@ -284,7 +282,6 @@ internal object Extractor {
      * For proper extraction, this must be a frontal view of the sudoku puzzle.
      *
      * @param img input image (for proper extraction, this must be a frontal view of the sudoku puzzle).
-     * @param size final (and resized) size of the image extracted.
      * @return an object with the image extracted and additional information about the cell.
      */
     fun extractSudokuCells(img: Mat): List<SudokuCell> {
