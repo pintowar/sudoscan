@@ -63,17 +63,21 @@ internal object Extractor {
         val polygons = contours.get()
 
         return if (polygons.isNotEmpty()) {
-            val polygon = polygons.maxByOrNull { it.contourArea() }!!
-            val points = polygon.createIndexer<IntIndexer>(isNotAndroid).use { idx ->
-                (0 until idx.size(0)).map { Coordinate(idx.get(it, 0, 0), idx.get(it, 0, 1)) }
-            }
+            try {
+                val polygon = polygons.maxByOrNull { it.contourArea() }!!
+                val points = polygon.createIndexer<IntIndexer>(isNotAndroid).use { idx ->
+                    (0 until idx.size(0)).map { Coordinate(idx.get(it, 0, 0), idx.get(it, 0, 1)) }
+                }
 
-            RectangleCorners(
-                bottomRight = points.maxByOrNull { it.x + it.y }!!,
-                topLeft = points.minByOrNull { it.x + it.y }!!,
-                bottomLeft = points.minByOrNull { it.x - it.y }!!,
-                topRight = points.maxByOrNull { it.x - it.y }!!
-            )
+                RectangleCorners(
+                    bottomRight = points.maxByOrNull { it.x + it.y }!!,
+                    topLeft = points.minByOrNull { it.x + it.y }!!,
+                    bottomLeft = points.minByOrNull { it.x - it.y }!!,
+                    topRight = points.maxByOrNull { it.x - it.y }!!
+                )
+            } catch(e: RuntimeException) {
+                RectangleCorners.EMPTY_CORNERS
+            }
         } else RectangleCorners.EMPTY_CORNERS
     }
 
