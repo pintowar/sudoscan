@@ -50,6 +50,25 @@ learn more about MIP and CSP approaches on Sudoku problems, take a look at the f
 Both recognizers (dlf4 and djl) are implementations that use a pre-trained model. The model creation and training can be
 found on the following [Kaggle Notebook](https://www.kaggle.com/pintowar/sudoscan-number-recognizer).
 
+### Project Modules Usage
+
+Add the repository
+
+```kotlin
+maven {
+    name = "SudoscanLibs"
+    url = uri("https://pintowar.jfrog.io/artifactory/sudoscan-libs-release")
+}
+```
+
+Add api, solver and recognizer the dependencies
+
+```kotlin
+implementation("com.github.pintowar:sudoscan-api:x.y.z")
+implementation("com.github.pintowar:sudoscan-solver-choco:x.y.z") // or sudoscan-solver-ojalgo
+implementation("com.github.pintowar:sudoscan-recognizer-dl4j:x.y.z") // or sudoscan-recognizer-djl
+```
+
 ## Building Project
 
 To build the fat jar client version of the app, run the following command:
