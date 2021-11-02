@@ -2,6 +2,7 @@ package com.github.pintowar.sudoscan.api.cv
 
 import org.bytedeco.opencv.opencv_core.Mat
 import org.bytedeco.opencv.opencv_core.Point
+import org.bytedeco.opencv.opencv_core.Rect
 import org.bytedeco.opencv.opencv_core.Size
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -48,21 +49,23 @@ internal data class Coordinate(val x: Int, val y: Int) {
 }
 
 /**
- * Represents a line segment between two coordinates.
+ * Represents a Bounding Box.
  *
- * @property begin
- * @property end
+ * @property origin the topLeft Coordinate
+ * @property width
+ * @property height
  */
-internal data class Segment(val begin: Coordinate, val end: Coordinate) {
+internal data class BBox(val origin: Coordinate, val width: Int, val height: Int) {
 
     /**
-     * Checks if this segment has a backslash (like a '\') format.
+     * Checks if bounding box is not empty.
      */
-    fun isBackSlash() = begin.x <= end.x && begin.y <= end.y
+    fun isNotEmpty() = width > 0 || height > 0
 
-    fun height() = end.y - begin.y
-
-    fun width() = end.x - begin.x
+    /**
+     * Converts to OpnCV Rect.
+     */
+    fun toRect() = Rect(origin.x, origin.y, width, height)
 }
 
 /**
@@ -87,9 +90,9 @@ internal data class RectangleCorners(
         .map { (a, b) -> sqrt((a.x - b.x).toDouble().pow(2) + (a.y - b.y).toDouble().pow(2)) }
 
     /**
-     * The diagonal segment of that square.
+     * The bounding box of that square.
      */
-    fun diagonal() = Segment(topLeft, bottomRight)
+    fun bBox() = BBox(topLeft, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y)
 
     /**
      * Convert to a 2d float array.

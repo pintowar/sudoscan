@@ -4,7 +4,9 @@ import org.bytedeco.javacpp.Loader
 import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_imgcodecs
 import org.bytedeco.opencv.global.opencv_imgproc
-import org.bytedeco.opencv.opencv_core.*
+import org.bytedeco.opencv.opencv_core.Mat
+import org.bytedeco.opencv.opencv_core.MatVector
+import org.bytedeco.opencv.opencv_core.Scalar
 import org.opencv.imgcodecs.Imgcodecs
 
 internal val isNotAndroid = !Loader.getPlatform().startsWith("android")
@@ -78,6 +80,13 @@ internal fun Mat.copyMakeBorder(top: Int, bottom: Int, left: Int, right: Int, bo
     return Mat().also { dst ->
         copyMakeBorder(this, dst, top, bottom, left, right, borderType, Scalar(value))
     }
+}
+
+internal fun Mat.crop(bBox: BBox): Mat {
+    return if (bBox.isNotEmpty())
+        Mat(this, bBox.toRect())
+    else
+        throw IllegalArgumentException("Bounding Box is empty.")
 }
 
 internal fun Mat.area() = Area(this.arrayWidth(), this.arrayHeight())

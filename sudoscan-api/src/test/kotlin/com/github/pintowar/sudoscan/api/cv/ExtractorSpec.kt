@@ -5,7 +5,6 @@ import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.dirtyEight
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.frontalSudoku
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.preProcessedSudoku
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.sudoku
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
@@ -53,31 +52,16 @@ class ExtractorSpec : StringSpec({
 
         squares.size shouldBe 81
         squares.forEach { square ->
-            (square.end.x - square.begin.x).toDouble() shouldBe (croppedSudoku.arrayWidth() / 9.0).plusOrMinus(1.0)
-            (square.end.y - square.begin.y).toDouble() shouldBe (croppedSudoku.arrayHeight() / 9.0).plusOrMinus(1.0)
+            square.width.toDouble() shouldBe (croppedSudoku.arrayWidth() / 9.0).plusOrMinus(1.0)
+            square.height.toDouble() shouldBe (croppedSudoku.arrayHeight() / 9.0).plusOrMinus(1.0)
         }
-    }
-
-    "test rect from segment" {
-        val validSquare = Segment(Coordinate(0, 0), Coordinate(43, 43))
-        val valid = Extractor.rectFromSegment(frontalSudoku, validSquare)
-
-        valid.arrayHeight() shouldBe 43
-        valid.arrayWidth() shouldBe 43
-
-        val invalidSquare = Segment(Coordinate(43, 43), Coordinate(0, 0))
-        val exception = shouldThrow<IllegalStateException> {
-            Extractor.rectFromSegment(frontalSudoku, invalidSquare)
-        }
-
-        exception.message shouldBe "Segment is invalid."
     }
 
     "test find largest feature" {
         val (size, margin) = 43 to 17
 
-        val diagonal = Segment(Coordinate(margin, margin), Coordinate(size - margin, size - margin))
-        val corners = Extractor.findLargestFeature(dirtyEight, diagonal)
+        val bBox = BBox(Coordinate(margin, margin), size - 2 * margin, size - 2 * margin)
+        val corners = Extractor.findLargestFeature(dirtyEight, bBox)
 
         corners.topLeft shouldBe Coordinate(17, 15)
         corners.topRight shouldBe Coordinate(17, 25)
@@ -94,7 +78,7 @@ class ExtractorSpec : StringSpec({
     }
 
     "test extract cell - eight" {
-        val eightSquare = Segment(Coordinate(0, 0), Coordinate(43, 43))
+        val eightSquare = BBox(Coordinate(0, 0), 43, 43)
         val result = Extractor.extractCell(frontalSudoku, eightSquare)
 
         result.isEmpty shouldBe false
@@ -103,7 +87,7 @@ class ExtractorSpec : StringSpec({
     }
 
     "test extract cell - empty" {
-        val eightSquare = Segment(Coordinate(43, 0), Coordinate(86, 43))
+        val eightSquare = BBox(Coordinate(43, 0), 43, 43)
         val result = Extractor.extractCell(frontalSudoku, eightSquare)
 
         result.isEmpty shouldBe true
