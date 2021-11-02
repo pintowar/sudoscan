@@ -126,7 +126,7 @@ internal object Extractor {
 
     /**
      * Splits the image into a 9x9 (81) grid. Assuming an image with a frontal perspective of a Sudoku is provided,
-     * a list of diagonal segments (top left to bottom right) is returned.
+     * a list of bounding boxes is returned.
      *
      * @param img original image (for better function, assume an image with a frontal perspective of a Sudoku puzzle).
      * @return list of bounding boxes of every sudoku piece (cell).
@@ -139,10 +139,7 @@ internal object Extractor {
 
         return (0 until numPieces).flatMap { i ->
             (0 until numPieces).map { j ->
-                BBox(
-                    Coordinate((j * side).toInt(), (i * side).toInt()),
-                    Coordinate(((j + 1) * side).toInt(), ((i + 1) * side).toInt())
-                )
+                BBox(Coordinate((j * side).toInt(), (i * side).toInt()), side.toInt(), side.toInt())
             }
         }
     }
@@ -183,25 +180,11 @@ internal object Extractor {
     }
 
     /**
-     * Cut a rectangle from an original image based on a bounding box or an empty
-     * matrix in case of an empty bounding box informed.
-     *
-     * @param img original image.
-     * @param bBox a bounding box.
-     * @return the cut image.
-     */
-    fun rectFromSegment(img: Mat, bBox: BBox): Mat =
-        if (bBox.isNotEmpty())
-            Mat(img, bBox.toRect())
-        else
-            throw IllegalStateException("Segment is invalid.")
-
-    /**
      * Scans the image in search of any relevant data (on the sudoku context, it searches for a number in a cell).
      * The process assumes that invalid pixel is BLACK and valid pixel is white (for instance, imagine a black image
      * with a white eight in the middle).
      *
-     * The scan uses a diagonal parameter that inform it the start area. This start area is a secure area with a
+     * The scan uses a [bBox] parameter that inform it the start area. This start area is a secure area with a
      * safe distance from the borders. For the sudoku context, when it scans a cell this is used to exclude its borders.
      * With the safe area informed, it marks all valid (white) data as gray.
      *
@@ -216,7 +199,7 @@ internal object Extractor {
      */
     fun findLargestFeature(
         inputImg: Mat,
-        bBox: BBox = BBox(Coordinate(0, 0), Coordinate(inputImg.arrayWidth(), inputImg.arrayHeight()))
+        bBox: BBox = BBox(Coordinate(0, 0), inputImg.arrayWidth(), inputImg.arrayHeight())
     ): RectangleCorners {
         val img = inputImg.clone()
         val (black, gray, white) = listOf(0, 64, 255)
@@ -263,22 +246,22 @@ internal object Extractor {
      * @return an object with the image extracted and additional information about the cell.
      */
     fun extractCell(img: Mat, bBox: BBox): SudokuCell = try {
-        val digit = rectFromSegment(img, bBox)
+        val digit = img.crop(bBox)
         val margin = ((digit.arrayWidth() + digit.arrayHeight()) / 5.0).toInt()
 
         val rect = findLargestFeature(
             digit,
-            BBox(Coordinate(margin, margin), Coordinate(digit.arrayWidth() - margin, digit.arrayHeight() - margin))
+            BBox(Coordinate(margin, margin), digit.arrayWidth() - 2 * margin, digit.arrayHeight() - 2 * margin)
         )
 
-        val noBorder = rectFromSegment(digit, rect.bBox())
+        val noBorder = digit.crop(rect.bBox())
         SudokuCell(noBorder)
     } catch (e: RuntimeException) {
         SudokuCell.EMPTY
     }
 
     /**
-     * Extract sudoku cells information from an input image. This function uses a list of segments as parameter.
+     * Extract sudoku cells information from an input image.
      * For proper extraction, this must be a frontal view of the sudoku puzzle.
      *
      * @param img input image (for proper extraction, this must be a frontal view of the sudoku puzzle).

@@ -5,7 +5,6 @@ import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.dirtyEight
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.frontalSudoku
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.preProcessedSudoku
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.sudoku
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
@@ -58,26 +57,11 @@ class ExtractorSpec : StringSpec({
         }
     }
 
-    "test rect from segment" {
-        val validSquare = BBox(Coordinate(0, 0), Coordinate(43, 43))
-        val valid = Extractor.rectFromSegment(frontalSudoku, validSquare)
-
-        valid.arrayHeight() shouldBe 43
-        valid.arrayWidth() shouldBe 43
-
-        val invalidSquare = BBox(Coordinate(43, 43), Coordinate(0, 0))
-        val exception = shouldThrow<IllegalStateException> {
-            Extractor.rectFromSegment(frontalSudoku, invalidSquare)
-        }
-
-        exception.message shouldBe "Segment is invalid."
-    }
-
     "test find largest feature" {
         val (size, margin) = 43 to 17
 
-        val diagonal = BBox(Coordinate(margin, margin), Coordinate(size - margin, size - margin))
-        val corners = Extractor.findLargestFeature(dirtyEight, diagonal)
+        val bBox = BBox(Coordinate(margin, margin), size - 2 * margin, size - 2 * margin)
+        val corners = Extractor.findLargestFeature(dirtyEight, bBox)
 
         corners.topLeft shouldBe Coordinate(17, 15)
         corners.topRight shouldBe Coordinate(17, 25)
@@ -94,7 +78,7 @@ class ExtractorSpec : StringSpec({
     }
 
     "test extract cell - eight" {
-        val eightSquare = BBox(Coordinate(0, 0), Coordinate(43, 43))
+        val eightSquare = BBox(Coordinate(0, 0), 43, 43)
         val result = Extractor.extractCell(frontalSudoku, eightSquare)
 
         result.isEmpty shouldBe false
@@ -103,7 +87,7 @@ class ExtractorSpec : StringSpec({
     }
 
     "test extract cell - empty" {
-        val eightSquare = BBox(Coordinate(43, 0), Coordinate(86, 43))
+        val eightSquare = BBox(Coordinate(43, 0), 43, 43)
         val result = Extractor.extractCell(frontalSudoku, eightSquare)
 
         result.isEmpty shouldBe true

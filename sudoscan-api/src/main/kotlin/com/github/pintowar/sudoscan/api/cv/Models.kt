@@ -57,8 +57,6 @@ internal data class Coordinate(val x: Int, val y: Int) {
  */
 internal data class BBox(val origin: Coordinate, val width: Int, val height: Int) {
 
-    constructor(begin: Coordinate, end: Coordinate) : this(begin, end.x - begin.x, end.y - begin.y)
-
     /**
      * Checks if bounding box is not empty.
      */
@@ -94,7 +92,7 @@ internal data class RectangleCorners(
     /**
      * The bounding box of that square.
      */
-    fun bBox() = BBox(topLeft, bottomRight)
+    fun bBox() = BBox(topLeft, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y)
 
     /**
      * Convert to a 2d float array.
