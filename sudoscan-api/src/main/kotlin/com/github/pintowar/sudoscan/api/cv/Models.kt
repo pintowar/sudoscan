@@ -59,6 +59,10 @@ internal data class Segment(val begin: Coordinate, val end: Coordinate) {
      * Checks if this segment has a backslash (like a '\') format.
      */
     fun isBackSlash() = begin.x <= end.x && begin.y <= end.y
+
+    fun height() = end.y - begin.y
+
+    fun width() = end.x - begin.x
 }
 
 /**

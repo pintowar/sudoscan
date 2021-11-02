@@ -8,6 +8,7 @@ import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.global.opencv_imgproc.COLOR_RGB2GRAY
 import org.bytedeco.opencv.opencv_core.Mat
+import org.bytedeco.opencv.opencv_core.Rect
 import kotlin.math.max
 import kotlin.math.min
 
@@ -188,9 +189,9 @@ internal object Extractor {
      */
     fun rectFromSegment(img: Mat, segment: Segment): Mat =
         if (segment.isBackSlash())
-            img.colRange(segment.begin.x, segment.end.x).rowRange(segment.begin.y, segment.end.y)
+            Mat(img, Rect(segment.begin.x, segment.begin.y, segment.width(), segment.height()))
         else
-            img.colRange(0, 0).rowRange(0, 0)
+            throw IllegalStateException("Segment is invalid.")
 
     /**
      * Scans the image in search of any relevant data (on the sudoku context, it searches for a number in a cell).
@@ -259,7 +260,7 @@ internal object Extractor {
      * @param size final (and resized) size of the image extracted.
      * @return an object with the image extracted and additional information about the cell.
      */
-    fun extractCell(img: Mat, segment: Segment): SudokuCell {
+    fun extractCell(img: Mat, segment: Segment): SudokuCell = try {
         val digit = rectFromSegment(img, segment)
         val margin = ((digit.arrayWidth() + digit.arrayHeight()) / 5.0).toInt()
 
@@ -269,7 +270,9 @@ internal object Extractor {
         )
 
         val noBorder = rectFromSegment(digit, box.diagonal())
-        return SudokuCell(noBorder)
+        SudokuCell(noBorder)
+    } catch (e: RuntimeException) {
+        SudokuCell.EMPTY
     }
 
     /**

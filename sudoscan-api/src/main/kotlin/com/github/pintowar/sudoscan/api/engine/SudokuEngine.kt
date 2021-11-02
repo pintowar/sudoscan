@@ -174,13 +174,8 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         val cropped = prePhases.frontal
         val processedCrop = preProcessGrayImage(cropped.img, false)
 
-        val (cells, cleanImage) = try {
-            val extractedCells = extractSudokuCells(processedCrop)
-            extractedCells to cellsToMat(extractedCells, debug)
-        } catch (e: Exception) {
-            val cleanImage = cellsToMat(emptyList(), false)
-            return listOf(image, prePhases.grayScale, prePhases.preProcessedGrayImage, processedCrop, cleanImage, image)
-        }
+        val cells = extractSudokuCells(processedCrop)
+        val cleanImage = cellsToMat(cells, debug)
 
         return try {
             val digits = recognizer.reliablePredict(cells)
