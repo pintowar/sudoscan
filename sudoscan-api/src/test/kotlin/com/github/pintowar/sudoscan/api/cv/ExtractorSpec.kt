@@ -5,6 +5,7 @@ import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.dirtyEight
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.frontalSudoku
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.preProcessedSudoku
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.sudoku
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
@@ -65,10 +66,11 @@ class ExtractorSpec : StringSpec({
         valid.arrayWidth() shouldBe 43
 
         val invalidSquare = Segment(Coordinate(43, 43), Coordinate(0, 0))
-        val invalid = Extractor.rectFromSegment(frontalSudoku, invalidSquare)
+        val exception = shouldThrow<IllegalStateException> {
+            Extractor.rectFromSegment(frontalSudoku, invalidSquare)
+        }
 
-        invalid.arrayHeight() shouldBe 0
-        invalid.arrayWidth() shouldBe 0
+        exception.message shouldBe "Segment is invalid."
     }
 
     "test find largest feature" {
