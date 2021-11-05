@@ -9,7 +9,7 @@ import org.bytedeco.opencv.opencv_core.MatVector
 import org.bytedeco.opencv.opencv_core.Scalar
 import org.opencv.imgcodecs.Imgcodecs
 
-internal val isNotAndroid = !Loader.getPlatform().startsWith("android")
+internal val isNotAndroid: Boolean = !Loader.getPlatform().startsWith("android")
 
 internal fun zeros(area: Area, type: Int = CV_8U): Mat = Mat.zeros(area.toSize(), type).asMat()
 
@@ -43,14 +43,14 @@ internal fun Mat.adaptiveThreshold(
     thresholdType: Int,
     blockSize: Int,
     c: Double
-) = Mat().also { dst ->
+): Mat = Mat().also { dst ->
     opencv_imgproc.adaptiveThreshold(this, dst, maxValue, adaptiveMethod, thresholdType, blockSize, c)
 }
 
-internal fun Mat.floodFill(seed: Coordinate, newVal: Double) =
+internal fun Mat.floodFill(seed: Coordinate, newVal: Double): Int =
     opencv_imgproc.floodFill(this, seed.toPoint(), Scalar(newVal))
 
-internal fun Mat.floodRect(extRect: BBox, scalar: Double = 255.0) =
+internal fun Mat.floodRect(extRect: BBox, scalar: Double = 255.0): Unit =
     opencv_imgproc.rectangle(this, extRect.toRect(), Scalar(scalar), -1, opencv_imgproc.LINE_8, 0)
 
 internal fun Mat.bitwiseNot(): Mat = Mat().also { dst -> bitwise_not(this, dst) }
@@ -61,7 +61,7 @@ internal fun getStructuringElement(shape: Int, area: Area): Mat {
     return opencv_imgproc.getStructuringElement(shape, area.toSize())
 }
 
-fun Mat.subtract(other: Mat): Mat = Mat().also { dst -> subtract(this, other, dst) }
+internal fun Mat.subtract(other: Mat): Mat = Mat().also { dst -> subtract(this, other, dst) }
 
 internal fun Mat.dilate(kernel: Mat): Mat = Mat().also { dst -> opencv_imgproc.dilate(this, dst, kernel) }
 
@@ -96,6 +96,6 @@ internal fun Mat.crop(bBox: BBox): Mat {
         throw IllegalArgumentException("Bounding Box is empty.")
 }
 
-internal fun Mat.area() = Area(this.arrayWidth(), this.arrayHeight())
+internal fun Mat.area(): Area = Area(this.arrayWidth(), this.arrayHeight())
 
-internal fun Mat.sumElements() = sumElems(this).get()
+internal fun Mat.countNonZero(): Int = countNonZero(this)
