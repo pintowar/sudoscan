@@ -61,7 +61,7 @@ internal object Extractor {
             val struct = opencv_imgproc.getStructuringElement(opencv_imgproc.MORPH_RECT, size.toSize())
             val grids = img.erode(struct).dilate(struct)
 
-            grids.findContours(Mat(), opencv_imgproc.RETR_TREE, opencv_imgproc.CHAIN_APPROX_SIMPLE).get().forEach {
+            grids.findContours(Mat(), opencv_imgproc.RETR_TREE, opencv_imgproc.CHAIN_APPROX_SIMPLE).forEach {
                 val poly = Mat().also { rect -> opencv_imgproc.approxPolyDP(it, rect, 3.0, true) }
                 val rect = opencv_imgproc.boundingRect(poly)
                 val extRect = if (horizontal)
@@ -91,8 +91,7 @@ internal object Extractor {
     fun findCorners(img: Mat): RectangleCorners {
         assert(img.channels() == 1) { "Image must be in gray scale." }
 
-        val contours = img.findContours(Mat(), opencv_imgproc.RETR_EXTERNAL, opencv_imgproc.CHAIN_APPROX_SIMPLE)
-        val polygons = contours.get()
+        val polygons = img.findContours(Mat(), opencv_imgproc.RETR_EXTERNAL, opencv_imgproc.CHAIN_APPROX_SIMPLE)
 
         return if (polygons.isNotEmpty()) {
             try {
@@ -217,7 +216,7 @@ internal object Extractor {
      * The process assumes that invalid pixel is BLACK and valid pixel is white (for instance, imagine a black image
      * with a white eight in the middle).
      *
-     * The scan uses a [bBox] parameter that inform it the start area. This start area is a secure area with a
+     * The scan uses a [margin] parameter that inform it the start area. This start area is a secure area with a
      * safe distance from the borders. For the sudoku context, when it scans a cell this is used to exclude its borders.
      * With the safe area informed, it marks all valid (white) data as gray.
      *

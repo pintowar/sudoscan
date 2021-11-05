@@ -67,9 +67,9 @@ internal fun Mat.dilate(kernel: Mat): Mat = Mat().also { dst -> opencv_imgproc.d
 
 internal fun Mat.erode(kernel: Mat): Mat = Mat().also { dst -> opencv_imgproc.erode(this, dst, kernel) }
 
-internal fun Mat.findContours(hierarchy: Mat, mode: Int, method: Int): MatVector = MatVector().also { contours ->
+internal fun Mat.findContours(hierarchy: Mat, mode: Int, method: Int): Array<Mat> = MatVector().also { contours ->
     opencv_imgproc.findContours(this, contours, hierarchy, mode, method)
-}
+}.get()
 
 internal fun Mat.contourArea(): Double = opencv_imgproc.contourArea(this)
 
