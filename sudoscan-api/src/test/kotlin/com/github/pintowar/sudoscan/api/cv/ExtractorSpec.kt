@@ -58,10 +58,9 @@ class ExtractorSpec : StringSpec({
     }
 
     "test find largest feature" {
-        val (size, margin) = 43 to 17
+        val margin = 17
 
-        val bBox = BBox(Coordinate(margin, margin), size - 2 * margin, size - 2 * margin)
-        val corners = Extractor.findLargestFeature(dirtyEight, bBox)
+        val corners = Extractor.findLargestFeature(dirtyEight, margin)
 
         corners.topLeft shouldBe Coordinate(17, 15)
         corners.topRight shouldBe Coordinate(17, 25)
@@ -78,7 +77,7 @@ class ExtractorSpec : StringSpec({
     }
 
     "test extract cell - eight" {
-        val eightSquare = BBox(Coordinate(0, 0), 43, 43)
+        val eightSquare = BBox(0, 0, 43, 43)
         val result = Extractor.extractCell(frontalSudoku, eightSquare)
 
         result.isEmpty shouldBe false
@@ -87,7 +86,7 @@ class ExtractorSpec : StringSpec({
     }
 
     "test extract cell - empty" {
-        val eightSquare = BBox(Coordinate(43, 0), 43, 43)
+        val eightSquare = BBox(43, 0, 43, 43)
         val result = Extractor.extractCell(frontalSudoku, eightSquare)
 
         result.isEmpty shouldBe true

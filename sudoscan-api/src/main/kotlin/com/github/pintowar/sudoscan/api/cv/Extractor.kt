@@ -4,7 +4,8 @@ import com.github.pintowar.sudoscan.api.SudokuCell
 import org.bytedeco.javacpp.indexer.FloatIndexer
 import org.bytedeco.javacpp.indexer.IntIndexer
 import org.bytedeco.javacpp.indexer.UByteIndexer
-import org.bytedeco.opencv.global.opencv_core.*
+import org.bytedeco.opencv.global.opencv_core.BORDER_CONSTANT
+import org.bytedeco.opencv.global.opencv_core.CV_32FC1
 import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.global.opencv_imgproc.COLOR_RGB2GRAY
 import org.bytedeco.opencv.opencv_core.Mat
@@ -46,6 +47,38 @@ internal object Extractor {
             val kernel = getStructuringElement(opencv_imgproc.MORPH_DILATE, Area(3))
             thresholdNot.dilate(kernel)
         } else thresholdNot
+    }
+
+    /**
+     * This function has the responsibility to remove (or at least try) the grids of the pre-processed frontal image.
+     *
+     * @param sudokuGrayImg Sudoku pre-processed frontal image
+     * @return frontal image without the images, or [sudokuGrayImg] case it fails.
+     */
+    fun removeGrid(sudokuGrayImg: Mat): Mat {
+        fun onlyLines(img: Mat, horizontal: Boolean = true): Mat {
+            val size = if (horizontal) Area(img.arrayHeight() / 9, 1) else Area(1, img.arrayWidth() / 9)
+            val struct = opencv_imgproc.getStructuringElement(opencv_imgproc.MORPH_RECT, size.toSize())
+            val grids = img.erode(struct).dilate(struct)
+
+            grids.findContours(Mat(), opencv_imgproc.RETR_TREE, opencv_imgproc.CHAIN_APPROX_SIMPLE).get().forEach {
+                val poly = Mat().also { rect -> opencv_imgproc.approxPolyDP(it, rect, 3.0, true) }
+                val rect = opencv_imgproc.boundingRect(poly)
+                val extRect = if (horizontal)
+                    BBox(0, max(0, rect.y() - 2), grids.arrayWidth(), rect.height() + 4)
+                else
+                    BBox(max(0, rect.x() - 2), 0, rect.width() + 4, grids.arrayHeight())
+
+                grids.floodRect(extRect)
+            }
+
+            return grids
+        }
+        return try {
+            sudokuGrayImg.subtract(onlyLines(sudokuGrayImg, true)).subtract(onlyLines(sudokuGrayImg, false))
+        } catch (e: RuntimeException) {
+            sudokuGrayImg
+        }
     }
 
     /**
@@ -139,7 +172,7 @@ internal object Extractor {
 
         return (0 until numPieces).flatMap { i ->
             (0 until numPieces).map { j ->
-                BBox(Coordinate((j * side).toInt(), (i * side).toInt()), side.toInt(), side.toInt())
+                BBox((j * side).toInt(), (i * side).toInt(), side.toInt(), side.toInt())
             }
         }
     }
@@ -194,13 +227,11 @@ internal object Extractor {
      * After this process it will detect the valid bounds of the final white object found.
      *
      * @param inputImg gray scale image to be scanned.
-     * @param bBox initial bounding box with a safe margin from the borders.
+     * @param margin margin of the initial bounding box with a safe margin from the borders.
      * @return a square containing the bounds of an object (number on sudoku context).
      */
-    fun findLargestFeature(
-        inputImg: Mat,
-        bBox: BBox = BBox(Coordinate(0, 0), inputImg.arrayWidth(), inputImg.arrayHeight())
-    ): RectangleCorners {
+    fun findLargestFeature(inputImg: Mat, margin: Int): RectangleCorners {
+        val bBox = BBox(margin, margin, inputImg.arrayWidth() - 2 * margin, inputImg.arrayHeight() - 2 * margin)
         val img = inputImg.clone()
         val (black, gray, white) = listOf(0, 64, 255)
         return img.createIndexer<UByteIndexer>(isNotAndroid).use { indexer ->
@@ -246,15 +277,11 @@ internal object Extractor {
      * @return an object with the image extracted and additional information about the cell.
      */
     fun extractCell(img: Mat, bBox: BBox): SudokuCell = try {
-        val digit = img.crop(bBox)
-        val margin = ((digit.arrayWidth() + digit.arrayHeight()) / 5.0).toInt()
+        val cell = img.crop(bBox)
+        val margin = ((cell.arrayWidth() + cell.arrayHeight()) / 5.0).toInt()
+        val rect = findLargestFeature(cell, margin)
 
-        val rect = findLargestFeature(
-            digit,
-            BBox(Coordinate(margin, margin), digit.arrayWidth() - 2 * margin, digit.arrayHeight() - 2 * margin)
-        )
-
-        val noBorder = digit.crop(rect.bBox())
+        val noBorder = cell.crop(rect.bBox())
         SudokuCell(noBorder)
     } catch (e: RuntimeException) {
         SudokuCell.EMPTY

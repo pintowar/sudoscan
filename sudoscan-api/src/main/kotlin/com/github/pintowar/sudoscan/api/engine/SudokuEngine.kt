@@ -7,6 +7,7 @@ import com.github.pintowar.sudoscan.api.cv.*
 import com.github.pintowar.sudoscan.api.cv.Extractor.extractSudokuCells
 import com.github.pintowar.sudoscan.api.cv.Extractor.preProcessGrayImage
 import com.github.pintowar.sudoscan.api.cv.Extractor.preProcessPhases
+import com.github.pintowar.sudoscan.api.cv.Extractor.removeGrid
 import com.github.pintowar.sudoscan.api.cv.Plotter.changePerspectiveToOriginalSize
 import com.github.pintowar.sudoscan.api.cv.Plotter.combineSolutionToOriginal
 import com.github.pintowar.sudoscan.api.cv.Plotter.plotSolution
@@ -173,8 +174,9 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         val prePhases = preProcessPhases(image)
         val cropped = prePhases.frontal
         val processedCrop = preProcessGrayImage(cropped.img, false)
+        val noGrid = removeGrid(processedCrop)
 
-        val cells = extractSudokuCells(processedCrop)
+        val cells = extractSudokuCells(noGrid)
         val cleanImage = cellsToMat(cells, debug)
 
         return try {
@@ -190,11 +192,11 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
             }
 
             listOf(
-                image, prePhases.grayScale, prePhases.preProcessedGrayImage, processedCrop, cleanImage, finalSolution
+                image, prePhases.preProcessedGrayImage, processedCrop, noGrid, cleanImage, finalSolution
             )
         } catch (e: Exception) {
             logger.trace(e) { "Problem found during solution!" }
-            listOf(image, prePhases.grayScale, prePhases.preProcessedGrayImage, processedCrop, cleanImage, image)
+            listOf(image, prePhases.preProcessedGrayImage, processedCrop, noGrid, cleanImage, image)
         }
     }
 

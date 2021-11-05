@@ -50,6 +50,9 @@ internal fun Mat.adaptiveThreshold(
 internal fun Mat.floodFill(seed: Coordinate, newVal: Double) =
     opencv_imgproc.floodFill(this, seed.toPoint(), Scalar(newVal))
 
+internal fun Mat.floodRect(extRect: BBox, scalar: Double = 255.0) =
+    opencv_imgproc.rectangle(this, extRect.toRect(), Scalar(scalar), -1, opencv_imgproc.LINE_8, 0)
+
 internal fun Mat.bitwiseNot(): Mat = Mat().also { dst -> bitwise_not(this, dst) }
 
 internal fun Mat.bitwiseAnd(that: Mat): Mat = Mat().also { dst -> bitwise_and(this, that, dst) }
@@ -58,7 +61,11 @@ internal fun getStructuringElement(shape: Int, area: Area): Mat {
     return opencv_imgproc.getStructuringElement(shape, area.toSize())
 }
 
+fun Mat.subtract(other: Mat): Mat = Mat().also { dst -> subtract(this, other, dst) }
+
 internal fun Mat.dilate(kernel: Mat): Mat = Mat().also { dst -> opencv_imgproc.dilate(this, dst, kernel) }
+
+internal fun Mat.erode(kernel: Mat): Mat = Mat().also { dst -> opencv_imgproc.erode(this, dst, kernel) }
 
 internal fun Mat.findContours(hierarchy: Mat, mode: Int, method: Int): MatVector = MatVector().also { contours ->
     opencv_imgproc.findContours(this, contours, hierarchy, mode, method)

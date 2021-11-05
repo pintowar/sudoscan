@@ -57,6 +57,8 @@ internal data class Coordinate(val x: Int, val y: Int) {
  */
 internal data class BBox(val origin: Coordinate, val width: Int, val height: Int) {
 
+    constructor(x: Int, y: Int, width: Int, height: Int) : this(Coordinate(x, y), width, height)
+
     /**
      * Checks if bounding box is not empty.
      */
