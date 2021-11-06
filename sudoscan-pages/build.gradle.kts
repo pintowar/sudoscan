@@ -21,7 +21,7 @@ jbake {
 }
 
 gitPublish {
-    repoUri.set("https://pintowar@github.com/pintowar/sudoscan.git")
+    repoUri.set("git@github.com:pintowar/sudoscan.git")
 
     branch.set("gh-pages")
 
