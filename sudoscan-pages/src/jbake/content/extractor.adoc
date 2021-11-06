@@ -1,0 +1,8 @@
+title=Extractor
+date=2021-11-05
+type=post
+tags=computer vision, opencv, javacv, artificial intelligence
+status=draft
+---------
+
+The Extractor must...
