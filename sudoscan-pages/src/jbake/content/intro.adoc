@@ -1,0 +1,132 @@
+title=Intro
+date=2021-11-05
+type=post
+tags=sudoscan
+status=published
+---------
+
+A while ago, I was talking to some co-workers about how AI is trendy these days! However, I realize 2 interesting facts:
+
+1. Most of my friends with strong Software Engineering background have little or very superficial knowledge about of
+AI/ML;
+2. Most of my friends with strong Data Science background don't know how to build a product with the models they create.
+
+Looking at this scenario, I decided that I could create a project to help build a bridge between these worlds. So,
+after seeing my girlfriend playing with some Sudoku puzzles, I realized this could be the perfect excuse for my plan.
+
+After some research, I found that my idea was not that original. However, I was motivated and determined to continue
+with the project, but with my personal touch.
+Also, I hoped that by building this project I would be able to learn new tools and how to use them in an environment
+I was not used to. I can say that some time after starting the project, my expectations were surpassed. I learned a
+lot of new things and hope to share some of the lessons I learned during this journey.
+
+REPLACE_WITH_READ_MORE
+
+== Objective and Steps
+
+The main objective was to build a Web App that could read a Sudoku puzzle image, **identify the puzzle board**,
+**recognize the puzzle numbers**, **solve the puzzle**, **plot the result over the original image** and send the
+new image (with the solution) back to the user.
+
+[plantuml, "silly-design", "svg"]
+----
+skinparam roundcorner 20
+skinparam monochrome true
+scale 120 height
+
+actor user
+cloud service
+
+user -> service : [puzzle]
+service -> user : [solution]
+----
+
+After the silly design of the main service, came the fundamental question of the project: how the hell do all the rest?
+
+To get to an answer to this question, let's start with small steps. The first thought is to build a pipe, to convert
+the image into a puzzle representation (object), from this representation find a solution and covert the solution to
+a final image. The diagram below shows the big picture of this pipe. At this point there are three main components
+acting on the process: **Converter**, **Solver** and **Plotter**.
+
+[plantuml, "big-picture", "svg"]
+----
+skinparam monochrome true
+scale 120 height
+
+file puzzle_image
+node Converter
+entity puzzle
+node Solver
+entity solution
+node Plotter
+file solution_image
+
+puzzle_image -> Converter
+Converter -> puzzle
+puzzle -> Solver
+Solver -> solution
+solution -> Plotter
+Plotter -> solution_image
+----
+
+The **Converter** component can be broken in more sub components:
+
+a. Extractor: to find a Sudoku board in the image and split it's cells into 81 (9x9) pieces;
+b. Recognizer: to convert a piece (cell if an image number) into a numeric value (or nothing if the cell is empty).
+
+With that in mind, we can generate a diagram of an engine responsible to run all discussed steps.
+
+[plantuml, "engine", "svg"]
+----
+skinparam monochrome true
+scale 120 height
+
+file Puzzle
+
+folder Engine {
+  component Extractor
+  component Recognizer
+  component Solver
+  component Plotter
+}
+
+file Solution
+
+Puzzle -> Extractor
+Extractor -> Recognizer
+Recognizer -> Solver
+Solver -> Plotter
+Plotter -> Solution
+----
+
+== Approaches and Tools
+
+On this section, let's dive into the engine's components and have a better understanding the nature of the problem and
+what tools and techniques are more appropriate to handle each one. Due to my background with JVM as a Web Developer,
+I decided to explore the AI/ML tools within the platform.
+
+=== Extractor
+
+The main objective of the Extractor is to identify a Sudoku board on an image and break it down into 81 (9 x 9) images
+for every cell in this puzzle. To achieve this goal, the Extractor needs to detect the borders of a sudoku, change it's
+perspective to a frontal view, apply some filters to clean the image and crop the image into 81 different pieces.
+
+This is basically a Computer Vision problem. OpenCV is an open-source library that includes several hundreds of
+computer vision (CV) algorithms. It is essentially a C++ API, but there are some Java APIs that can use it's native
+interfaces. I found some different ports of OpenCv to Java, however the https://github.com/bytedeco/javacv[JavaCv] lib
+turned out to be a good option, especially for its ease of use with build tools (Gradle, Maven). In particular its
+feature to generate artifacts for each platform (linux, windows, macos).
+
+=== Recognizer
+
+The Recognizer
+
+This is mainly a Classification problem
+
+=== Solver
+
+This is mainly a Constraint Solver problem
+
+=== Plotter
+
+This is mainly a Computer Vision problem
