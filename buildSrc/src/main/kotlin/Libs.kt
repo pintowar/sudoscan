@@ -47,7 +47,7 @@ object Libs {
     }
 
     object OjAlgo {
-        private const val vOjAlgo = "49.2.0"
+        private const val vOjAlgo = "49.2.1"
         const val ojAlgo = "org.ojalgo:ojalgo:$vOjAlgo"
 
         fun DependencyHandler.implementOjAlgo() {
