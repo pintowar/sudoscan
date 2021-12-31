@@ -15,6 +15,8 @@ This is a toy project for educational purpose.
 I usually use this project to explore some JVM/Kotlin libs, new Gradle features/plugins,
 AI libs and CI pipes (using github actions).
 
+[![Sudoscan Project](http://img.youtube.com/vi/8D4gMhDRu-U/0.jpg)](https://youtu.be/8D4gMhDRu-U "Sudoscan Project")
+
 ### Project Concepts
 
 The main objective of this project is to use an image of a sudoku puzzle as input, identify the puzzle, 
