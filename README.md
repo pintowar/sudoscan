@@ -103,4 +103,4 @@ there is no need the JVM to run the application.
 The latest GraalVM version tested was GraalVM CE 21.2.0 (graalvm-21.2.0+java11) which is for Java 11. 
 To build the native image, run the following command on `sudoscan-cli` module:
 
-`gradle -PjavacppPlatform=linux-x86_64 clean nativeImage`
+`gradle -PjavacppPlatform=linux-x86_64 clean nativeCompile`

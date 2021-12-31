@@ -7,6 +7,7 @@ import Libs.Micronaut.implementMicronautPicocli
 plugins {
     id("sudoscan.kotlin-app")
     id("io.micronaut.application")
+    id("io.micronaut.graalvm")
     id("com.github.johnrengelman.shadow")
 }
 
@@ -42,9 +43,13 @@ tasks {
     val platform = project.properties["javacppPlatform"] ?: "multi"
     val baseName = "${project.name}-app-$platform"
 
-    nativeImage {
-        args("--verbose", "-Djava.awt.headless=false")
-        imageName.set(baseName)
+    graalvmNative {
+        binaries {
+            named("main") {
+                buildArgs("--verbose", "-Djava.awt.headless=false")
+                imageName.set(baseName)
+            }
+        }
     }
 
     shadowJar {
