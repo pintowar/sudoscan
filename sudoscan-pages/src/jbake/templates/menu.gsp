@@ -17,6 +17,9 @@
                 <li>
                     <a href="<% if (content.rootpath) { %>${content.rootpath}<% } else { %><% } %>intro.html">Intro</a>
                 </li>
+                <li>
+                    <a href="<% content.rootpath ?: '' %>extractor.html">Extractor & Plotter</a>
+                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="https://github.com/pintowar"><i class="fa fa-github"></i></a></li>

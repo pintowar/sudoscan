@@ -2,7 +2,13 @@ title=Extractor
 date=2021-11-05
 type=post
 tags=computer vision, opencv, javacv, artificial intelligence
-status=draft
+status=published
 ---------
 
+== Extractor
+
 The Extractor must...
+
+== Plotter
+
+The Plotter will...

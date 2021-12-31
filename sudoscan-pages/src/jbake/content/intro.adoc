@@ -148,7 +148,7 @@ This is a **Classification Problem**, a common kind of problem usually solved wi
 There are tons of ML models trained to accomplish this goal. For this project, I will use the one created in this
 https://www.kaggle.com/pintowar/sudoscan-number-recognizer[Kaggle Notebook].
 
-The model was created using Python/Tensorflow, but it's possible to use the trained model in the JVM world. By the
+The model was created using Python/Keras/Tensorflow, but it's possible to use the trained model in the JVM world. By the
 time this project was developed, there were two promising projects that could use (or even train) an existing
 model to be used by the JVM. They Are:
 
