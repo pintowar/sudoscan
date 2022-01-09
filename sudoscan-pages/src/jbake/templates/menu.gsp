@@ -23,6 +23,9 @@
                 <li>
                     <a href="<% content.rootpath ?: '' %>recognizer.html">Recognizer</a>
                 </li>
+                <li>
+                    <a href="<% content.rootpath ?: '' %>solver.html">Solver</a>
+                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="https://github.com/pintowar"><i class="fa fa-github"></i></a></li>
