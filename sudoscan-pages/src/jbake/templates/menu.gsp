@@ -8,17 +8,20 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="<% if (content.rootpath) { %>${content.rootpath}<% } else { %><% } %>index.html"
+            <a href="<% content.rootpath ?: '' %>index.html"
             class="navbar-brand">Sudoscan</a>
         </div>
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="<% if (content.rootpath) { %>${content.rootpath}<% } else { %><% } %>intro.html">Intro</a>
+                    <a href="<% content.rootpath ?: '' %>intro.html">Intro</a>
                 </li>
                 <li>
                     <a href="<% content.rootpath ?: '' %>extractor.html">Extractor & Plotter</a>
+                </li>
+                <li>
+                    <a href="<% content.rootpath ?: '' %>recognizer.html">Recognizer</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

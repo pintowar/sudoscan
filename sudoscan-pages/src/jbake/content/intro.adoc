@@ -168,8 +168,7 @@ These characteristics make this step a **Constraint Satisfaction Problem**. CSP 
 solved with different tools. It can be solved with pure programming logic, but there are a set of different
 areas that can achieve the same objective using a declarative approach. Constraint Solvers (CS) are pieces of software
 that can model a CSP in a declarative way and then use a solver to find the expected solution. Another declarative
-approach (and more mathematical way) to solve this kind of problem is to model it as a Mixed Integer Problem (MIP),
-and use a MIP solver to find the optimal solution. A comparison between these two approaches can be found in this
+approach (and more mathematical way) to solve this kind of problem is to model it as an Operations Research (OR) Problem, and use a Mixed Integer Programming (MIP) solver to find the optimal solution. A comparison between these two approaches can be found in this
 https://www.kaggle.com/pintowar/modeling-a-sudoku-solver-with-or-tools[Kaggle Notebook].
 
 There are several solvers (commercial/open source) for these approaches. For the JVM, two lightway (and pure java)
