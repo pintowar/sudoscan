@@ -1,14 +1,109 @@
-title=Extractor
+title=Extractor & Plotter
 date=2021-11-05
 type=post
 tags=computer vision, opencv, javacv, artificial intelligence
 status=published
 ---------
 
+Extractor and Plotter are both Sudoscan components responsibles to act on a given image. The Extractor is responsible to "parse" an image and generate a computational representation of the Sudoku Puzzle. While the plotter is responsible to draw the puzzle's solution back to the original image.
+
+Both components dependens on *Image Processing* tasks. This is a process of transforming an image into a digital form and performing certain operations to get some useful information from it.
+
+*OpenCV* is an open-source Image processing library that includes several hundreds of computer vision (CV) algorithms. It is essentially a C++ API, it can perform some real-time operations because it is very fast and lightweight.
+
+Since *OpenCV* is a C++ API, it can't be used directly on JVM, however there are some projects that wraps its native interfaces. The chosen project chosen for Sudoscan was https://github.com/bytedeco/javacv[JavaCV].
+
+*JavaCV* uses wrappers from the https://github.com/bytedeco/javacpp[JavaCPP] of commonly used libraries by researchers in the field of computer vision and provides utility classes to make their functionality easier to use on the Java platform, including Android.
+
+The most appealing reason to use *JavaCV* among all possible alternatives is the use of *JavaCPP* for packing native dependencies (binaries) for different platforms/architectures. To build an application using native binaries for a specific platform, it's just necessary to add an extra configuration during build time. For instance, the command `gradle -PjavacppPlatform=linux-x86_64 build` with only linux-x86_64 binaries on the generated artifact.
+
+The code for both Extractor and Plotter can found be found on https://github.com/pintowar/sudoscan/tree/master/sudoscan-api[sudoscan-api] sub module.
+
 == Extractor
 
-The Extractor must...
+As mentioned above, the Extractor is responsible to "parse" an image. For simplicity, let's assume the given image is the image below:
+
+image::../sudoku01.jpg[Unsolved,320,align="center"]
+
+The "parsing" process can be diveded into 4 different phases:
+
+1. Pre-process image;
+2. Puzzle detection and and frontal perspective;
+3. Grids removal;
+4. Cell split and content enhance.
+
+These phases are decribed in more details on the sections below.
+
+=== Pre-process image
+
+The first step of the entire extraction process consists of simplify the given image. To achieve this state, a series of filter are applied to the image, they are:
+
+* Convert to Grayscale: subsequent steps don’t rely on color;
+* Blur the image: a gaussian blur is applied to reduce noise obtained in thresholding algorithm (adaptive thresholding);
+* Apply Thresholding: separate an image into regions (or their contours), the process is called segmentation. Thresholding is a way to segment such regions;
+* Invert colors: converts white into black and black into white;
+* Dilation: the noise reduction of the applied Gaussian Blur shrinked the object. The dilation is a way to "revert" the shrinkage.
+
+After appling those filters, the image should be transformed into this:
+
+image::../sudoku02.jpg[Filtered,320,align="center"]
+
+=== Puzzle detection and frontal perspective
+
+After pre-process the image, it's time to detect the Sudoku Puzzle on the image. To find it, it was used the *OpenCv*'s `findContours` function. This function will find external contours (boundaries of shapes having the same intensity). The function will find a list of potential objects (polygons) that can be found on the image. However, it's assumed that the given image is focused on a Sudoku Puzzle, therefore the object with the largest area is selected.
+
+With the largest polygon selected, it's time to crop it from the original image and transform the cropped image into a frontal perspective. To achieve the frontal perspective, it was used *OpenCv*'s `getPerspectiveTransform` and `warpPerspective` functions.
+
+After those transformations, the image looks like:
+
+image::../sudoku03.jpg[Perspective,320,align="center"]
+
+=== Grids removal
+
+Now is time to reduce the "noise" from the image, since the objective is to identify all cells content from the image (an empty cell or a numeric cell), the grids are extra visual information that's not important. That being said, it’s useful to get rid of the grid lines.
+
+A structuring element is passed to `erode` and `dilate` in order clean up the grid lines. The function `findContours` is again used but this time with help of `approxPolyDP` to identify the vertical an horizontal lines. With an identified line, a thicker empty rectangle is drawn in order to override the line.
+
+The resulting image of this phase is:
+
+image::../sudoku04.jpg[NoGrids,320,align="center"]
+
+=== Cell split and content enhance
+
+At this point the initial image is completed prepared to be splitted. The image is divided into 81 (9x9) smaller smaller blocks. Every block is used to create a *SudokuCell*.
+
+A *SudokuCell* is a computational reprsentation (a Kotlin class) of a Sudoku cell. This component is capable to identify is a cell is empty (in case at least 10% of total area of the cell has any content) and enhance it's content in case it's not empty.
+
+Merging all cells together after the enchacement generates the following image:
+
+image::../sudoku05.jpg[Enhanced,320,align="center"]
+
+A set of *SudokuCell* is called a *PuzzleCells*. This component can generate a *Puzzle* representation with the help of a *Recognizer*.
 
 == Plotter
 
-The Plotter will...
+While the Extractor uses an image to generate a computational representation (*Puzzle*), the Plotter generate an image from the computational representation, change it's perspective to the same of the original image and finally "paste" the result over the original image.
+
+=== Generate the solution image
+
+After the final solution is found by a *Solver*, the original empty cells are known numbers, With this information, a new image (withe the same size of the frontal perspective image) is generated with the new numbers found in the solution.
+
+The solution image:
+
+image::../sudoku06.jpg[Solved,320,align="center"]
+
+=== Revert perspective
+
+After the solution image is generated, it's perspective must change to "fit" the original perspective of the original image. Again, using *OpenCv*'s `getPerspectiveTransform` and `warpPerspective` functions, a transformed image is generated.
+
+The reverted perspective of the solution image is:
+
+image::../sudoku07.jpg[Solved,320,align="center"]
+
+=== Overlapping solution
+
+The last step of the plotting, consists in overlap the original image with the reverted perspective image. A simple use of *OpenCv*'s `bitwiseAnd` function can handle this operation.
+
+Finally, the final solution can be viewed:
+
+image::../sudoku08.jpg[Solved,320,align="center"]

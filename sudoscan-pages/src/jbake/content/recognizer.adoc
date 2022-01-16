@@ -12,7 +12,7 @@ The goal in Image Classification is to classify a specific picture according to 
 
 In the Sudoscan context, it is possible to use the same principle. However, instead of classify an image into two categories (cats and dogs), it classifies an image into 9 different categories (a range of numbers between 1 and 9).
 
-A very common way to address this kind of problems is the use of Machine Learning techniques. Even under the "Machine Learning Umbrella", there are sereval ways to solve this kind of problem like: K-Nearest Neighbor(KNN), Support Vector Machine (SVM), Artificial Neural Networks (ANN), Decision Trees, Naive Bayes, Logistic Regression, etc.
+A very common way to address this kind of problems is the use of Machine Learning techniques. Even under the "Machine Learning Umbrella", there are sereval ways to solve those problems like: K-Nearest Neighbor(KNN), Support Vector Machine (SVM), Artificial Neural Networks (ANN), Decision Trees, Naive Bayes, Logistic Regression, etc.
 
 Deep learning is part of a broader family of Machine Learning methods based on Artificial Neural Networks. There are several ANN architectures that fits on this ML sub-categories. One of those architectures is known as Convolutional Neural Networks (CNN), a very architecture to handle Image Classification Problems.
 
