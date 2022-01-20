@@ -1,0 +1,80 @@
+title=Engine & Cli
+date=2022-01-16
+type=post
+tags=artificial intelligence, computer vision, machine learning, csp, mip
+status=published
+---------
+
+== Engine
+
+This is the component responsible for using other components like *Extractor*, *Recognizer*, *Solver* and *Plotter*. It glues these components together to create a pipe responsible for the entire process of solving the puzzle from an image.
+
+The Engine can use extra params, they are:
+
+1. solutionColor: the color of solution numbers found by the *Solver*;
+2. recognizedColor: the color of numbers recognized the the *Recognizer*;
+3. debug (default false): if true, the engine will generate a solution with images from the intermediate steps. Case false, only the image from the final step will be generated.
+
+The Engine also uses some fallback mechanism in case a problem occurs, it simply returns the original (unsolved puzzle) image.
+
+The following diagram shows how the Engine ensambles other components in order to generate a final solution.
+
+[plantuml, "engine", "svg"]
+----
+skinparam monochrome true
+scale 120 height
+
+file "Puzzle Image"   as Puzzle
+file "Solution Image" as Solution
+
+folder SudokuEngine {
+  component Extractor
+  component Recognizer
+  component Solver
+  component Plotter
+}
+
+Puzzle -> Extractor
+Extractor -> Recognizer
+Recognizer -> Solver
+Solver -> Plotter
+Plotter -> Solution
+----
+
+The code for the Engine can found be found on https://github.com/pintowar/sudoscan/tree/master/sudoscan-api[sudoscan-api] sub module, on a class called `SudokuEngine`.
+
+== Cli
+
+Sudoscan comes with a command line application. The cli application can be downloaded on this https://github.com/pintowar/sudoscan/releases[link].
+
+The cli application was build using https://picocli.info[picocli] and https://micronaut.io[micronaut] to warp a SudokuEngine and expose it's functionalities through a command line interface. Picocli is an awesome library that allows creating rich command line applications for the JVM. Micronaut is used to enrich the application with auto-generated bean injection, auto-configuration and such.
+
+A Sudoscan cli application con only have a single implementations for *Solver* and *Recognizer*. Since Sudoscan comes with different implementations for both components, a different implementation can be used at build time.
+
+For instance, the following command (executed on project's root) generates a final jar with ojalgo solver and djl recognizer:
+
+`gradle -Pojalgo -Pdjl clean assembleCliApp`
+
+To use generate a version with choco solver and dl4j recognizer no extra param need to be defined (since they're the default components). The following command must be executed:
+
+`gradle clean assembleCliApp`
+
+The code for the cli application can found be found on https://github.com/pintowar/sudoscan/tree/master/sudoscan-cli[sudoscan-cli]
+
+=== Native Cli
+
+Micronaut applications can be ahead-of-time compiled to a GraalVM native image, with extremely fast startup time and lower memory requirements, which can be distributed as a single executable file.
+
+The latest GraalVM version tested was GraalVM CE 21.2.0 (graalvm-21.2.0+java11) which is for Java 11. To build the native image, run the following command on sudoscan-cli module:
+
+`gradle -PjavacppPlatform=linux-x86_64 clean nativeCompile`
+
+== Web Cli
+
+Another honorable mention related do Sudoscan is the https://github.com/pintowar/sudoscan-web[sudoscan-web] project. This is a web version of th Sudoscan Cli (also built with micronaut).
+
+A quick way to see it in action is to use it's docker image build. Just run the following command:
+
+`docker run -p 8080:8080 pintowar/sudoscan-web`
+
+More information about it can be found on it's https://github.com/pintowar/sudoscan-web/blob/master/README.md[README] file.
