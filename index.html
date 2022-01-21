@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Sudoscan</title>
+    <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="pintowar">
@@ -10,19 +10,29 @@
     <meta name="generator" content="JBake">
 
     <!-- Le styles -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/asciidoctor.css" rel="stylesheet">
-    <link href="css/base.css" rel="stylesheet">
-    <link href="css/prettify.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/asciidoctor.css" rel="stylesheet">
+    <link href="/css/base.css" rel="stylesheet">
+    <link href="/css/prettify.css" rel="stylesheet">
 
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="js/html5shiv.min.js"></script>
+      <script src="/js/html5shiv.min.js"></script>
     <![endif]-->
 
     <!-- Fav and touch icons -->
-    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0DNWDTGYP7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-0DNWDTGYP7');
+    </script>
   </head>
   <body onload="prettyPrint()">
     <div id="wrap">
@@ -39,14 +49,25 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="index.html"
-            class="navbar-brand">Sudoscan</a>
+            <a href="/index.html" class="navbar-brand">Sudoscan</a>
         </div>
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="intro.html">Intro</a>
+                    <a href="/intro.html">Intro</a>
+                </li>
+                <li>
+                    <a href="/engine.html">Engine & Cli</a>
+                </li>
+                <li>
+                    <a href="/extractor.html">Extractor & Plotter</a>
+                </li>
+                <li>
+                    <a href="/recognizer.html">Recognizer</a>
+                </li>
+                <li>
+                    <a href="/solver.html">Solver</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -61,82 +82,86 @@
 
 	<div class="page-header">
         <div class="row">
-            <div class="col-xs-12 col-md-8"><h1>Sudoscan Pages</h1></div>
+            <div class="col-xs-12 col-md-8"><h1>Sudoscan Project</h1></div>
         </div>
 	</div>
 
     <div class="row">
-
         <div class="col-sm-8">
+            <p>A quick view on Sudoscan in action can be seen in this video:</p>
+        </div>
+    </div>
 
-            
-                
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2">
+            <div class="videoblock text-center">
+                <div class="content">
+                    <iframe width="640" height="480" src="https://www.youtube.com/embed/8D4gMhDRu-U?rel=0"
+                        frameborder="0" allowfullscreen=""></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col-sm-8">
             
+            
+
+            <p>
+                This blog contains a series of posts related to the creation of the Sudoscan Project.
+                The posts should be read in the following order:
+            </p>
+
+            <ol>
                 
-                    <div  itemscope itemtype="http://schema.org/Blog">
-                        <div itemprop="author" itemscope itemtype="http://schema.org/Person">
-                            <meta itemprop="name" content="Yan Bonnel"/>
-                        </div>
-                        <meta itemprop="inLanguage" content="en-US"/>
-                        <a itemprop="url" href="intro.html">
-                            <h1 itemprop="name">Intro</h1>
-                        </a>
+                    <li>
+                        <a itemprop="url" href="intro.html">Intro</a>
                         <p>
-                            <time itemprop="datePublished"
-                                  datetime="2021-11-05">
-                                05 November 2021
-                            </time>
-                             - Tags :
+                            Tags:
                             <meta itemprop="keywords" content="artificial intelligence,computer vision,machine learning,csp,mip"/>
                             <a href="tags/artificial intelligence.html">artificial intelligence</a>, <a href="tags/computer vision.html">computer vision</a>, <a href="tags/machine learning.html">machine learning</a>, <a href="tags/csp.html">csp</a>, <a href="tags/mip.html">mip</a>
                         </p>
-
-                        
-
-                        <div itemprop="blogPost">
-                            <p><div class="paragraph">
-<p>A while ago, I was talking to some co-workers about how AI is trendy these days! However, I realized 2 interesting
-facts:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Most of my friends with strong <strong>Software Engineering</strong> backgrounds have little or very superficial knowledge of
-AI/ML;</p>
-</li>
-<li>
-<p>Most of my friends with strong <strong>Data Science</strong> backgrounds don&#8217;t know how to build a product with the models
-they create.</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>Looking at this scenario, I decided that I could create a project to help build a bridge between these worlds. So,
-after seeing my girlfriend playing with some Sudoku puzzles, I realized this could be the perfect excuse for my plan.</p>
-</div>
-<div class="paragraph">
-<p>After some research, I found that my idea was not that original. However, I was motivated and determined to continue
-with the project, but with my personal touch.
-Also, I hoped that by building this project I would be able to learn new tools/techniques and how to use them in an
-environment I was already familiar with. I can say that some time after starting the project, my expectations
-were surpassed. I learned a lot of new things and hope to share some of the lessons I learned during this journey.</p>
-</div>
-<div class="paragraph">
-<p></p>
-                            <p><a itemprop="readMore" href="intro.html">Read more</a></p>
-                        </div>
-                        
-                    </div>
+                    </li>
                 
-
-            
-
-            <hr />
-
+                    <li>
+                        <a itemprop="url" href="engine.html">Engine & Cli</a>
+                        <p>
+                            Tags:
+                            <meta itemprop="keywords" content="artificial intelligence"/>
+                            <a href="tags/artificial intelligence.html">artificial intelligence</a>
+                        </p>
+                    </li>
+                
+                    <li>
+                        <a itemprop="url" href="extractor.html">Extractor & Plotter</a>
+                        <p>
+                            Tags:
+                            <meta itemprop="keywords" content="computer vision,opencv,javacv,artificial intelligence"/>
+                            <a href="tags/computer vision.html">computer vision</a>, <a href="tags/opencv.html">opencv</a>, <a href="tags/javacv.html">javacv</a>, <a href="tags/artificial intelligence.html">artificial intelligence</a>
+                        </p>
+                    </li>
+                
+                    <li>
+                        <a itemprop="url" href="recognizer.html">Recognizer</a>
+                        <p>
+                            Tags:
+                            <meta itemprop="keywords" content="tensorflow,machine learning,deep learning,artificial intelligence"/>
+                            <a href="tags/tensorflow.html">tensorflow</a>, <a href="tags/machine learning.html">machine learning</a>, <a href="tags/deep learning.html">deep learning</a>, <a href="tags/artificial intelligence.html">artificial intelligence</a>
+                        </p>
+                    </li>
+                
+                    <li>
+                        <a itemprop="url" href="solver.html">Solver</a>
+                        <p>
+                            Tags:
+                            <meta itemprop="keywords" content="choco-solver,ojAlgo,csp,mip,operations research,artificial intelligence"/>
+                            <a href="tags/choco-solver.html">choco-solver</a>, <a href="tags/ojAlgo.html">ojAlgo</a>, <a href="tags/csp.html">csp</a>, <a href="tags/mip.html">mip</a>, <a href="tags/operations research.html">operations research</a>, <a href="tags/artificial intelligence.html">artificial intelligence</a>
+                        </p>
+                    </li>
+                
+            </ol>
         </div>
-
-
     </div>
 
 		</div>
@@ -153,19 +178,9 @@ were surpassed. I learned a lot of new things and hope to share some of the less
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery-1.11.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/prettify.js"></script>
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0DNWDTGYP7"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-0DNWDTGYP7');
-    </script>
+    <script src="/js/jquery-1.11.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/prettify.js"></script>
 
   </body>
 </html>

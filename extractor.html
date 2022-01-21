@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="pintowar">
+    <meta name="keywords" content="">
+    <meta name="generator" content="JBake">
+
+    <!-- Le styles -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/asciidoctor.css" rel="stylesheet">
+    <link href="/css/base.css" rel="stylesheet">
+    <link href="/css/prettify.css" rel="stylesheet">
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="/js/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0DNWDTGYP7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-0DNWDTGYP7');
+    </script>
+  </head>
+  <body onload="prettyPrint()">
+    <div id="wrap">
+
+
+
+	<!-- Fixed navbar -->
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/index.html" class="navbar-brand">Sudoscan</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/intro.html">Intro</a>
+                </li>
+                <li>
+                    <a href="/engine.html">Engine & Cli</a>
+                </li>
+                <li>
+                    <a href="/extractor.html">Extractor & Plotter</a>
+                </li>
+                <li>
+                    <a href="/recognizer.html">Recognizer</a>
+                </li>
+                <li>
+                    <a href="/solver.html">Solver</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="https://github.com/pintowar"><i class="fa fa-github"></i></a></li>
+              <li><a href="https://twitter.com/pintowar"><i class="fa fa-twitter"></i></a>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</div>
+<div class="container">
+
+
+	<div class="page-header">
+		<h1>Extractor & Plotter</h1>
+	</div>
+
+	<p><em>05 November 2021</em></p>
+
+	<p><div class="paragraph">
+<p>Extractor and Plotter are both Sudoscan components responsible for acting on a given image. The Extractor is responsible to "parse" an image and generate a computational representation of the Sudoku Puzzle. While the plotter is responsible to draw the puzzle&#8217;s solution back to the original image.</p>
+</div>
+<div class="paragraph">
+<p>Both components dependens on <strong>Image Processing</strong> tasks. This is a process of transforming an image into a digital form and performing certain operations to get some useful information from it.</p>
+</div>
+<div class="paragraph">
+<p><strong>OpenCV</strong> is an open-source Image processing library that includes several hundreds of computer vision (CV) algorithms. It is essentially a C++ API, it can perform some real-time operations because it is very fast and lightweight.</p>
+</div>
+<div class="paragraph">
+<p>Since <strong>OpenCV</strong> is a C++ API, it can&#8217;t be used directly on JVM, however there are some projects that wraps its native interfaces. The chosen project chosen for Sudoscan was <a href="https://github.com/bytedeco/javacv">JavaCV</a>.</p>
+</div>
+<div class="paragraph">
+<p><strong>JavaCV</strong> uses wrappers from the <a href="https://github.com/bytedeco/javacpp">JavaCPP</a> of commonly used libraries by researchers in the field of computer vision and provides utility classes to make their functionality easier to use on the Java platform, including Android.</p>
+</div>
+<div class="paragraph">
+<p>The most appealing reason to use <strong>JavaCV</strong> among all possible alternatives is the use of <strong>JavaCPP</strong> for packing native dependencies (binaries) for different platforms/architectures. To build an application using native binaries for a specific platform, it&#8217;s just necessary to add an extra configuration during build time. For instance, the command <code>gradle -PjavacppPlatform=linux-x86_64 build</code> with only linux-x86_64 binaries on the generated artifact.</p>
+</div>
+<div class="paragraph">
+<p>The code for both Extractor and Plotter can found be found on <a href="https://github.com/pintowar/sudoscan/tree/master/sudoscan-api">sudoscan-api</a> sub module.</p>
+</div>
+<div class="sect1">
+<h2 id="_extractor">Extractor</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As mentioned above, the <strong>Extractor</strong> is responsible for "parsing" an image. For simplicity, let&#8217;s assume the given image is the image below:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="imgs/sudoku01.jpg" alt="Unsolved" width="320">
+</div>
+</div>
+<div class="paragraph">
+<p>The "parsing" process can be diveded into 4 different phases:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Pre-process image;</p>
+</li>
+<li>
+<p>Puzzle detection and and frontal perspective;</p>
+</li>
+<li>
+<p>Grids removal;</p>
+</li>
+<li>
+<p>Cell split and content enhance.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>These phases are described in more detail in the sections below.</p>
+</div>
+<div class="sect2">
+<h3 id="_pre_process_image">Pre-process image</h3>
+<div class="paragraph">
+<p>The first step of the entire extraction process consists of simplifying the given image. To achieve this state, a series of filters are applied to the image, they are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Convert to Grayscale: subsequent steps don’t rely on color;</p>
+</li>
+<li>
+<p>Blur the image: a gaussian blur is applied to reduce noise obtained in the thresholding algorithm (adaptive thresholding);</p>
+</li>
+<li>
+<p>Apply Thresholding: separate an image into regions (or their contours). The process is called segmentation. Thresholding is a way to segment such regions;</p>
+</li>
+<li>
+<p>Invert colors: converts white into black and black into white;</p>
+</li>
+<li>
+<p>Dilation: the noise reduction of the applied Gaussian Blur shrinks the object. The dilation is a way to "revert" the shrinkage.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>After applying those filters, the image should be transformed into this:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="imgs/sudoku02.jpg" alt="Filtered" width="320">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_puzzle_detection_and_frontal_perspective">Puzzle detection and frontal perspective</h3>
+<div class="paragraph">
+<p>After preprocessing the image, it&#8217;s time to detect the Sudoku Puzzle in the image. To find it, it was used the <strong>OpenCv</strong>'s <code>findContours</code> function. This function will find external contours (boundaries of shapes having the same intensity). The function will find a list of potential objects (polygons) that can be found in the image. However, it&#8217;s assumed that the given image is focused on a Sudoku Puzzle, so the object with the largest area is selected.</p>
+</div>
+<div class="paragraph">
+<p>With the largest polygon selected, it&#8217;s time to crop it from the original image and transform the cropped image into a frontal perspective. To achieve the frontal perspective, it was used <strong>OpenCv</strong>'s <code>getPerspectiveTransform</code> and <code>warpPerspective</code> functions.</p>
+</div>
+<div class="paragraph">
+<p>After those transformations, the image looks like this:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="imgs/sudoku03.jpg" alt="Perspective" width="320">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_grids_removal">Grids removal</h3>
+<div class="paragraph">
+<p>Now is time to reduce the "noise" from the image. Since the objective is to identify all cells' content from the image (an empty cell or a numeric cell), the grids are extra visual information that&#8217;s not important. That being said, it’s useful to get rid of the grid lines.</p>
+</div>
+<div class="paragraph">
+<p>A structuring element is passed to <code>erode</code> and <code>dilate</code> in order to clean up the grid lines. The function <code>findContours</code> is again used, but this time with the help of <code>approxPolyDP</code> to identify the vertical and horizontal lines. With an identified line, a thicker empty rectangle is drawn in order to override the line.</p>
+</div>
+<div class="paragraph">
+<p>The resulting image of this phase is:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="imgs/sudoku04.jpg" alt="NoGrids" width="320">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cell_split_and_content_enhance">Cell split and content enhance</h3>
+<div class="paragraph">
+<p>At this point, the initial image is completed and prepared to be split. The image is divided into 81 (9x9) smaller blocks. Every block is used to create a <strong>SudokuCell</strong>.</p>
+</div>
+<div class="paragraph">
+<p>A <strong>SudokuCell</strong> is a computational representation (a Kotlin class) of a Sudoku cell. This component is capable of identifying if a cell is empty (in case at least 10% of the total area of the cell has any content) and enhancing its content in case it’s not empty.</p>
+</div>
+<div class="paragraph">
+<p>Merging all cells together after the enchacement generates the following image:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="imgs/sudoku05.jpg" alt="Enhanced" width="320">
+</div>
+</div>
+<div class="paragraph">
+<p>A set of <strong>SudokuCell</strong> is called a <strong>PuzzleCells</strong>. This component can generate a <strong>Puzzle</strong> representation with the help of a <strong>Recognizer</strong>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_plotter">Plotter</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>While the Extractor uses an image to generate a computational representation (<strong>Puzzle</strong>), the Plotter generate an image from the computational representation, change it&#8217;s perspective to the same of the original image and finally "paste" the result over the original image.</p>
+</div>
+<div class="sect2">
+<h3 id="_generate_the_solution_image">Generate the solution image</h3>
+<div class="paragraph">
+<p>After the final solution is found by a <strong>Solver</strong>, the original empty cells are known numbers. With this information, a new image (with the same size as the frontal perspective image) is generated with the new numbers found in the solution.</p>
+</div>
+<div class="paragraph">
+<p>The solution image:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="imgs/sudoku06.jpg" alt="Solved" width="320">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_revert_perspective">Revert perspective</h3>
+<div class="paragraph">
+<p>After the solution image is generated, it&#8217;s perspective must change to "fit" the original perspective of the original image. Again, using <strong>OpenCv</strong>'s <code>getPerspectiveTransform</code> and <code>warpPerspective</code> functions, a transformed image is generated.</p>
+</div>
+<div class="paragraph">
+<p>The reverted perspective of the solution image is:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="imgs/sudoku07.jpg" alt="Solved" width="320">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_overlapping_solution">Overlapping solution</h3>
+<div class="paragraph">
+<p>The last step of the plotting consists of overlapping the original image with the reverted perspective image. A simple use of <strong>OpenCv</strong>'s <code>bitwiseAnd</code> function can handle this operation.</p>
+</div>
+<div class="paragraph">
+<p>Finally, the final solution can be viewed as:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="imgs/sudoku08.jpg" alt="Solved" width="320">
+</div>
+</div>
+</div>
+</div>
+</div></p>
+
+	<hr />
+
+		</div>
+		<div id="push"></div>
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p class="muted credit">All posts on this blog are published with a <em>Creative Commons by-nc-sa</em> license.<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/fr/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/2.0/fr/88x31.png"/></a></p>
+        <p class="muted credit">&copy; 2021 | Mixed with <a href="http://twitter.github.com/bootstrap/">Bootstrap v3.0.3</a> | Baked with <a href="http://jbake.org">JBake v2.6.6</a></p>
+      </div>
+    </div>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/js/jquery-1.11.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/prettify.js"></script>
+
+  </body>
+</html>
+

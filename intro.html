@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Intro</title>
+    <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="pintowar">
@@ -10,19 +10,29 @@
     <meta name="generator" content="JBake">
 
     <!-- Le styles -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/asciidoctor.css" rel="stylesheet">
-    <link href="css/base.css" rel="stylesheet">
-    <link href="css/prettify.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/asciidoctor.css" rel="stylesheet">
+    <link href="/css/base.css" rel="stylesheet">
+    <link href="/css/prettify.css" rel="stylesheet">
 
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="js/html5shiv.min.js"></script>
+      <script src="/js/html5shiv.min.js"></script>
     <![endif]-->
 
     <!-- Fav and touch icons -->
-    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0DNWDTGYP7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-0DNWDTGYP7');
+    </script>
   </head>
   <body onload="prettyPrint()">
     <div id="wrap">
@@ -39,14 +49,25 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="index.html"
-            class="navbar-brand">Sudoscan</a>
+            <a href="/index.html" class="navbar-brand">Sudoscan</a>
         </div>
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="intro.html">Intro</a>
+                    <a href="/intro.html">Intro</a>
+                </li>
+                <li>
+                    <a href="/engine.html">Engine & Cli</a>
+                </li>
+                <li>
+                    <a href="/extractor.html">Extractor & Plotter</a>
+                </li>
+                <li>
+                    <a href="/recognizer.html">Recognizer</a>
+                </li>
+                <li>
+                    <a href="/solver.html">Solver</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -66,47 +87,33 @@
 	<p><em>05 November 2021</em></p>
 
 	<p><div class="paragraph">
-<p>A while ago, I was talking to some co-workers about how AI is trendy these days! However, I realized 2 interesting
-facts:</p>
+<p>A while ago, I was talking to some co-workers about how AI is trendy these days! However, I realized 2 interesting facts:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Most of my friends with strong <strong>Software Engineering</strong> backgrounds have little or very superficial knowledge of
-AI/ML;</p>
+<p>Most of my friends with strong <strong>Software Engineering</strong> backgrounds have little or very superficial knowledge of AI/ML;</p>
 </li>
 <li>
-<p>Most of my friends with strong <strong>Data Science</strong> backgrounds don&#8217;t know how to build a product with the models
-they create.</p>
+<p>Most of my friends with strong <strong>Data Science</strong> backgrounds don&#8217;t know how to build a product with the models they create.</p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>Looking at this scenario, I decided that I could create a project to help build a bridge between these worlds. So,
-after seeing my girlfriend playing with some Sudoku puzzles, I realized this could be the perfect excuse for my plan.</p>
+<p>Looking at this scenario, I decided that I could create a project to help build a bridge between these worlds. So, after seeing my girlfriend playing with some Sudoku puzzles, I realized this could be the perfect excuse for my plan.</p>
 </div>
 <div class="paragraph">
-<p>After some research, I found that my idea was not that original. However, I was motivated and determined to continue
-with the project, but with my personal touch.
-Also, I hoped that by building this project I would be able to learn new tools/techniques and how to use them in an
-environment I was already familiar with. I can say that some time after starting the project, my expectations
-were surpassed. I learned a lot of new things and hope to share some of the lessons I learned during this journey.</p>
-</div>
-<div class="paragraph">
-<p></p>
+<p>After some research, I found that my idea was not that original. However, I was motivated and determined to continue with the project, but with my personal touch.
+Also, I hoped that by building this project I would be able to learn new tools/techniques and how to use them in an environment I was already familiar with. I can say that some time after starting the project, my expectations were surpassed. I learned a lot of new things and I hope to share some of the lessons I learned during this journey.</p>
 </div>
 <div class="sect1">
 <h2 id="_what_is_a_sudoku_puzzle">What is a Sudoku Puzzle?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Sudoku is a mathematical game that was invented in the late 1970s, became popular in Japan in the 1980s and became known
-internationally in 2005 when numerous newspapers began publishing it in their hobbies section.</p>
+<p>Sudoku is a mathematical game that was invented in the late 1970s, became popular in Japan in the 1980s and became known internationally in 2005 when numerous newspapers began publishing it in their hobbies section.</p>
 </div>
 <div class="paragraph">
-<p>The objective of the game is to place numbers from 1 to 9 in each of the empty cells in a 9x9 grid, consisting of 3x3
-subgrades called regions. The puzzle contains some initial clues, which are numbers inserted into some cells, to allow
-an induction or deduction of numbers into empty cells. Each column, row, and region can only have a number from
-each of 1 through 9.</p>
+<p>The objective of the game is to place numbers from 1 to 9 in each of the empty cells in a 9x9 grid, consisting of 3x3 subgrades called regions. The puzzle contains some initial clues, which are numbers inserted into some cells, to allow an induction or deduction of numbers into empty cells. Each column, row, and region can only have a number from 1 through 9.</p>
 </div>
 <div class="paragraph">
 <p>For instance, given the initial Sudoku state:</p>
@@ -130,9 +137,7 @@ each of 1 through 9.</p>
 <h2 id="_objective_and_steps">Objective and Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The main objective was to build a Service that could read a Sudoku puzzle image, <strong>identify the puzzle board</strong>,
-<strong>recognize the puzzle numbers</strong>, <strong>solve the puzzle</strong>, <strong>plot the result over the original image</strong> and send the
-new image (with the solution) back to the user.</p>
+<p>The main objective was to build a service that could read a Sudoku puzzle image, <strong>identify the puzzle board</strong>, <strong>recognize the puzzle numbers</strong>, <strong>solve the puzzle</strong>, <strong>plot the result over the original image</strong>, and send the new image (with the solution) back to the user.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -143,10 +148,7 @@ new image (with the solution) back to the user.</p>
 <p>After the silly design of the main service, came the fundamental question of the project: how the hell do all the rest?</p>
 </div>
 <div class="paragraph">
-<p>To get to an answer to this question, let&#8217;s start with small steps. The first thought is to build a pipe, to convert
-the image into a puzzle representation (object), from this representation find a solution and covert the solution to
-a final image. The diagram below shows the big picture of this pipe. At this point, there are three main components
-acting on the process: <strong>Converter</strong>, <strong>Solver</strong> and <strong>Plotter</strong>.</p>
+<p>To get an answer to this question, let&#8217;s start with small steps. The first thought is to build a pipe, to convert the image into a puzzle representation (object), from this representation, find a solution, and covert the solution to a final image. The diagram below shows the big picture of this pipe. At this point, there are three main components acting on the process: <strong>Converter</strong>, <strong>Solver</strong> and <strong>Plotter</strong>.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -166,56 +168,34 @@ acting on the process: <strong>Converter</strong>, <strong>Solver</strong> and <
 </li>
 </ol>
 </div>
-<div class="paragraph">
-<p>With that in mind, we can generate a diagram of an engine responsible for running all the discussed steps.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="imgs/diagrams/engine.svg" alt="engine" width="813" height="121">
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_approaches_and_tools">Approaches and Tools</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In this section, let&#8217;s dive into the engine&#8217;s components and have a better understanding of the nature of the problem
-and what tools and techniques are more appropriate to handle each one. Due to my experience with JVM as a Web Developer,
-I decided to investigate the platform&#8217;s AI/ML tools. Also, since the Kotlin language is becoming more popular, it will
-be used in the project.</p>
+<p>In this section, let&#8217;s dive into the engine&#8217;s components and get a better understanding of the nature of the problem and what tools and techniques are more appropriate to handle each one. Due to my experience with JVM as a Web Developer, I decided to investigate the platform&#8217;s AI/ML tools. Also, since the Kotlin language is becoming more popular, it will be used in the project.</p>
 </div>
 <div class="sect2">
 <h3 id="_extractor">Extractor</h3>
 <div class="paragraph">
-<p>The main objective of the Extractor is to identify a Sudoku board on an image and break it down into 81 (9 x 9) images
-for every cell in this puzzle. To achieve this goal, the Extractor needs to detect the borders of a sudoku, change it&#8217;s
-perspective to a frontal view, apply some filters to clean the image and crop the image into 81 different pieces.</p>
+<p>The main objective of the Extractor is to identify a Sudoku board in an image and break it down into 81 (9 x 9) images for every cell in this puzzle. To achieve this goal, the Extractor needs to detect the borders of a sudoku, change its perspective to a frontal view, apply some filters to clean the image, and crop the image into 81 different pieces.</p>
 </div>
 <div class="paragraph">
-<p>This is basically a <strong>Computer Vision Problem</strong>. OpenCV is an open-source library that includes several hundreds of
-computer vision (CV) algorithms. It is essentially a C++ API, but there are some Java APIs that can use it&#8217;s native
-interfaces. I found some different ports of OpenCv to Java, but the <a href="https://github.com/bytedeco/javacv">JavaCv</a> lib
-turned out to be a good option, especially for its ease of use with build tools (Gradle, Maven). Its ability to generate
-artifacts for each platform (Linux, Windows, and Macos) is particularly noteworthy.</p>
+<p>This is basically a <strong>Computer Vision Problem</strong>. OpenCV is an open-source library that includes several hundred of computer vision (CV) algorithms. It is essentially a C++ API, but there are some Java APIs that can use its native interfaces. I found some different ports of OpenCv to Java, but the <a href="https://github.com/bytedeco/javacv">JavaCv</a> lib turned out to be a good option, especially for its ease of use with build tools (Gradle, Maven). Its ability to generate artifacts for each platform (Linux, Windows, and Macos) is particularly noteworthy.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_recognizer">Recognizer</h3>
 <div class="paragraph">
-<p>The Recognizer is responsible for converting a Sudoku cell (whenever it&#8217;s empty or with a number image) into
-computational numerical information. Since the Sudoku cells have a pre-defined range of possible numbers, the recognizer
-can use a model to classify an image into a number between 1-9.</p>
+<p>The Recognizer is responsible for converting a Sudoku cell (whenever it&#8217;s empty or with a number image) into computational numerical information. Since the Sudoku cells have a pre-defined range of possible numbers, the recognizer can use a model to classify an image into a number between 1-9.</p>
 </div>
 <div class="paragraph">
 <p>This is a <strong>Classification Problem</strong>, a common kind of problem usually solved with Machine Learning models.
-There are tons of ML models trained to accomplish this goal. For this project, I will use the one created in this
-<a href="https://www.kaggle.com/pintowar/sudoscan-number-recognizer">Kaggle Notebook</a>.</p>
+There are tons of ML models trained to accomplish this goal. For this project, I will use the one created in this <a href="https://www.kaggle.com/pintowar/sudoscan-number-recognizer">Kaggle Notebook</a>.</p>
 </div>
 <div class="paragraph">
-<p>The model was created using Python/Tensorflow, but it&#8217;s possible to use the trained model in the JVM world. By the
-time this project was developed, there were two promising projects that could use (or even train) an existing
-model to be used by the JVM. They Are:</p>
+<p>The model was created using Python/Keras/Tensorflow, but it&#8217;s possible to use the trained model in the JVM world. By the time this project was developed, there were two promising projects that could use (or even train) an existing model to be used by the JVM. They Are:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -234,23 +214,13 @@ model to be used by the JVM. They Are:</p>
 <div class="sect2">
 <h3 id="_solver">Solver</h3>
 <div class="paragraph">
-<p>The Solver is responsible for reading a computational representation of an <strong>Unsolved Puzzle</strong> puzzle and generating a
-computational representation of a <strong>Solved Puzzle</strong>. The puzzle consists of 81 (9 x 9) Digits (previously
-discovered by a Recognizer from a Sudoku cell). A Sudoku Puzzle contains a set of variables, a set of constraints and
-functions that maps each variable to a finite domain.</p>
+<p>The Solver is responsible for reading a computational representation of an <strong>Unsolved Puzzle</strong> puzzle and generating a computational representation of a <strong>Solved Puzzle</strong>. The puzzle consists of 81 (9 x 9) <strong>Digits</strong> (previously discovered by a Recognizer from a Sudoku cell). A Sudoku puzzle contains a set of variables, a set of constraints and functions that maps each variable to a finite domain.</p>
 </div>
 <div class="paragraph">
-<p>These characteristics make this step a <strong>Constraint Satisfaction Problem</strong>. CSP is a class of problem that can be
-solved with different tools. It can be solved with pure programming logic, but there are a set of different
-areas that can achieve the same objective using a declarative approach. Constraint Solvers (CS) are pieces of software
-that can model a CSP in a declarative way and then use a solver to find the expected solution. Another declarative
-approach (and more mathematical way) to solve this kind of problem is to model it as a Mixed Integer Problem (MIP),
-and use a MIP solver to find the optimal solution. A comparison between these two approaches can be found in this
-<a href="https://www.kaggle.com/pintowar/modeling-a-sudoku-solver-with-or-tools">Kaggle Notebook</a>.</p>
+<p>These characteristics make this step a <strong>Constraint Satisfaction Problem</strong>. CSP is a class of problem that can be solved with different tools. It can be solved with pure programming logic, but there are a set of different areas that can achieve the same objective using a declarative approach. Constraint Solvers (CS) are pieces of software that can model a CSP in a declarative way and then use a solver to find the expected solution. Another declarative approach (and more mathematical way) to solve this kind of problem is to model it as an Operations Research (OR) problem, and use a Mixed Integer Programming (MIP) solver to find the optimal solution. A comparison between these two approaches can be found in this <a href="https://www.kaggle.com/pintowar/modeling-a-sudoku-solver-with-or-tools">Kaggle Notebook</a>.</p>
 </div>
 <div class="paragraph">
-<p>There are several solvers (commercial/open source) for these approaches. For the JVM, two lightway (and pure java)
-implementations are:</p>
+<p>There are several solvers (commercial/open source) for these approaches. For the JVM, two lightway (and pure java) implementations are:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -269,19 +239,16 @@ implementations are:</p>
 <div class="sect2">
 <h3 id="_plotter">Plotter</h3>
 <div class="paragraph">
-<p>The main objective of the Plotter is to "paint" (or plot) the actual Sudoku solution back to its original image. It&#8217;s
-a way to combine real world information (the Sudoku board image) with virtual generated data.</p>
+<p>The main objective of the Plotter is to "paint" (or plot) the actual Sudoku solution back to its original image. It&#8217;s a way to combine real world information (the Sudoku board image) with virtual generated data.</p>
 </div>
 <div class="paragraph">
-<p>This is also a <strong>Computer Vision Problem</strong> and as discussed before (in the Extractor sub section), the tool used for
-this task is the <a href="https://github.com/bytedeco/javacv">JavaCv</a> lib.</p>
+<p>This is also a <strong>Computer Vision Problem</strong> and as discussed before (in the <strong>Extractor</strong> sub section), the tool used for this task is the <a href="https://github.com/bytedeco/javacv">JavaCv</a> lib.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_sudoku_engine">Sudoku Engine</h3>
 <div class="paragraph">
-<p>This is the piece of software that uses all the previously described components and glues them together to generate the
-main component responsible for the full process.</p>
+<p>This is the component that uses all the previously described components and glues them together to generate the main component responsible for the full process.</p>
 </div>
 </div>
 </div>
@@ -303,19 +270,9 @@ main component responsible for the full process.</p>
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery-1.11.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/prettify.js"></script>
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0DNWDTGYP7"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-0DNWDTGYP7');
-    </script>
+    <script src="/js/jquery-1.11.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/prettify.js"></script>
 
   </body>
 </html>

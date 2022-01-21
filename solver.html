@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="pintowar">
+    <meta name="keywords" content="">
+    <meta name="generator" content="JBake">
+
+    <!-- Le styles -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/asciidoctor.css" rel="stylesheet">
+    <link href="/css/base.css" rel="stylesheet">
+    <link href="/css/prettify.css" rel="stylesheet">
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="/js/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0DNWDTGYP7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-0DNWDTGYP7');
+    </script>
+  </head>
+  <body onload="prettyPrint()">
+    <div id="wrap">
+
+
+
+	<!-- Fixed navbar -->
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/index.html" class="navbar-brand">Sudoscan</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/intro.html">Intro</a>
+                </li>
+                <li>
+                    <a href="/engine.html">Engine & Cli</a>
+                </li>
+                <li>
+                    <a href="/extractor.html">Extractor & Plotter</a>
+                </li>
+                <li>
+                    <a href="/recognizer.html">Recognizer</a>
+                </li>
+                <li>
+                    <a href="/solver.html">Solver</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="https://github.com/pintowar"><i class="fa fa-github"></i></a></li>
+              <li><a href="https://twitter.com/pintowar"><i class="fa fa-twitter"></i></a>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</div>
+<div class="container">
+
+
+	<div class="page-header">
+		<h1>Solver</h1>
+	</div>
+
+	<p><em>09 January 2022</em></p>
+
+	<p><div class="paragraph">
+<p>In Sudoscan&#8217;s context, the process of solving a Sudoku puzzle is the main goal of a <strong>Solver</strong>.</p>
+</div>
+<div class="paragraph">
+<p>A quick recap: In the Sudoku puzzle, every empty box must be filled with an integer between 1 and 9 in such a way that every number from 1 to 9 appears once in every row, every column, and every one of the small 3 by 3 boxes (regions).</p>
+</div>
+<div class="paragraph">
+<p>There are several ways to solve a Sudoku puzzle. One of the most common solutions is to write it from scratch using a preferred programming language. One of the most famous implementations of a Sudoku solver is <a href="https://norvig.com/sudoku.html">Peter Norvig&#8217;s python implementation</a>.</p>
+</div>
+<div class="paragraph">
+<p>However, a Sudoku puzzle has some special characteristics like a set of variables (empty cells of the puzzle), a set of constraints (the unique appearance of a number in every row, column, and region) and functions that maps each variable to a finite domain.</p>
+</div>
+<div class="paragraph">
+<p>These characteristics place a Sudoku puzzle description in the <strong>Constraint Satisfaction Problem</strong> (CSP) category. Constraint Solvers are tools able to model a CSP in a declarative way with solvers that can search for a solution in a "smart way".</p>
+</div>
+<div class="paragraph">
+<p>Also, these same characteristics can be modeled on a more mathematical approach using Operations Research techniques. Since the problem can be formulated  in terms of a linear objective function and linear inequality constraints, Linear Programming (LP) can be a powerful tool for finding optimal solutions. A Mixed Integer Programming (MIP) is a special case of LP, where some of its variables are integer numbers.</p>
+</div>
+<div class="paragraph">
+<p>Sudoscan provides solvers that use both CSP and MIP modeling. There are several projects that can handle modeling in a declarative way and also solve them. One good mention is <a href="https://developers.google.com/optimization/">OR-Tools</a>. OR-Tools has support to work with both approaches. However, since it&#8217;s not a native java (JVM) implementation, it wasn&#8217;t used on the Sudoscan project. At the time of writing the project, two good projects to work on with both approaches were:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#_choco_solver">Choco Solver</a> for CSP;</p>
+</li>
+<li>
+<p><a href="#_ojalgo">ojAlgo</a> for MIP.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A more detailed comparison between CSP and MIP modeling can be found in this <a href="https://www.kaggle.com/pintowar/modeling-a-sudoku-solver-with-or-tools">Kaggle Notebook</a>. This notebook uses OR-Tools for modeling and comparing the solution time.</p>
+</div>
+<div class="paragraph">
+<p>Sudoscan can use only one of the implementations per execution. The current implementation can be defined at compile time (the default implementation is the Choco Solver one). To learn more about how each implementation can be used, check out <a href="https://github.com/pintowar/sudoscan#building-project">this link</a>.</p>
+</div>
+<div class="sect1">
+<h2 id="_choco_solver">Choco Solver</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Choco is an Open-Source Java library dedicated to Constraint Programming.
+The user models its problem in a declarative way by stating the set of constraints that need to be satisfied in every solution.
+Then, the problem is solved by alternating constraint filtering algorithms with a search mechanism.</p>
+</div>
+<div class="paragraph">
+<p>To see how Choco Solver was used on Sudoscan, checkout the <a href="https://github.com/pintowar/sudoscan/tree/master/sudoscan-solver-choco">sudoscan-solver-choco</a> submodule. This is a small module containing a Solver implementation that uses Choco Solver.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ojalgo">ojAlgo</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>OjAlgo is a fast pure Java linear algebra library available.</p>
+</div>
+<div class="paragraph">
+<p>Optimisation (mathematical programming) tools including LP, QP and MIP solvers. This is pure Java with zero dependencies.</p>
+</div>
+<div class="paragraph">
+<p>To see how ojAlgo was used on Sudoscan, checkout <a href="https://github.com/pintowar/sudoscan/tree/master/sudoscan-solver-ojalgo">sudoscan-solver-ojalgo</a> sub module. This is a small module containing a Solver implementation that uses ojAlgo.</p>
+</div>
+</div>
+</div></p>
+
+	<hr />
+
+		</div>
+		<div id="push"></div>
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p class="muted credit">All posts on this blog are published with a <em>Creative Commons by-nc-sa</em> license.<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/fr/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/2.0/fr/88x31.png"/></a></p>
+        <p class="muted credit">&copy; 2021 | Mixed with <a href="http://twitter.github.com/bootstrap/">Bootstrap v3.0.3</a> | Baked with <a href="http://jbake.org">JBake v2.6.6</a></p>
+      </div>
+    </div>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/js/jquery-1.11.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/prettify.js"></script>
+
+  </body>
+</html>
+

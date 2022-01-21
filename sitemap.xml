@@ -3,7 +3,27 @@
 xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
     <url>
-    	<loc>https://github.com/pintowar/sudoscan/intro.html</loc>
+    	<loc>https://pintowar.github.io/sudoscan//engine.html</loc>
+    	<lastmod>2022-01-16</lastmod>
+    </url>
+
+    <url>
+    	<loc>https://pintowar.github.io/sudoscan//solver.html</loc>
+    	<lastmod>2022-01-09</lastmod>
+    </url>
+
+    <url>
+    	<loc>https://pintowar.github.io/sudoscan//recognizer.html</loc>
+    	<lastmod>2021-12-31</lastmod>
+    </url>
+
+    <url>
+    	<loc>https://pintowar.github.io/sudoscan//intro.html</loc>
+    	<lastmod>2021-11-05</lastmod>
+    </url>
+
+    <url>
+    	<loc>https://pintowar.github.io/sudoscan//extractor.html</loc>
     	<lastmod>2021-11-05</lastmod>
     </url>
 

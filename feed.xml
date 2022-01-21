@@ -2,62 +2,315 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Sudoscan</title>
-    <link>https://github.com/pintowar/sudoscan</link>
-    <atom:link href="https://github.com/pintowar/sudoscan/feed.xml" rel="self" type="application/rss+xml" />
+    <link>https://pintowar.github.io/sudoscan/</link>
+    <atom:link href="https://pintowar.github.io/sudoscan//feed.xml" rel="self" type="application/rss+xml" />
     <description>Sudoscan - Pages</description>
     <language>en-us</language>
-    <pubDate>Sat, 6 Nov 2021 20:05:38 -0300</pubDate>
-    <lastBuildDate>Sat, 6 Nov 2021 20:05:38 -0300</lastBuildDate>
+    <pubDate>Fri, 21 Jan 2022 00:14:22 -0300</pubDate>
+    <lastBuildDate>Fri, 21 Jan 2022 00:14:22 -0300</lastBuildDate>
 
     
     <item>
-      <title>Intro</title>
-      <link>https://github.com/pintowar/sudoscan/intro.html</link>
-      <pubDate>Fri, 5 Nov 2021 00:00:00 -0300</pubDate>
-      <guid isPermaLink="false">intro.html</guid>
+      <title>Engine & Cli</title>
+      <link>https://pintowar.github.io/sudoscan//engine.html</link>
+      <pubDate>Sun, 16 Jan 2022 00:00:00 -0300</pubDate>
+      <guid isPermaLink="false">engine.html</guid>
       <description>
-      &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;A while ago, I was talking to some co-workers about how AI is trendy these days! However, I realized 2 interesting
-facts:&lt;/p&gt;
+      &lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_engine&quot;&gt;Engine&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This is the component responsible for using other components like &lt;strong&gt;Extractor&lt;/strong&gt;, &lt;strong&gt;Recognizer&lt;/strong&gt;, &lt;strong&gt;Solver&lt;/strong&gt; and &lt;strong&gt;Plotter&lt;/strong&gt;. It glues these components together to create a pipe responsible for the entire process of solving the puzzle from an image.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The &lt;strong&gt;Engine&lt;/strong&gt; can use extra params, they are:&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;olist arabic&quot;&gt;
 &lt;ol class=&quot;arabic&quot;&gt;
 &lt;li&gt;
-&lt;p&gt;Most of my friends with strong &lt;strong&gt;Software Engineering&lt;/strong&gt; backgrounds have little or very superficial knowledge of
-AI/ML;&lt;/p&gt;
+&lt;p&gt;solutionColor: the color of solution numbers found by the &lt;strong&gt;Solver&lt;/strong&gt;;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Most of my friends with strong &lt;strong&gt;Data Science&lt;/strong&gt; backgrounds don&amp;#8217;t know how to build a product with the models
-they create.&lt;/p&gt;
+&lt;p&gt;recognizedColor: the color of numbers recognized the the &lt;strong&gt;Recognizer&lt;/strong&gt;;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;debug (default false): if true, the engine will generate a solution with images from the intermediate steps. Case false, only the image from the final step will be generated.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;Looking at this scenario, I decided that I could create a project to help build a bridge between these worlds. So,
-after seeing my girlfriend playing with some Sudoku puzzles, I realized this could be the perfect excuse for my plan.&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;Engine&lt;/strong&gt; also uses some fallback mechanism in case a problem occurs, it simply returns the original (unsolved puzzle) image.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;After some research, I found that my idea was not that original. However, I was motivated and determined to continue
-with the project, but with my personal touch.
-Also, I hoped that by building this project I would be able to learn new tools/techniques and how to use them in an
-environment I was already familiar with. I can say that some time after starting the project, my expectations
-were surpassed. I learned a lot of new things and hope to share some of the lessons I learned during this journey.&lt;/p&gt;
+&lt;p&gt;The following diagram shows how the &lt;strong&gt;Engine&lt;/strong&gt; ensambles other components in order to generate a final solution.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;imageblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;imgs/diagrams/engine.svg&quot; alt=&quot;engine&quot; width=&quot;914&quot; height=&quot;121&quot;&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;REPLACE_WITH_READ_MORE&lt;/p&gt;
+&lt;p&gt;The code for the Engine can found be found on &lt;a href=&quot;https://github.com/pintowar/sudoscan/tree/master/sudoscan-api&quot;&gt;sudoscan-api&lt;/a&gt; sub module, on a class called &lt;code&gt;SudokuEngine&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_cli&quot;&gt;Cli&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Sudoscan comes with a command line application. The cli application can be downloaded on this &lt;a href=&quot;https://github.com/pintowar/sudoscan/releases&quot;&gt;link&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The cli application was built using &lt;a href=&quot;https://picocli.info&quot;&gt;picocli&lt;/a&gt; and &lt;a href=&quot;https://micronaut.io&quot;&gt;micronaut&lt;/a&gt; to warp a SudokuEngine and expose its functionalities through a command line interface. Picocli is an awesome library that allows creating rich command line applications for the JVM. Micronaut is used to enrich the application with auto-generated bean injections, auto-configuration and such.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A Sudoscan cli application can only have a single implementation for &lt;strong&gt;Solver&lt;/strong&gt; and &lt;strong&gt;Recognizer&lt;/strong&gt;. Since Sudoscan comes with different implementations for both components, a different implementation can be used at build time.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;For instance, the following command (executed on the project&amp;#8217;s root) generates a final jar with ojalgo solver and djl recognizer:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;code&gt;gradle -Pojalgo -Pdjl clean assembleCliApp&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;To generate a version with choco solver and dl4j recognizer, no extra parameters need to be defined (since they&amp;#8217;re the default components). The following command must be executed:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;code&gt;gradle clean assembleCliApp&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The code for the cli application can found be found on &lt;a href=&quot;https://github.com/pintowar/sudoscan/tree/master/sudoscan-cli&quot;&gt;sudoscan-cli&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_native_cli&quot;&gt;Native Cli&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Micronaut applications can be ahead-of-time compiled to a GraalVM native image, with extremely fast startup time and lower memory requirements, which can be distributed as a single executable file.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The latest GraalVM version tested was GraalVM CE 21.2.0 (graalvm-21.2.0+java11) which is for Java 11. To build the native image, run the following command on sudoscan-cli module:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;code&gt;gradle -PjavacppPlatform=linux-x86_64 clean nativeCompile&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_web_cli&quot;&gt;Web Cli&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Another honorable mention related to Sudoscan is the &lt;a href=&quot;https://github.com/pintowar/sudoscan-web&quot;&gt;sudoscan-web&lt;/a&gt; project. This is a web version of the Sudoscan Cli (also built with micronaut).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A quick way to see it in action is to use its docker image build. Just run the following command:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;code&gt;docker run -p 8080:8080 pintowar/sudoscan-web&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;More information about it can be found on it&amp;#8217;s &lt;a href=&quot;https://github.com/pintowar/sudoscan-web/blob/master/README.md&quot;&gt;README&lt;/a&gt; file.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+	  </description>
+    </item>
+    
+    <item>
+      <title>Solver</title>
+      <link>https://pintowar.github.io/sudoscan//solver.html</link>
+      <pubDate>Sun, 9 Jan 2022 00:00:00 -0300</pubDate>
+      <guid isPermaLink="false">solver.html</guid>
+      <description>
+      &lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;In Sudoscan&amp;#8217;s context, the process of solving a Sudoku puzzle is the main goal of a &lt;strong&gt;Solver&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A quick recap: In the Sudoku puzzle, every empty box must be filled with an integer between 1 and 9 in such a way that every number from 1 to 9 appears once in every row, every column, and every one of the small 3 by 3 boxes (regions).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;There are several ways to solve a Sudoku puzzle. One of the most common solutions is to write it from scratch using a preferred programming language. One of the most famous implementations of a Sudoku solver is &lt;a href=&quot;https://norvig.com/sudoku.html&quot;&gt;Peter Norvig&amp;#8217;s python implementation&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;However, a Sudoku puzzle has some special characteristics like a set of variables (empty cells of the puzzle), a set of constraints (the unique appearance of a number in every row, column, and region) and functions that maps each variable to a finite domain.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;These characteristics place a Sudoku puzzle description in the &lt;strong&gt;Constraint Satisfaction Problem&lt;/strong&gt; (CSP) category. Constraint Solvers are tools able to model a CSP in a declarative way with solvers that can search for a solution in a &quot;smart way&quot;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Also, these same characteristics can be modeled on a more mathematical approach using Operations Research techniques. Since the problem can be formulated  in terms of a linear objective function and linear inequality constraints, Linear Programming (LP) can be a powerful tool for finding optimal solutions. A Mixed Integer Programming (MIP) is a special case of LP, where some of its variables are integer numbers.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Sudoscan provides solvers that use both CSP and MIP modeling. There are several projects that can handle modeling in a declarative way and also solve them. One good mention is &lt;a href=&quot;https://developers.google.com/optimization/&quot;&gt;OR-Tools&lt;/a&gt;. OR-Tools has support to work with both approaches. However, since it&amp;#8217;s not a native java (JVM) implementation, it wasn&amp;#8217;t used on the Sudoscan project. At the time of writing the project, two good projects to work on with both approaches were:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;#_choco_solver&quot;&gt;Choco Solver&lt;/a&gt; for CSP;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;#_ojalgo&quot;&gt;ojAlgo&lt;/a&gt; for MIP.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A more detailed comparison between CSP and MIP modeling can be found in this &lt;a href=&quot;https://www.kaggle.com/pintowar/modeling-a-sudoku-solver-with-or-tools&quot;&gt;Kaggle Notebook&lt;/a&gt;. This notebook uses OR-Tools for modeling and comparing the solution time.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Sudoscan can use only one of the implementations per execution. The current implementation can be defined at compile time (the default implementation is the Choco Solver one). To learn more about how each implementation can be used, check out &lt;a href=&quot;https://github.com/pintowar/sudoscan#building-project&quot;&gt;this link&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_choco_solver&quot;&gt;Choco Solver&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Choco is an Open-Source Java library dedicated to Constraint Programming.
+The user models its problem in a declarative way by stating the set of constraints that need to be satisfied in every solution.
+Then, the problem is solved by alternating constraint filtering algorithms with a search mechanism.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;To see how Choco Solver was used on Sudoscan, checkout the &lt;a href=&quot;https://github.com/pintowar/sudoscan/tree/master/sudoscan-solver-choco&quot;&gt;sudoscan-solver-choco&lt;/a&gt; submodule. This is a small module containing a Solver implementation that uses Choco Solver.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_ojalgo&quot;&gt;ojAlgo&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;OjAlgo is a fast pure Java linear algebra library available.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Optimisation (mathematical programming) tools including LP, QP and MIP solvers. This is pure Java with zero dependencies.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;To see how ojAlgo was used on Sudoscan, checkout &lt;a href=&quot;https://github.com/pintowar/sudoscan/tree/master/sudoscan-solver-ojalgo&quot;&gt;sudoscan-solver-ojalgo&lt;/a&gt; sub module. This is a small module containing a Solver implementation that uses ojAlgo.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+	  </description>
+    </item>
+    
+    <item>
+      <title>Recognizer</title>
+      <link>https://pintowar.github.io/sudoscan//recognizer.html</link>
+      <pubDate>Fri, 31 Dec 2021 00:00:00 -0300</pubDate>
+      <guid isPermaLink="false">recognizer.html</guid>
+      <description>
+      &lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Recognition is the process of extracting information from a known pattern. In Sudoscan context, a &lt;strong&gt;Recognizer&lt;/strong&gt; is the &quot;entity&quot; responsible for recognizing the patterns of an image of a Sudoku cell. It uses an image as input and generates information if the cell is empty and the numerical information in it (if it is not empty).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;This process solves a very similar (and well-known) problem: Image Classification.
+The goal of Image Classification is to classify a specific picture according to a set of possible categories. A classic example of image classification is the identification (recognition) of cats and dogs in a (set of) picture(s).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;In the Sudoscan context, it is possible to use the same principle. However, instead of classifying an image into two categories (cats and dogs), it classifies an image into 9 different categories (a range of numbers between 1 and 9).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A very common way to address this kind of problem is through the use of Machine Learning techniques. Even under the &quot;Machine Learning Umbrella&quot;, there are several ways to solve those problems, like: K-Nearest Neighbor(KNN), Support Vector Machine (SVM), Artificial Neural Networks (ANN), Decision Trees, Naive Bayes, Logistic Regression, etc.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Deep learning is part of a broader family of Machine Learning methods based on Artificial Neural Networks. There are several ANN architectures that fits into this ML sub-category. One of those architectures is known as Convolutional Neural Networks (CNN), a very efficient architecture to handle Image Classification Problems.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;There are several Open Source tools that help create an ANN. Due to its flexibility and ease of use, the chosen tool for generating (and training) a classification model using CNN for Sudoscan was &lt;a href=&quot;https://keras.io/&quot;&gt;Keras&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A more detailed description of how the CNN model for Sudoscan was created and trained can be found on this &lt;a href=&quot;https://www.kaggle.com/pintowar/sudoscan-number-recognizer&quot;&gt;Kaggle Notebook&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_keras_tensorflow_2&quot;&gt;Keras &amp;amp; Tensorflow 2&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Keras is a deep learning API written in Python. According to &lt;a href=&quot;https://keras.io/&quot;&gt;Keras&lt;/a&gt; website:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;quoteblock&quot;&gt;
+&lt;blockquote&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.tensorflow.org/&quot;&gt;TensorFlow 2&lt;/a&gt; is an end-to-end, open-source machine learning platform. You can think of it as an infrastructure layer for differentiable programming.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://keras.io/&quot;&gt;Keras&lt;/a&gt; is the high-level API of TensorFlow 2: an approachable, highly-productive interface for solving machine learning problems, with a focus on modern deep learning. It provides essential abstractions and building blocks for developing and shipping machine learning solutions with high iteration velocity.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;As mentioned, the Keras API used to create and train the CNN model is written in Python. Meanwhile, the Sudoscan project was written in Kotlin, a JVM language.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;At this point, an observable reader may wonder, &quot;How is it possible to reuse code from different programming languages?&quot;. Well, at the time of writing this project, I found 2 projects that could help the reuse of a Keras trained models on the JVM, they are:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;#_deeplearning4j&quot;&gt;Deeplearning4j&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;#_djl&quot;&gt;DJL&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Sudoscan contains implementations for both projects. On both implementations, Sudoscan downloads the trained model from the Kaggle website and uses the project API to reuse the trained model (originally trained in Python).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Sudoscan can use only one of the implementations per execution. The current implementation can be defined at compile time (the default implementation is the Deeplearning4j one). To learn more on how each implementation can be used, check &lt;a href=&quot;https://github.com/pintowar/sudoscan#building-project&quot;&gt;this link&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_deeplearning4j&quot;&gt;Deeplearning4j&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://deeplearning4j.konduit.ai/&quot;&gt;Deeplearning4j&lt;/a&gt; is a suite of tools for running deep learning on the JVM. It&amp;#8217;s a framework that allows you to train models from java while interoperating with the python ecosystem through a mix of python execution via its cpython bindings, model import support, and interop with other runtimes such as tensorflow-java.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;To see how Deeplearning4j was used on Sudoscan, checkout the &lt;a href=&quot;https://github.com/pintowar/sudoscan/tree/master/sudoscan-recognizer-dl4j&quot;&gt;sudoscan-recognizer-dl4j&lt;/a&gt; submodule. This is a small module containing a &lt;strong&gt;Recognizer&lt;/strong&gt; implementation that uses Deeplearning4j.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_djl&quot;&gt;DJL&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://djl.ai/&quot;&gt;Deep Java Library&lt;/a&gt; is an open-source, high-level, engine-agnostic Java framework for deep learning. DJL is designed to be easy to get started with and simple to use for Java developers. DJL provides a native Java development experience and functions like any other regular Java library.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;To see how DJL was used on Sudoscan, checkout the &lt;a href=&quot;https://github.com/pintowar/sudoscan/tree/master/sudoscan-recognizer-djl&quot;&gt;sudoscan-recognizer-djl&lt;/a&gt; submodule. This is a small module containing a &lt;strong&gt;Recognizer&lt;/strong&gt; implementation that uses DJL.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+	  </description>
+    </item>
+    
+    <item>
+      <title>Intro</title>
+      <link>https://pintowar.github.io/sudoscan//intro.html</link>
+      <pubDate>Fri, 5 Nov 2021 00:00:00 -0300</pubDate>
+      <guid isPermaLink="false">intro.html</guid>
+      <description>
+      &lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A while ago, I was talking to some co-workers about how AI is trendy these days! However, I realized 2 interesting facts:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;olist arabic&quot;&gt;
+&lt;ol class=&quot;arabic&quot;&gt;
+&lt;li&gt;
+&lt;p&gt;Most of my friends with strong &lt;strong&gt;Software Engineering&lt;/strong&gt; backgrounds have little or very superficial knowledge of AI/ML;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Most of my friends with strong &lt;strong&gt;Data Science&lt;/strong&gt; backgrounds don&amp;#8217;t know how to build a product with the models they create.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Looking at this scenario, I decided that I could create a project to help build a bridge between these worlds. So, after seeing my girlfriend playing with some Sudoku puzzles, I realized this could be the perfect excuse for my plan.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;After some research, I found that my idea was not that original. However, I was motivated and determined to continue with the project, but with my personal touch.
+Also, I hoped that by building this project I would be able to learn new tools/techniques and how to use them in an environment I was already familiar with. I can say that some time after starting the project, my expectations were surpassed. I learned a lot of new things and I hope to share some of the lessons I learned during this journey.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;sect1&quot;&gt;
 &lt;h2 id=&quot;_what_is_a_sudoku_puzzle&quot;&gt;What is a Sudoku Puzzle?&lt;/h2&gt;
 &lt;div class=&quot;sectionbody&quot;&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;Sudoku is a mathematical game that was invented in the late 1970s, became popular in Japan in the 1980s and became known
-internationally in 2005 when numerous newspapers began publishing it in their hobbies section.&lt;/p&gt;
+&lt;p&gt;Sudoku is a mathematical game that was invented in the late 1970s, became popular in Japan in the 1980s and became known internationally in 2005 when numerous newspapers began publishing it in their hobbies section.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;The objective of the game is to place numbers from 1 to 9 in each of the empty cells in a 9x9 grid, consisting of 3x3
-subgrades called regions. The puzzle contains some initial clues, which are numbers inserted into some cells, to allow
-an induction or deduction of numbers into empty cells. Each column, row, and region can only have a number from
-each of 1 through 9.&lt;/p&gt;
+&lt;p&gt;The objective of the game is to place numbers from 1 to 9 in each of the empty cells in a 9x9 grid, consisting of 3x3 subgrades called regions. The puzzle contains some initial clues, which are numbers inserted into some cells, to allow an induction or deduction of numbers into empty cells. Each column, row, and region can only have a number from 1 through 9.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;For instance, given the initial Sudoku state:&lt;/p&gt;
@@ -81,9 +334,7 @@ each of 1 through 9.&lt;/p&gt;
 &lt;h2 id=&quot;_objective_and_steps&quot;&gt;Objective and Steps&lt;/h2&gt;
 &lt;div class=&quot;sectionbody&quot;&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;The main objective was to build a Service that could read a Sudoku puzzle image, &lt;strong&gt;identify the puzzle board&lt;/strong&gt;,
-&lt;strong&gt;recognize the puzzle numbers&lt;/strong&gt;, &lt;strong&gt;solve the puzzle&lt;/strong&gt;, &lt;strong&gt;plot the result over the original image&lt;/strong&gt; and send the
-new image (with the solution) back to the user.&lt;/p&gt;
+&lt;p&gt;The main objective was to build a service that could read a Sudoku puzzle image, &lt;strong&gt;identify the puzzle board&lt;/strong&gt;, &lt;strong&gt;recognize the puzzle numbers&lt;/strong&gt;, &lt;strong&gt;solve the puzzle&lt;/strong&gt;, &lt;strong&gt;plot the result over the original image&lt;/strong&gt;, and send the new image (with the solution) back to the user.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;imageblock&quot;&gt;
 &lt;div class=&quot;content&quot;&gt;
@@ -94,10 +345,7 @@ new image (with the solution) back to the user.&lt;/p&gt;
 &lt;p&gt;After the silly design of the main service, came the fundamental question of the project: how the hell do all the rest?&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;To get to an answer to this question, let&amp;#8217;s start with small steps. The first thought is to build a pipe, to convert
-the image into a puzzle representation (object), from this representation find a solution and covert the solution to
-a final image. The diagram below shows the big picture of this pipe. At this point, there are three main components
-acting on the process: &lt;strong&gt;Converter&lt;/strong&gt;, &lt;strong&gt;Solver&lt;/strong&gt; and &lt;strong&gt;Plotter&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;To get an answer to this question, let&amp;#8217;s start with small steps. The first thought is to build a pipe, to convert the image into a puzzle representation (object), from this representation, find a solution, and covert the solution to a final image. The diagram below shows the big picture of this pipe. At this point, there are three main components acting on the process: &lt;strong&gt;Converter&lt;/strong&gt;, &lt;strong&gt;Solver&lt;/strong&gt; and &lt;strong&gt;Plotter&lt;/strong&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;imageblock&quot;&gt;
 &lt;div class=&quot;content&quot;&gt;
@@ -117,56 +365,34 @@ acting on the process: &lt;strong&gt;Converter&lt;/strong&gt;, &lt;strong&gt;Sol
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
-&lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;With that in mind, we can generate a diagram of an engine responsible for running all the discussed steps.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class=&quot;imageblock&quot;&gt;
-&lt;div class=&quot;content&quot;&gt;
-&lt;img src=&quot;imgs/diagrams/engine.svg&quot; alt=&quot;engine&quot; width=&quot;813&quot; height=&quot;121&quot;&gt;
-&lt;/div&gt;
-&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;sect1&quot;&gt;
 &lt;h2 id=&quot;_approaches_and_tools&quot;&gt;Approaches and Tools&lt;/h2&gt;
 &lt;div class=&quot;sectionbody&quot;&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;In this section, let&amp;#8217;s dive into the engine&amp;#8217;s components and have a better understanding of the nature of the problem
-and what tools and techniques are more appropriate to handle each one. Due to my experience with JVM as a Web Developer,
-I decided to investigate the platform&amp;#8217;s AI/ML tools. Also, since the Kotlin language is becoming more popular, it will
-be used in the project.&lt;/p&gt;
+&lt;p&gt;In this section, let&amp;#8217;s dive into the engine&amp;#8217;s components and get a better understanding of the nature of the problem and what tools and techniques are more appropriate to handle each one. Due to my experience with JVM as a Web Developer, I decided to investigate the platform&amp;#8217;s AI/ML tools. Also, since the Kotlin language is becoming more popular, it will be used in the project.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;sect2&quot;&gt;
 &lt;h3 id=&quot;_extractor&quot;&gt;Extractor&lt;/h3&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;The main objective of the Extractor is to identify a Sudoku board on an image and break it down into 81 (9 x 9) images
-for every cell in this puzzle. To achieve this goal, the Extractor needs to detect the borders of a sudoku, change it&amp;#8217;s
-perspective to a frontal view, apply some filters to clean the image and crop the image into 81 different pieces.&lt;/p&gt;
+&lt;p&gt;The main objective of the Extractor is to identify a Sudoku board in an image and break it down into 81 (9 x 9) images for every cell in this puzzle. To achieve this goal, the Extractor needs to detect the borders of a sudoku, change its perspective to a frontal view, apply some filters to clean the image, and crop the image into 81 different pieces.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;This is basically a &lt;strong&gt;Computer Vision Problem&lt;/strong&gt;. OpenCV is an open-source library that includes several hundreds of
-computer vision (CV) algorithms. It is essentially a C++ API, but there are some Java APIs that can use it&amp;#8217;s native
-interfaces. I found some different ports of OpenCv to Java, but the &lt;a href=&quot;https://github.com/bytedeco/javacv&quot;&gt;JavaCv&lt;/a&gt; lib
-turned out to be a good option, especially for its ease of use with build tools (Gradle, Maven). Its ability to generate
-artifacts for each platform (Linux, Windows, and Macos) is particularly noteworthy.&lt;/p&gt;
+&lt;p&gt;This is basically a &lt;strong&gt;Computer Vision Problem&lt;/strong&gt;. OpenCV is an open-source library that includes several hundred of computer vision (CV) algorithms. It is essentially a C++ API, but there are some Java APIs that can use its native interfaces. I found some different ports of OpenCv to Java, but the &lt;a href=&quot;https://github.com/bytedeco/javacv&quot;&gt;JavaCv&lt;/a&gt; lib turned out to be a good option, especially for its ease of use with build tools (Gradle, Maven). Its ability to generate artifacts for each platform (Linux, Windows, and Macos) is particularly noteworthy.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;sect2&quot;&gt;
 &lt;h3 id=&quot;_recognizer&quot;&gt;Recognizer&lt;/h3&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;The Recognizer is responsible for converting a Sudoku cell (whenever it&amp;#8217;s empty or with a number image) into
-computational numerical information. Since the Sudoku cells have a pre-defined range of possible numbers, the recognizer
-can use a model to classify an image into a number between 1-9.&lt;/p&gt;
+&lt;p&gt;The Recognizer is responsible for converting a Sudoku cell (whenever it&amp;#8217;s empty or with a number image) into computational numerical information. Since the Sudoku cells have a pre-defined range of possible numbers, the recognizer can use a model to classify an image into a number between 1-9.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;This is a &lt;strong&gt;Classification Problem&lt;/strong&gt;, a common kind of problem usually solved with Machine Learning models.
-There are tons of ML models trained to accomplish this goal. For this project, I will use the one created in this
-&lt;a href=&quot;https://www.kaggle.com/pintowar/sudoscan-number-recognizer&quot;&gt;Kaggle Notebook&lt;/a&gt;.&lt;/p&gt;
+There are tons of ML models trained to accomplish this goal. For this project, I will use the one created in this &lt;a href=&quot;https://www.kaggle.com/pintowar/sudoscan-number-recognizer&quot;&gt;Kaggle Notebook&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;The model was created using Python/Tensorflow, but it&amp;#8217;s possible to use the trained model in the JVM world. By the
-time this project was developed, there were two promising projects that could use (or even train) an existing
-model to be used by the JVM. They Are:&lt;/p&gt;
+&lt;p&gt;The model was created using Python/Keras/Tensorflow, but it&amp;#8217;s possible to use the trained model in the JVM world. By the time this project was developed, there were two promising projects that could use (or even train) an existing model to be used by the JVM. They Are:&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;olist arabic&quot;&gt;
 &lt;ol class=&quot;arabic&quot;&gt;
@@ -185,23 +411,13 @@ model to be used by the JVM. They Are:&lt;/p&gt;
 &lt;div class=&quot;sect2&quot;&gt;
 &lt;h3 id=&quot;_solver&quot;&gt;Solver&lt;/h3&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;The Solver is responsible for reading a computational representation of an &lt;strong&gt;Unsolved Puzzle&lt;/strong&gt; puzzle and generating a
-computational representation of a &lt;strong&gt;Solved Puzzle&lt;/strong&gt;. The puzzle consists of 81 (9 x 9) Digits (previously
-discovered by a Recognizer from a Sudoku cell). A Sudoku Puzzle contains a set of variables, a set of constraints and
-functions that maps each variable to a finite domain.&lt;/p&gt;
+&lt;p&gt;The Solver is responsible for reading a computational representation of an &lt;strong&gt;Unsolved Puzzle&lt;/strong&gt; puzzle and generating a computational representation of a &lt;strong&gt;Solved Puzzle&lt;/strong&gt;. The puzzle consists of 81 (9 x 9) &lt;strong&gt;Digits&lt;/strong&gt; (previously discovered by a Recognizer from a Sudoku cell). A Sudoku puzzle contains a set of variables, a set of constraints and functions that maps each variable to a finite domain.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;These characteristics make this step a &lt;strong&gt;Constraint Satisfaction Problem&lt;/strong&gt;. CSP is a class of problem that can be
-solved with different tools. It can be solved with pure programming logic, but there are a set of different
-areas that can achieve the same objective using a declarative approach. Constraint Solvers (CS) are pieces of software
-that can model a CSP in a declarative way and then use a solver to find the expected solution. Another declarative
-approach (and more mathematical way) to solve this kind of problem is to model it as a Mixed Integer Problem (MIP),
-and use a MIP solver to find the optimal solution. A comparison between these two approaches can be found in this
-&lt;a href=&quot;https://www.kaggle.com/pintowar/modeling-a-sudoku-solver-with-or-tools&quot;&gt;Kaggle Notebook&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;These characteristics make this step a &lt;strong&gt;Constraint Satisfaction Problem&lt;/strong&gt;. CSP is a class of problem that can be solved with different tools. It can be solved with pure programming logic, but there are a set of different areas that can achieve the same objective using a declarative approach. Constraint Solvers (CS) are pieces of software that can model a CSP in a declarative way and then use a solver to find the expected solution. Another declarative approach (and more mathematical way) to solve this kind of problem is to model it as an Operations Research (OR) problem, and use a Mixed Integer Programming (MIP) solver to find the optimal solution. A comparison between these two approaches can be found in this &lt;a href=&quot;https://www.kaggle.com/pintowar/modeling-a-sudoku-solver-with-or-tools&quot;&gt;Kaggle Notebook&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;There are several solvers (commercial/open source) for these approaches. For the JVM, two lightway (and pure java)
-implementations are:&lt;/p&gt;
+&lt;p&gt;There are several solvers (commercial/open source) for these approaches. For the JVM, two lightway (and pure java) implementations are:&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;olist arabic&quot;&gt;
 &lt;ol class=&quot;arabic&quot;&gt;
@@ -220,19 +436,218 @@ implementations are:&lt;/p&gt;
 &lt;div class=&quot;sect2&quot;&gt;
 &lt;h3 id=&quot;_plotter&quot;&gt;Plotter&lt;/h3&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;The main objective of the Plotter is to &quot;paint&quot; (or plot) the actual Sudoku solution back to its original image. It&amp;#8217;s
-a way to combine real world information (the Sudoku board image) with virtual generated data.&lt;/p&gt;
+&lt;p&gt;The main objective of the Plotter is to &quot;paint&quot; (or plot) the actual Sudoku solution back to its original image. It&amp;#8217;s a way to combine real world information (the Sudoku board image) with virtual generated data.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;This is also a &lt;strong&gt;Computer Vision Problem&lt;/strong&gt; and as discussed before (in the Extractor sub section), the tool used for
-this task is the &lt;a href=&quot;https://github.com/bytedeco/javacv&quot;&gt;JavaCv&lt;/a&gt; lib.&lt;/p&gt;
+&lt;p&gt;This is also a &lt;strong&gt;Computer Vision Problem&lt;/strong&gt; and as discussed before (in the &lt;strong&gt;Extractor&lt;/strong&gt; sub section), the tool used for this task is the &lt;a href=&quot;https://github.com/bytedeco/javacv&quot;&gt;JavaCv&lt;/a&gt; lib.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;sect2&quot;&gt;
 &lt;h3 id=&quot;_sudoku_engine&quot;&gt;Sudoku Engine&lt;/h3&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;This is the piece of software that uses all the previously described components and glues them together to generate the
-main component responsible for the full process.&lt;/p&gt;
+&lt;p&gt;This is the component that uses all the previously described components and glues them together to generate the main component responsible for the full process.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+	  </description>
+    </item>
+    
+    <item>
+      <title>Extractor & Plotter</title>
+      <link>https://pintowar.github.io/sudoscan//extractor.html</link>
+      <pubDate>Fri, 5 Nov 2021 00:00:00 -0300</pubDate>
+      <guid isPermaLink="false">extractor.html</guid>
+      <description>
+      &lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Extractor and Plotter are both Sudoscan components responsible for acting on a given image. The Extractor is responsible to &quot;parse&quot; an image and generate a computational representation of the Sudoku Puzzle. While the plotter is responsible to draw the puzzle&amp;#8217;s solution back to the original image.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Both components dependens on &lt;strong&gt;Image Processing&lt;/strong&gt; tasks. This is a process of transforming an image into a digital form and performing certain operations to get some useful information from it.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;strong&gt;OpenCV&lt;/strong&gt; is an open-source Image processing library that includes several hundreds of computer vision (CV) algorithms. It is essentially a C++ API, it can perform some real-time operations because it is very fast and lightweight.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Since &lt;strong&gt;OpenCV&lt;/strong&gt; is a C++ API, it can&amp;#8217;t be used directly on JVM, however there are some projects that wraps its native interfaces. The chosen project chosen for Sudoscan was &lt;a href=&quot;https://github.com/bytedeco/javacv&quot;&gt;JavaCV&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;strong&gt;JavaCV&lt;/strong&gt; uses wrappers from the &lt;a href=&quot;https://github.com/bytedeco/javacpp&quot;&gt;JavaCPP&lt;/a&gt; of commonly used libraries by researchers in the field of computer vision and provides utility classes to make their functionality easier to use on the Java platform, including Android.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The most appealing reason to use &lt;strong&gt;JavaCV&lt;/strong&gt; among all possible alternatives is the use of &lt;strong&gt;JavaCPP&lt;/strong&gt; for packing native dependencies (binaries) for different platforms/architectures. To build an application using native binaries for a specific platform, it&amp;#8217;s just necessary to add an extra configuration during build time. For instance, the command &lt;code&gt;gradle -PjavacppPlatform=linux-x86_64 build&lt;/code&gt; with only linux-x86_64 binaries on the generated artifact.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The code for both Extractor and Plotter can found be found on &lt;a href=&quot;https://github.com/pintowar/sudoscan/tree/master/sudoscan-api&quot;&gt;sudoscan-api&lt;/a&gt; sub module.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_extractor&quot;&gt;Extractor&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;As mentioned above, the &lt;strong&gt;Extractor&lt;/strong&gt; is responsible for &quot;parsing&quot; an image. For simplicity, let&amp;#8217;s assume the given image is the image below:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;imageblock text-center&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;imgs/sudoku01.jpg&quot; alt=&quot;Unsolved&quot; width=&quot;320&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The &quot;parsing&quot; process can be diveded into 4 different phases:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;olist arabic&quot;&gt;
+&lt;ol class=&quot;arabic&quot;&gt;
+&lt;li&gt;
+&lt;p&gt;Pre-process image;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Puzzle detection and and frontal perspective;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Grids removal;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Cell split and content enhance.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;These phases are described in more detail in the sections below.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_pre_process_image&quot;&gt;Pre-process image&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The first step of the entire extraction process consists of simplifying the given image. To achieve this state, a series of filters are applied to the image, they are:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Convert to Grayscale: subsequent steps don’t rely on color;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Blur the image: a gaussian blur is applied to reduce noise obtained in the thresholding algorithm (adaptive thresholding);&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Apply Thresholding: separate an image into regions (or their contours). The process is called segmentation. Thresholding is a way to segment such regions;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Invert colors: converts white into black and black into white;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Dilation: the noise reduction of the applied Gaussian Blur shrinks the object. The dilation is a way to &quot;revert&quot; the shrinkage.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;After applying those filters, the image should be transformed into this:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;imageblock text-center&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;imgs/sudoku02.jpg&quot; alt=&quot;Filtered&quot; width=&quot;320&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_puzzle_detection_and_frontal_perspective&quot;&gt;Puzzle detection and frontal perspective&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;After preprocessing the image, it&amp;#8217;s time to detect the Sudoku Puzzle in the image. To find it, it was used the &lt;strong&gt;OpenCv&lt;/strong&gt;&apos;s &lt;code&gt;findContours&lt;/code&gt; function. This function will find external contours (boundaries of shapes having the same intensity). The function will find a list of potential objects (polygons) that can be found in the image. However, it&amp;#8217;s assumed that the given image is focused on a Sudoku Puzzle, so the object with the largest area is selected.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;With the largest polygon selected, it&amp;#8217;s time to crop it from the original image and transform the cropped image into a frontal perspective. To achieve the frontal perspective, it was used &lt;strong&gt;OpenCv&lt;/strong&gt;&apos;s &lt;code&gt;getPerspectiveTransform&lt;/code&gt; and &lt;code&gt;warpPerspective&lt;/code&gt; functions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;After those transformations, the image looks like this:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;imageblock text-center&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;imgs/sudoku03.jpg&quot; alt=&quot;Perspective&quot; width=&quot;320&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_grids_removal&quot;&gt;Grids removal&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Now is time to reduce the &quot;noise&quot; from the image. Since the objective is to identify all cells&apos; content from the image (an empty cell or a numeric cell), the grids are extra visual information that&amp;#8217;s not important. That being said, it’s useful to get rid of the grid lines.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A structuring element is passed to &lt;code&gt;erode&lt;/code&gt; and &lt;code&gt;dilate&lt;/code&gt; in order to clean up the grid lines. The function &lt;code&gt;findContours&lt;/code&gt; is again used, but this time with the help of &lt;code&gt;approxPolyDP&lt;/code&gt; to identify the vertical and horizontal lines. With an identified line, a thicker empty rectangle is drawn in order to override the line.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The resulting image of this phase is:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;imageblock text-center&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;imgs/sudoku04.jpg&quot; alt=&quot;NoGrids&quot; width=&quot;320&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_cell_split_and_content_enhance&quot;&gt;Cell split and content enhance&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;At this point, the initial image is completed and prepared to be split. The image is divided into 81 (9x9) smaller blocks. Every block is used to create a &lt;strong&gt;SudokuCell&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A &lt;strong&gt;SudokuCell&lt;/strong&gt; is a computational representation (a Kotlin class) of a Sudoku cell. This component is capable of identifying if a cell is empty (in case at least 10% of the total area of the cell has any content) and enhancing its content in case it’s not empty.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Merging all cells together after the enchacement generates the following image:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;imageblock text-center&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;imgs/sudoku05.jpg&quot; alt=&quot;Enhanced&quot; width=&quot;320&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;A set of &lt;strong&gt;SudokuCell&lt;/strong&gt; is called a &lt;strong&gt;PuzzleCells&lt;/strong&gt;. This component can generate a &lt;strong&gt;Puzzle&lt;/strong&gt; representation with the help of a &lt;strong&gt;Recognizer&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;_plotter&quot;&gt;Plotter&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;While the Extractor uses an image to generate a computational representation (&lt;strong&gt;Puzzle&lt;/strong&gt;), the Plotter generate an image from the computational representation, change it&amp;#8217;s perspective to the same of the original image and finally &quot;paste&quot; the result over the original image.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_generate_the_solution_image&quot;&gt;Generate the solution image&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;After the final solution is found by a &lt;strong&gt;Solver&lt;/strong&gt;, the original empty cells are known numbers. With this information, a new image (with the same size as the frontal perspective image) is generated with the new numbers found in the solution.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The solution image:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;imageblock text-center&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;imgs/sudoku06.jpg&quot; alt=&quot;Solved&quot; width=&quot;320&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_revert_perspective&quot;&gt;Revert perspective&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;After the solution image is generated, it&amp;#8217;s perspective must change to &quot;fit&quot; the original perspective of the original image. Again, using &lt;strong&gt;OpenCv&lt;/strong&gt;&apos;s &lt;code&gt;getPerspectiveTransform&lt;/code&gt; and &lt;code&gt;warpPerspective&lt;/code&gt; functions, a transformed image is generated.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The reverted perspective of the solution image is:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;imageblock text-center&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;imgs/sudoku07.jpg&quot; alt=&quot;Solved&quot; width=&quot;320&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;_overlapping_solution&quot;&gt;Overlapping solution&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;The last step of the plotting consists of overlapping the original image with the reverted perspective image. A simple use of &lt;strong&gt;OpenCv&lt;/strong&gt;&apos;s &lt;code&gt;bitwiseAnd&lt;/code&gt; function can handle this operation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Finally, the final solution can be viewed as:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;imageblock text-center&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;img src=&quot;imgs/sudoku08.jpg&quot; alt=&quot;Solved&quot; width=&quot;320&quot;&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
