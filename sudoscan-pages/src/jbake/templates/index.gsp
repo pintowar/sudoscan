@@ -4,60 +4,45 @@
 
 	<div class="page-header">
         <div class="row">
-            <div class="col-xs-12 col-md-8"><h1>Sudoscan Pages</h1></div>
+            <div class="col-xs-12 col-md-8"><h1>Sudoscan Project</h1></div>
         </div>
 	</div>
 
     <div class="row">
-
         <div class="col-sm-8">
-
-            <% posts.take(8).each { post -> %>
-                <%if (post.status == "published") {%>
-                    <div  itemscope itemtype="http://schema.org/Blog">
-                        <div itemprop="author" itemscope itemtype="http://schema.org/Person">
-                            <meta itemprop="name" content="Yan Bonnel"/>
-                        </div>
-                        <meta itemprop="inLanguage" content="en-US"/>
-                        <a itemprop="url" href="${post.uri}">
-                            <h1 itemprop="name">${post.title}</h1>
-                        </a>
-                        <p>
-                            <time itemprop="datePublished"
-                                  datetime="${post.date.format("yyyy-MM-dd")}">
-                                ${post.date.format("dd MMMM yyyy")}
-                            </time>
-                             - Tags :
-                            <meta itemprop="keywords" content="${post.tags.join(",")}"/>
-                            <%
-                                out << post.tags.collect { post_tag ->
-                                    """<a href="tags/${post_tag}.html">${post_tag}</a>"""
-                                } .join(", ")
-                            %>
-                        </p>
-
-                        <%indexBody = post.body.indexOf("REPLACE_WITH_READ_MORE")
-                          if ( indexBody > 0) {%>
-
-                        <div itemprop="blogPost">
-                            <p>${post.body.substring(0, indexBody)}</p>
-                            <p><a itemprop="readMore" href="${post.uri}">Read more</a></p>
-                        </div>
-                        <%}else{%>
-                        <div itemprop="blogPost">
-                            <p>${post.body}</p>
-                        </div>
-                        <%}%>
-                    </div>
-                <%}%>
-
-            <%}%>
-
-            <hr />
-
+            <p>A quick view on Sudoscan in action can be seen in this video:</p>
         </div>
+    </div>
 
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2">
+            <div class="videoblock text-center">
+                <div class="content">
+                    <iframe width="640" height="480" src="https://www.youtube.com/embed/8D4gMhDRu-U?rel=0"
+                        frameborder="0" allowfullscreen=""></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col-sm-8">
+            <% map = posts.collectEntries { post -> [post.title, post] } %>
+            <% order = ['Intro', 'Engine & Cli', 'Extractor & Plotter', 'Recognizer', 'Solver'] %>
+
+            <p>
+                This blog contains a series of posts related to the creation of the Sudoscan Project.
+                The posts should be read in the following order:
+            </p>
+
+            <ol>
+                <% order.each { title -> %>
+                    <li>
+                        <a itemprop="url" href="${map[title].uri}">${title}</a>
+                    </li>
+                <%}%>
+            </ol>
+        </div>
     </div>
 
 <%include "footer.gsp"%>

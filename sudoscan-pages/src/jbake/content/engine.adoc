@@ -1,7 +1,7 @@
 title=Engine & Cli
 date=2022-01-16
 type=post
-tags=artificial intelligence, computer vision, machine learning, csp, mip
+tags=artificial intelligence
 status=published
 ---------
 

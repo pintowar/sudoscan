@@ -1,11 +1,11 @@
 <%include "header.gsp"%>
 
 	<%include "menu.gsp"%>
-	
+
 	<div class="page-header">
 		<h1>Tag: ${tag}</h1>
 	</div>
-	
+
 	<!--<ul>-->
 		<%def last_month=null;%>
 		<%tag_posts.each {post ->%>
@@ -19,10 +19,10 @@
 			<h4>${post.date.format("MMMM yyyy")}</h4>
 			<ul>
 		<%}%>
-		
+
 		<li>${post.date.format("dd")} - <a href="${content.rootpath}${post.uri}">${post.title}</a></li>
 		<% last_month = post.date.format("MMMM yyyy")%>
 		<%}%>
 	</ul>
-	
+
 <%include "footer.gsp"%>

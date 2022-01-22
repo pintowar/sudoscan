@@ -8,14 +8,16 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="<% content.rootpath ?: '' %>index.html"
-            class="navbar-brand">Sudoscan</a>
+            <a href="<% content.rootpath ?: '' %>index.html" class="navbar-brand">Sudoscan</a>
         </div>
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li>
                     <a href="<% content.rootpath ?: '' %>intro.html">Intro</a>
+                </li>
+                <li>
+                    <a href="<% content.rootpath ?: '' %>engine.html">Engine & Cli</a>
                 </li>
                 <li>
                     <a href="<% content.rootpath ?: '' %>extractor.html">Extractor & Plotter</a>

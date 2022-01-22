@@ -8,7 +8,7 @@
 
 	<p><em>${content.date.format("dd MMMM yyyy")}</em></p>
 
-	<p>${content.body.replaceAll("REPLACE_WITH_READ_MORE", "")}</p>
+	<p>${content.body}</p>
 
 	<hr />
 
