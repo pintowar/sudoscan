@@ -5,7 +5,7 @@ plugins {
     id("java-library")
 }
 
-description = "Sudoscan Solver Choco"
+description = "Sudoscan Solver OjAlgo"
 
 dependencies {
     api(projects.sudoscanApi)
