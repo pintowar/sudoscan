@@ -3,12 +3,13 @@ date=2021-11-05
 type=post
 tags=artificial intelligence, computer vision, machine learning, csp, mip
 status=published
+next=engine
 ---------
 
 A while ago, I was talking to some co-workers about how AI is trendy these days! However, I realized 2 interesting facts:
 
-1. Most of my friends with strong **Software Engineering** backgrounds have little or very superficial knowledge of AI/ML;
-2. Most of my friends with strong **Data Science** backgrounds don't know how to build a product with the models they create.
+1. Most of my friends with **Software Engineering** backgrounds have little or very superficial knowledge of AI/ML;
+2. Most of my friends with **Data Science** backgrounds don't know how to build a product with the models they create.
 
 Looking at this scenario, I decided that I could create a project to help build a bridge between these worlds. So, after seeing my girlfriend playing with some Sudoku puzzles, I realized this could be the perfect excuse for my plan.
 
@@ -84,7 +85,9 @@ In this section, let's dive into the engine's components and get a better unders
 
 The main objective of the Extractor is to identify a Sudoku board in an image and break it down into 81 (9 x 9) images for every cell in this puzzle. To achieve this goal, the Extractor needs to detect the borders of a sudoku, change its perspective to a frontal view, apply some filters to clean the image, and crop the image into 81 different pieces.
 
-This is basically a **Computer Vision Problem**. OpenCV is an open-source library that includes several hundred of computer vision (CV) algorithms. It is essentially a C++ API, but there are some Java APIs that can use its native interfaces. I found some different ports of OpenCv to Java, but the https://github.com/bytedeco/javacv[JavaCv] lib turned out to be a good option, especially for its ease of use with build tools (Gradle, Maven). Its ability to generate artifacts for each platform (Linux, Windows, and Macos) is particularly noteworthy.
+This is basically a **Computer Vision** task. OpenCV is an open-source library that includes several hundred of computer vision (CV) algorithms. It is essentially a C++ API, but there are some Java APIs that can use its native interfaces. I found some different ports of OpenCv to Java, but the https://github.com/bytedeco/javacv[JavaCv] lib turned out to be a good option, especially for its ease of use with build tools (Gradle, Maven). Its ability to generate artifacts for each platform (Linux, Windows, and Macos) is particularly noteworthy.
+
+link:extractor.html#_extractor[learn more]
 
 === Recognizer
 
@@ -100,6 +103,8 @@ The model was created using Python/Keras/Tensorflow, but it's possible to use th
 
 The Sudoscan Project has implementations for both libraries.
 
+link:recognizer.html[learn more]
+
 === Solver
 
 The Solver is responsible for reading a computational representation of an **Unsolved Puzzle** puzzle and generating a computational representation of a **Solved Puzzle**. The puzzle consists of 81 (9 x 9) *Digits* (previously discovered by a Recognizer from a Sudoku cell). A Sudoku puzzle contains a set of variables, a set of constraints and functions that maps each variable to a finite domain.
@@ -113,12 +118,18 @@ There are several solvers (commercial/open source) for these approaches. For the
 
 The Sudoscan Project also has implementations for both libraries.
 
+link:solver.html[learn more]
+
 === Plotter
 
-The main objective of the Plotter is to "paint" (or plot) the actual Sudoku solution back to its original image. It's a way to combine real world information (the Sudoku board image) with virtual generated data.
+The main objective of the Plotter is to plot ("paint") the actual Sudoku solution back to its original image. It's a way to combine real world information (the Sudoku board image) with virtual generated data.
 
 This is also a **Computer Vision Problem** and as discussed before (in the *Extractor* sub section), the tool used for this task is the https://github.com/bytedeco/javacv[JavaCv] lib.
+
+link:extractor.html#_plotter[learn more]
 
 === Sudoku Engine
 
 This is the component that uses all the previously described components and glues them together to generate the main component responsible for the full process.
+
+link:engine.html[learn more]

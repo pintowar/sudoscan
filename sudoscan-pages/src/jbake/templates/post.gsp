@@ -12,4 +12,13 @@
 
 	<hr />
 
+	<div class="row">
+        <div class="col-md-6">
+            <a href="${content.previous ? (content.previous + '.html') : '#'}">${content.previous ? '<< prev' : ''}</a>
+        </div>
+        <div class="col-md-6 text-right">
+            <a href="${content.next ? (content.next + '.html') : '#'}">${content.next ? 'next >>' : ''}</a>
+        </div>
+    </div>
+
 <%include "footer.gsp"%>

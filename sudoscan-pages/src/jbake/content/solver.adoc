@@ -3,11 +3,12 @@ date=2022-01-09
 type=post
 tags=choco-solver, ojAlgo, csp, mip, operations research, artificial intelligence
 status=published
+previous=recognizer
 ---------
 
 In Sudoscan's context, the process of solving a Sudoku puzzle is the main goal of a *Solver*.
 
-A quick recap: In the Sudoku puzzle, every empty box must be filled with an integer between 1 and 9 in such a way that every number from 1 to 9 appears once in every row, every column, and every one of the small 3 by 3 boxes (regions).
+A quick recap: In the Sudoku puzzle, every empty box must be filled with an integer between 1 and 9 in such a way that every number appears once in every row, every column, and every small 3 by 3 boxes (regions).
 
 There are several ways to solve a Sudoku puzzle. One of the most common solutions is to write it from scratch using a preferred programming language. One of the most famous implementations of a Sudoku solver is https://norvig.com/sudoku.html[Peter Norvig's python implementation].
 

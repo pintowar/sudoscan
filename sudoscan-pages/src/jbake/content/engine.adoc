@@ -3,6 +3,8 @@ date=2022-01-16
 type=post
 tags=artificial intelligence
 status=published
+previous=intro
+next=extractor
 ---------
 
 == Engine
@@ -47,7 +49,7 @@ The code for the Engine can found be found on https://github.com/pintowar/sudosc
 
 Sudoscan comes with a command line application. The cli application can be downloaded on this https://github.com/pintowar/sudoscan/releases[link].
 
-The cli application was built using https://picocli.info[picocli] and https://micronaut.io[micronaut] to warp a SudokuEngine and expose its functionalities through a command line interface. Picocli is an awesome library that allows creating rich command line applications for the JVM. Micronaut is used to enrich the application with auto-generated bean injections, auto-configuration and such.
+The cli application was built using https://picocli.info[picocli] and https://micronaut.io[micronaut] to warp a *SudokuEngine* and expose its functionalities through a command line interface. Picocli is an awesome library that allows creating rich command line applications for the JVM. Micronaut is used to enrich the application with auto-generated bean injections, auto-configuration and such.
 
 A Sudoscan cli application can only have a single implementation for *Solver* and *Recognizer*. Since Sudoscan comes with different implementations for both components, a different implementation can be used at build time.
 
