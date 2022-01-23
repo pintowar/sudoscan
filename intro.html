@@ -92,10 +92,10 @@
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Most of my friends with strong <strong>Software Engineering</strong> backgrounds have little or very superficial knowledge of AI/ML;</p>
+<p>Most of my friends with <strong>Software Engineering</strong> backgrounds have little or very superficial knowledge of AI/ML;</p>
 </li>
 <li>
-<p>Most of my friends with strong <strong>Data Science</strong> backgrounds don&#8217;t know how to build a product with the models they create.</p>
+<p>Most of my friends with <strong>Data Science</strong> backgrounds don&#8217;t know how to build a product with the models they create.</p>
 </li>
 </ol>
 </div>
@@ -182,7 +182,10 @@ Also, I hoped that by building this project I would be able to learn new tools/t
 <p>The main objective of the Extractor is to identify a Sudoku board in an image and break it down into 81 (9 x 9) images for every cell in this puzzle. To achieve this goal, the Extractor needs to detect the borders of a sudoku, change its perspective to a frontal view, apply some filters to clean the image, and crop the image into 81 different pieces.</p>
 </div>
 <div class="paragraph">
-<p>This is basically a <strong>Computer Vision Problem</strong>. OpenCV is an open-source library that includes several hundred of computer vision (CV) algorithms. It is essentially a C++ API, but there are some Java APIs that can use its native interfaces. I found some different ports of OpenCv to Java, but the <a href="https://github.com/bytedeco/javacv">JavaCv</a> lib turned out to be a good option, especially for its ease of use with build tools (Gradle, Maven). Its ability to generate artifacts for each platform (Linux, Windows, and Macos) is particularly noteworthy.</p>
+<p>This is basically a <strong>Computer Vision</strong> task. OpenCV is an open-source library that includes several hundred of computer vision (CV) algorithms. It is essentially a C++ API, but there are some Java APIs that can use its native interfaces. I found some different ports of OpenCv to Java, but the <a href="https://github.com/bytedeco/javacv">JavaCv</a> lib turned out to be a good option, especially for its ease of use with build tools (Gradle, Maven). Its ability to generate artifacts for each platform (Linux, Windows, and Macos) is particularly noteworthy.</p>
+</div>
+<div class="paragraph">
+<p><a href="extractor.html#_extractor">learn more</a></p>
 </div>
 </div>
 <div class="sect2">
@@ -210,6 +213,9 @@ There are tons of ML models trained to accomplish this goal. For this project, I
 <div class="paragraph">
 <p>The Sudoscan Project has implementations for both libraries.</p>
 </div>
+<div class="paragraph">
+<p><a href="recognizer.html">learn more</a></p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_solver">Solver</h3>
@@ -235,14 +241,20 @@ There are tons of ML models trained to accomplish this goal. For this project, I
 <div class="paragraph">
 <p>The Sudoscan Project also has implementations for both libraries.</p>
 </div>
+<div class="paragraph">
+<p><a href="solver.html">learn more</a></p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_plotter">Plotter</h3>
 <div class="paragraph">
-<p>The main objective of the Plotter is to "paint" (or plot) the actual Sudoku solution back to its original image. It&#8217;s a way to combine real world information (the Sudoku board image) with virtual generated data.</p>
+<p>The main objective of the Plotter is to plot ("paint") the actual Sudoku solution back to its original image. It&#8217;s a way to combine real world information (the Sudoku board image) with virtual generated data.</p>
 </div>
 <div class="paragraph">
 <p>This is also a <strong>Computer Vision Problem</strong> and as discussed before (in the <strong>Extractor</strong> sub section), the tool used for this task is the <a href="https://github.com/bytedeco/javacv">JavaCv</a> lib.</p>
+</div>
+<div class="paragraph">
+<p><a href="extractor.html#_plotter">learn more</a></p>
 </div>
 </div>
 <div class="sect2">
@@ -250,11 +262,23 @@ There are tons of ML models trained to accomplish this goal. For this project, I
 <div class="paragraph">
 <p>This is the component that uses all the previously described components and glues them together to generate the main component responsible for the full process.</p>
 </div>
+<div class="paragraph">
+<p><a href="engine.html">learn more</a></p>
+</div>
 </div>
 </div>
 </div></p>
 
 	<hr />
+
+	<div class="row">
+        <div class="col-md-6">
+            <a href="#"></a>
+        </div>
+        <div class="col-md-6 text-right">
+            <a href="engine.html">next >></a>
+        </div>
+    </div>
 
 		</div>
 		<div id="push"></div>

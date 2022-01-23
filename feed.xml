@@ -6,8 +6,8 @@
     <atom:link href="https://pintowar.github.io/sudoscan//feed.xml" rel="self" type="application/rss+xml" />
     <description>Sudoscan - Pages</description>
     <language>en-us</language>
-    <pubDate>Fri, 21 Jan 2022 21:20:43 -0300</pubDate>
-    <lastBuildDate>Fri, 21 Jan 2022 21:20:43 -0300</lastBuildDate>
+    <pubDate>Sat, 22 Jan 2022 01:35:28 -0300</pubDate>
+    <lastBuildDate>Sat, 22 Jan 2022 01:35:28 -0300</lastBuildDate>
 
     
     <item>
@@ -125,7 +125,7 @@
 &lt;p&gt;In Sudoscan&amp;#8217;s context, the process of solving a Sudoku puzzle is the main goal of a &lt;strong&gt;Solver&lt;/strong&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;A quick recap: In the Sudoku puzzle, every empty box must be filled with an integer between 1 and 9 in such a way that every number from 1 to 9 appears once in every row, every column, and every one of the small 3 by 3 boxes (regions).&lt;/p&gt;
+&lt;p&gt;A quick recap: In the Sudoku puzzle, every empty box must be filled with an integer between 1 and 9 in such a way that every number appears once in every row, every column, and every small 3 by 3 boxes (regions).&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;There are several ways to solve a Sudoku puzzle. One of the most common solutions is to write it from scratch using a preferred programming language. One of the most famous implementations of a Sudoku solver is &lt;a href=&quot;https://norvig.com/sudoku.html&quot;&gt;Peter Norvig&amp;#8217;s python implementation&lt;/a&gt;.&lt;/p&gt;
@@ -195,7 +195,7 @@ Then, the problem is solved by alternating constraint filtering algorithms with 
       <guid isPermaLink="false">recognizer.html</guid>
       <description>
       &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;Recognition is the process of extracting information from a known pattern. In Sudoscan context, a &lt;strong&gt;Recognizer&lt;/strong&gt; is the &quot;entity&quot; responsible for recognizing the patterns of an image of a Sudoku cell. It uses an image as input and generates information if the cell is empty and the numerical information in it (if it is not empty).&lt;/p&gt;
+&lt;p&gt;Recognition is the process of extracting information from a known pattern. In Sudoscan context, a &lt;strong&gt;Recognizer&lt;/strong&gt; is the &quot;entity&quot; responsible for recognizing the patterns in an image of a Sudoku cell. It uses an image as input and generates information if the cell is empty or the numerical information in it (if it is not empty).&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;This process solves a very similar (and well-known) problem: Image Classification.
@@ -289,10 +289,10 @@ The goal of Image Classification is to classify a specific picture according to 
 &lt;div class=&quot;olist arabic&quot;&gt;
 &lt;ol class=&quot;arabic&quot;&gt;
 &lt;li&gt;
-&lt;p&gt;Most of my friends with strong &lt;strong&gt;Software Engineering&lt;/strong&gt; backgrounds have little or very superficial knowledge of AI/ML;&lt;/p&gt;
+&lt;p&gt;Most of my friends with &lt;strong&gt;Software Engineering&lt;/strong&gt; backgrounds have little or very superficial knowledge of AI/ML;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Most of my friends with strong &lt;strong&gt;Data Science&lt;/strong&gt; backgrounds don&amp;#8217;t know how to build a product with the models they create.&lt;/p&gt;
+&lt;p&gt;Most of my friends with &lt;strong&gt;Data Science&lt;/strong&gt; backgrounds don&amp;#8217;t know how to build a product with the models they create.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
@@ -379,7 +379,10 @@ Also, I hoped that by building this project I would be able to learn new tools/t
 &lt;p&gt;The main objective of the Extractor is to identify a Sudoku board in an image and break it down into 81 (9 x 9) images for every cell in this puzzle. To achieve this goal, the Extractor needs to detect the borders of a sudoku, change its perspective to a frontal view, apply some filters to clean the image, and crop the image into 81 different pieces.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;This is basically a &lt;strong&gt;Computer Vision Problem&lt;/strong&gt;. OpenCV is an open-source library that includes several hundred of computer vision (CV) algorithms. It is essentially a C++ API, but there are some Java APIs that can use its native interfaces. I found some different ports of OpenCv to Java, but the &lt;a href=&quot;https://github.com/bytedeco/javacv&quot;&gt;JavaCv&lt;/a&gt; lib turned out to be a good option, especially for its ease of use with build tools (Gradle, Maven). Its ability to generate artifacts for each platform (Linux, Windows, and Macos) is particularly noteworthy.&lt;/p&gt;
+&lt;p&gt;This is basically a &lt;strong&gt;Computer Vision&lt;/strong&gt; task. OpenCV is an open-source library that includes several hundred of computer vision (CV) algorithms. It is essentially a C++ API, but there are some Java APIs that can use its native interfaces. I found some different ports of OpenCv to Java, but the &lt;a href=&quot;https://github.com/bytedeco/javacv&quot;&gt;JavaCv&lt;/a&gt; lib turned out to be a good option, especially for its ease of use with build tools (Gradle, Maven). Its ability to generate artifacts for each platform (Linux, Windows, and Macos) is particularly noteworthy.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;extractor.html#_extractor&quot;&gt;learn more&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;sect2&quot;&gt;
@@ -407,6 +410,9 @@ There are tons of ML models trained to accomplish this goal. For this project, I
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;The Sudoscan Project has implementations for both libraries.&lt;/p&gt;
 &lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;recognizer.html&quot;&gt;learn more&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;sect2&quot;&gt;
 &lt;h3 id=&quot;_solver&quot;&gt;Solver&lt;/h3&gt;
@@ -432,20 +438,29 @@ There are tons of ML models trained to accomplish this goal. For this project, I
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;The Sudoscan Project also has implementations for both libraries.&lt;/p&gt;
 &lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;solver.html&quot;&gt;learn more&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;sect2&quot;&gt;
 &lt;h3 id=&quot;_plotter&quot;&gt;Plotter&lt;/h3&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
-&lt;p&gt;The main objective of the Plotter is to &quot;paint&quot; (or plot) the actual Sudoku solution back to its original image. It&amp;#8217;s a way to combine real world information (the Sudoku board image) with virtual generated data.&lt;/p&gt;
+&lt;p&gt;The main objective of the Plotter is to plot (&quot;paint&quot;) the actual Sudoku solution back to its original image. It&amp;#8217;s a way to combine real world information (the Sudoku board image) with virtual generated data.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;This is also a &lt;strong&gt;Computer Vision Problem&lt;/strong&gt; and as discussed before (in the &lt;strong&gt;Extractor&lt;/strong&gt; sub section), the tool used for this task is the &lt;a href=&quot;https://github.com/bytedeco/javacv&quot;&gt;JavaCv&lt;/a&gt; lib.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;extractor.html#_plotter&quot;&gt;learn more&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;sect2&quot;&gt;
 &lt;h3 id=&quot;_sudoku_engine&quot;&gt;Sudoku Engine&lt;/h3&gt;
 &lt;div class=&quot;paragraph&quot;&gt;
 &lt;p&gt;This is the component that uses all the previously described components and glues them together to generate the main component responsible for the full process.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;engine.html&quot;&gt;learn more&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
