@@ -1,0 +1,44 @@
+title=Solver
+date=2022-01-09
+type=post
+tags=choco-solver, ojAlgo, csp, mip, operations research, artificial intelligence
+status=published
+previous=recognizer
+---------
+
+In Sudoscan's context, the process of solving a Sudoku puzzle is the main goal of a *Solver*.
+
+A quick recap: In the Sudoku puzzle, every empty box must be filled with an integer between 1 and 9 in such a way that every number appears once in every row, every column, and every small 3 by 3 boxes (regions).
+
+There are several ways to solve a Sudoku puzzle. One of the most common solutions is to write it from scratch using a preferred programming language. One of the most famous implementations of a Sudoku solver is https://norvig.com/sudoku.html[Peter Norvig's python implementation].
+
+However, a Sudoku puzzle has some special characteristics like a set of variables (empty cells of the puzzle), a set of constraints (the unique appearance of a number in every row, column, and region) and functions that maps each variable to a finite domain.
+
+These characteristics place a Sudoku puzzle description in the *Constraint Satisfaction Problem* (CSP) category. Constraint Solvers are tools able to model a CSP in a declarative way with solvers that can search for a solution in a "smart way".
+
+Also, these same characteristics can be modeled on a more mathematical approach using Operations Research techniques. Since the problem can be formulated  in terms of a linear objective function and linear inequality constraints, Linear Programming (LP) can be a powerful tool for finding optimal solutions. A Mixed Integer Programming (MIP) is a special case of LP, where some of its variables are integer numbers.
+
+Sudoscan provides solvers that use both CSP and MIP modeling. There are several projects that can handle modeling in a declarative way and also solve them. One good mention is https://developers.google.com/optimization/[OR-Tools]. OR-Tools has support to work with both approaches. However, since it's not a native java (JVM) implementation, it wasn't used on the Sudoscan project. At the time of writing the project, two good projects to work on with both approaches were:
+
+* <<_choco_solver>> for CSP;
+* <<_ojalgo>> for MIP.
+
+A more detailed comparison between CSP and MIP modeling can be found in this https://www.kaggle.com/pintowar/modeling-a-sudoku-solver-with-or-tools[Kaggle Notebook]. This notebook uses OR-Tools for modeling and comparing the solution time.
+
+Sudoscan can use only one of the implementations per execution. The current implementation can be defined at compile time (the default implementation is the Choco Solver one). To learn more about how each implementation can be used, check out https://github.com/pintowar/sudoscan#building-project[this link].
+
+== Choco Solver
+
+Choco is an Open-Source Java library dedicated to Constraint Programming.
+The user models its problem in a declarative way by stating the set of constraints that need to be satisfied in every solution.
+Then, the problem is solved by alternating constraint filtering algorithms with a search mechanism.
+
+To see how Choco Solver was used on Sudoscan, checkout the https://github.com/pintowar/sudoscan/tree/master/sudoscan-solver-choco[sudoscan-solver-choco] submodule. This is a small module containing a Solver implementation that uses Choco Solver.
+
+== ojAlgo
+
+OjAlgo is a fast pure Java linear algebra library available.
+
+Optimisation (mathematical programming) tools including LP, QP and MIP solvers. This is pure Java with zero dependencies.
+
+To see how ojAlgo was used on Sudoscan, checkout https://github.com/pintowar/sudoscan/tree/master/sudoscan-solver-ojalgo[sudoscan-solver-ojalgo] sub module. This is a small module containing a Solver implementation that uses ojAlgo.

@@ -17,6 +17,8 @@ AI libs and CI pipes (using github actions).
 
 [![Sudoscan Project](http://img.youtube.com/vi/8D4gMhDRu-U/0.jpg)](https://youtu.be/8D4gMhDRu-U "Sudoscan Project")
 
+For a more detailed explanation of how the project works, check out the [Project Blog](https://pintowar.github.io/sudoscan/).
+
 ### Project Concepts
 
 The main objective of this project is to use an image of a sudoku puzzle as input, identify the puzzle, 

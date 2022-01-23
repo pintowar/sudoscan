@@ -91,3 +91,6 @@ gradle-app.setting
 
 ## Vs Code config
 **/.vscode/**
+
+## Asciidoctor
+.asciidoctor

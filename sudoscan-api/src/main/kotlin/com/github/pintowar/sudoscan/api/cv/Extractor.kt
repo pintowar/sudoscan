@@ -1,5 +1,6 @@
 package com.github.pintowar.sudoscan.api.cv
 
+import com.github.pintowar.sudoscan.api.PuzzleCells
 import com.github.pintowar.sudoscan.api.SudokuCell
 import org.bytedeco.javacpp.indexer.FloatIndexer
 import org.bytedeco.javacpp.indexer.IntIndexer
@@ -293,9 +294,9 @@ internal object Extractor {
      * @param img input image (for proper extraction, this must be a frontal view of the sudoku puzzle).
      * @return an object with the image extracted and additional information about the cell.
      */
-    fun extractSudokuCells(img: Mat): List<SudokuCell> {
+    fun extractPuzzleCells(img: Mat): PuzzleCells {
         val squares = splitSquares(img)
-        return squares.map { s -> extractCell(img, s) }
+        return PuzzleCells(squares.map { s -> extractCell(img, s) })
     }
 
     /**
