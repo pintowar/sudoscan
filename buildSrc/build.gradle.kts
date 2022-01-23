@@ -21,4 +21,8 @@ dependencies {
     implementation("io.kotest:kotest-gradle-plugin:0.3.9")
     implementation("org.jlleitschuh.gradle:ktlint-gradle:10.2.1")
     implementation("net.researchgate:gradle-release:2.8.1")
+
+    implementation("org.asciidoctor:asciidoctorj-diagram:2.2.1")
+    implementation("org.jbake:jbake-gradle-plugin:5.5.0")
+    implementation("org.ajoberstar:gradle-git-publish:3.0.0")
 }
