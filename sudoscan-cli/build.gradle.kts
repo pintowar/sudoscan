@@ -1,7 +1,3 @@
-import Libs.AwtColorFactory.implementAwtColorFactory
-import Libs.JavaCv.implementFfmpeg
-import Libs.JavaCv.implementJavaCv
-import Libs.JavaCv.implementOpenCv
 import Libs.Micronaut.implementMicronautPicocli
 
 plugins {
@@ -26,12 +22,20 @@ val hasOjalgo = project.hasProperty("ojalgo")
 dependencies {
     implementation(if (hasOjalgo) projects.sudoscanSolverOjalgo else projects.sudoscanSolverChoco)
     implementation(if (hasDjl) projects.sudoscanRecognizerDjl else projects.sudoscanRecognizerDl4j)
-    implementJavaCv()
-    implementOpenCv()
-    implementFfmpeg()
+    implementation(libs.javacv) {
+        listOf(
+            "artoolkitplus", "flandmark", "flycapture", "leptonica", "libdc1394",
+            "libfreenect", "libfreenect2", "librealsense", "librealsense2",
+            "tesseract", "videoinput", "openblas", "ffmpeg", "opencv"
+        ).forEach {
+            exclude(group = "org.bytedeco", module = it)
+        }
+    }
+    implementation(libs.opencv)
+    implementation(libs.ffmpeg)
 
     implementMicronautPicocli()
-    implementAwtColorFactory()
+    implementation(libs.awtColorFactory)
 }
 
 application {

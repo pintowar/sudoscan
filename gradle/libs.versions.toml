@@ -1,0 +1,28 @@
+[versions]
+ojalgo = "50.0.1"
+choco = "4.10.6"
+djlzoo = "0.13.0"
+djltensorflow = "2.4.1"
+nd4j = "1.0.0-M1.1"
+hdf5 = "1.12.1-1.5.6"
+caffeine = "3.0.4"
+javacv = "1.5.6"
+opencv = "4.5.3-1.5.6"
+ffmpeg = "4.4-1.5.6"
+awtColorFactory = "1.0.2"
+
+[libraries]
+ojalgo = { module = "org.ojalgo:ojalgo", version.ref = "ojalgo" }
+choco = { module = "org.choco-solver:choco-solver", version.ref = "choco" }
+djl-zoo = { module = "ai.djl.tensorflow:tensorflow-model-zoo", version.ref = "djlzoo" }
+djl-tensorflow = { module = "ai.djl.tensorflow:tensorflow-native-auto", version.ref = "djltensorflow" }
+nd4j = { module = "org.nd4j:nd4j-native-platform", version.ref = "nd4j" }
+dl4j = { module = "org.deeplearning4j:deeplearning4j-modelimport", version.ref = "nd4j" }
+hdf5 = { module = "org.bytedeco:hdf5-platform", version.ref = "hdf5" }
+javacv = { module = "org.bytedeco:javacv", version.ref = "javacv" }
+opencv = { module = "org.bytedeco:opencv-platform", version.ref = "opencv" }
+ffmpeg = { module = "org.bytedeco:ffmpeg-platform", version.ref = "ffmpeg" }
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+awtColorFactory = { module = "org.beryx:awt-color-factory", version.ref = "awtColorFactory" }
+
+#[bundle]
