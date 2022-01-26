@@ -4,7 +4,6 @@ import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 plugins {
     kotlin("jvm")
     id("org.jetbrains.dokka")
-    id("io.kotest")
     id("jacoco")
     id("idea")
     id("org.jlleitschuh.gradle.ktlint")

@@ -1,5 +1,6 @@
 plugins {
     id("sudoscan.kotlin-base")
+    id("io.kotest")
     `maven-publish`
 }
 
