@@ -31,7 +31,5 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          dependencies-cache-enabled: true
-          configuration-cache-enabled: true
           gradle-version: wrapper
           arguments: clean codeCoverageReport sonarqube
