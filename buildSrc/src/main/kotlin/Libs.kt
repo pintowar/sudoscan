@@ -15,7 +15,7 @@ object Libs {
     }
 
     object Kotest {
-        private const val vKotest = "4.6.3"
+        private const val vKotest = "4.6.4"
 
         const val junit = "io.kotest:kotest-runner-junit5-jvm:$vKotest"
         const val assertionsCore = "io.kotest:kotest-assertions-core-jvm:$vKotest"
@@ -47,7 +47,7 @@ object Libs {
     }
 
     object OjAlgo {
-        private const val vOjAlgo = "49.2.0"
+        private const val vOjAlgo = "50.0.1"
         const val ojAlgo = "org.ojalgo:ojalgo:$vOjAlgo"
 
         fun DependencyHandler.implementOjAlgo() {

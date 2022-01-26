@@ -31,8 +31,8 @@ class SudokuCell(mat: Mat) {
      * Checks if the informed image has more than 10% of data or else it assumes it's an empty cell.
      */
     private fun scaleAndCenter(cleanedImage: Mat): Pair<Mat, Boolean> {
-        val area = cleanedImage.area().value()
-        val percentFill = if (area > 0) (cleanedImage.sumElements() / 255) / area else 0.0
+        val area = cleanedImage.area().value().toDouble()
+        val percentFill = if (area > 0) cleanedImage.countNonZero() / area else 0.0
 
         return if (percentFill > 0.1)
             scaleAndCenter(cleanedImage, CELL_SIZE, CELL_SIZE / 7) to false

@@ -2,9 +2,8 @@ package com.github.pintowar.sudoscan.api.engine
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.pintowar.sudoscan.api.Puzzle
-import com.github.pintowar.sudoscan.api.SudokuCell
 import com.github.pintowar.sudoscan.api.cv.*
-import com.github.pintowar.sudoscan.api.cv.Extractor.extractSudokuCells
+import com.github.pintowar.sudoscan.api.cv.Extractor.extractPuzzleCells
 import com.github.pintowar.sudoscan.api.cv.Extractor.preProcessGrayImage
 import com.github.pintowar.sudoscan.api.cv.Extractor.preProcessPhases
 import com.github.pintowar.sudoscan.api.cv.Extractor.removeGrid
@@ -48,7 +47,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
      * @param puzzle puzzle to be solved
      * @return puzzle solution
      */
-    private fun solveWithCache(puzzle: Puzzle) = cache.get(puzzle.describe()) {
+    private fun solveWithCache(puzzle: Puzzle): Puzzle = cache.get(puzzle.describe()) {
         logger.debug { "Digital Sudoku:\n ${puzzle.describe(false)}" }
         val solution = solver.solve(puzzle)
         logger.debug { "Solution:\n ${solution.describe(false)}" }
@@ -176,12 +175,11 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         val processedCrop = preProcessGrayImage(cropped.img, false)
         val noGrid = removeGrid(processedCrop)
 
-        val cells = extractSudokuCells(noGrid)
-        val cleanImage = cellsToMat(cells, debug)
+        val puzzleCells = extractPuzzleCells(noGrid)
+        val cleanImage = puzzleCells.toMat(debug)
 
         return try {
-            val digits = recognizer.reliablePredict(cells)
-            val puzzle = Puzzle.Unsolved(digits)
+            val puzzle = puzzleCells.toUnsolvedPuzzle(recognizer)
             val finalSolution = when (val solution = solveWithCache(puzzle)) {
                 is Puzzle.Unsolved -> image
                 is Puzzle.Solved -> {
@@ -199,11 +197,4 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
             listOf(image, prePhases.preProcessedGrayImage, processedCrop, noGrid, cleanImage, image)
         }
     }
-
-    private fun cellsToMat(cells: List<SudokuCell>, debug: Boolean) = if (debug) cells
-        .map { it.data }
-        .chunked(9)
-        .map { it.reduce { acc, mat -> acc.concat(mat) } }
-        .reduce { acc, mat -> acc.concat(mat, false) }
-    else zeros(Area(9 * SudokuCell.CELL_SIZE))
 }

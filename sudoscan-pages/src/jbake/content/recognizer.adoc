@@ -1,0 +1,57 @@
+title=Recognizer
+date=2021-12-31
+type=post
+tags=tensorflow, machine learning, deep learning, artificial intelligence
+status=published
+previous=extractor
+next=solver
+---------
+
+Recognition is the process of extracting information from a known pattern. In Sudoscan context, a *Recognizer* is the "entity" responsible for recognizing the patterns in an image of a Sudoku cell. It uses an image as input and generates information if the cell is empty or the numerical information in it (if it is not empty).
+
+This process solves a very similar (and well-known) problem: Image Classification.
+The goal of Image Classification is to classify a specific picture according to a set of possible categories. A classic example of image classification is the identification (recognition) of cats and dogs in a (set of) picture(s).
+
+In the Sudoscan context, it is possible to use the same principle. However, instead of classifying an image into two categories (cats and dogs), it classifies an image into 9 different categories (a range of numbers between 1 and 9).
+
+A very common way to address this kind of problem is through the use of Machine Learning techniques. Even under the "Machine Learning Umbrella", there are several ways to solve those problems, like: K-Nearest Neighbor(KNN), Support Vector Machine (SVM), Artificial Neural Networks (ANN), Decision Trees, Naive Bayes, Logistic Regression, etc.
+
+Deep learning is part of a broader family of Machine Learning methods based on Artificial Neural Networks. There are several ANN architectures that fits into this ML sub-category. One of those architectures is known as Convolutional Neural Networks (CNN), a very efficient architecture to handle Image Classification Problems.
+
+There are several Open Source tools that help create an ANN. Due to its flexibility and ease of use, the chosen tool for generating (and training) a classification model using CNN for Sudoscan was https://keras.io/[Keras].
+
+A more detailed description of how the CNN model for Sudoscan was created and trained can be found on this https://www.kaggle.com/pintowar/sudoscan-number-recognizer[Kaggle Notebook].
+
+== Keras & Tensorflow 2
+
+Keras is a deep learning API written in Python. According to https://keras.io/[Keras] website:
+
+[quote]
+____
+https://www.tensorflow.org/[TensorFlow 2] is an end-to-end, open-source machine learning platform. You can think of it as an infrastructure layer for differentiable programming.
+
+https://keras.io/[Keras] is the high-level API of TensorFlow 2: an approachable, highly-productive interface for solving machine learning problems, with a focus on modern deep learning. It provides essential abstractions and building blocks for developing and shipping machine learning solutions with high iteration velocity.
+____
+
+As mentioned, the Keras API used to create and train the CNN model is written in Python. Meanwhile, the Sudoscan project was written in Kotlin, a JVM language.
+
+At this point, an observable reader may wonder, "How is it possible to reuse code from different programming languages?". Well, at the time of writing this project, I found 2 projects that could help the reuse of a Keras trained models on the JVM, they are:
+
+* <<_deeplearning4j>>
+* <<_djl>>
+
+Sudoscan contains implementations for both projects. On both implementations, Sudoscan downloads the trained model from the Kaggle website and uses the project API to reuse the trained model (originally trained in Python).
+
+Sudoscan can use only one of the implementations per execution. The current implementation can be defined at compile time (the default implementation is the Deeplearning4j one). To learn more on how each implementation can be used, check https://github.com/pintowar/sudoscan#building-project[this link].
+
+=== Deeplearning4j
+
+https://deeplearning4j.konduit.ai/[Deeplearning4j] is a suite of tools for running deep learning on the JVM. It's a framework that allows you to train models from java while interoperating with the python ecosystem through a mix of python execution via its cpython bindings, model import support, and interop with other runtimes such as tensorflow-java.
+
+To see how Deeplearning4j was used on Sudoscan, checkout the https://github.com/pintowar/sudoscan/tree/master/sudoscan-recognizer-dl4j[sudoscan-recognizer-dl4j] submodule. This is a small module containing a *Recognizer* implementation that uses Deeplearning4j.
+
+=== DJL
+
+https://djl.ai/[Deep Java Library] is an open-source, high-level, engine-agnostic Java framework for deep learning. DJL is designed to be easy to get started with and simple to use for Java developers. DJL provides a native Java development experience and functions like any other regular Java library.
+
+To see how DJL was used on Sudoscan, checkout the https://github.com/pintowar/sudoscan/tree/master/sudoscan-recognizer-djl[sudoscan-recognizer-djl] submodule. This is a small module containing a *Recognizer* implementation that uses DJL.

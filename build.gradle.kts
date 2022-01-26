@@ -19,7 +19,11 @@ tasks {
         subprojects {
             val subproject = this
             subproject.plugins.withType<JacocoPlugin>().configureEach {
-                val extensions = subproject.tasks.matching { it.extensions.findByType<JacocoTaskExtension>() != null }
+                val extensions = subproject.tasks.matching {
+                    val hasJacoco = it.extensions.findByType<JacocoTaskExtension>() != null
+                    hasJacoco && !it.name.contains("native", ignoreCase = true)
+                }
+
                 extensions.forEach { codeCoverageTask.dependsOn(it) }
 
                 extensions.configureEach {
