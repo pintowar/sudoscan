@@ -37,7 +37,7 @@ gradleplugin-javacpp = { module = "org.bytedeco.gradle-javacpp-platform:org.byte
 
 gradleplugin-jbake = { module = "org.jbake:jbake-gradle-plugin", version = "5.5.0" }
 gradleplugin-asciidoctorj-diagram = { module = "org.asciidoctor:asciidoctorj-diagram", version = "2.2.1" }
-gradleplugin-git-publish = { module = "org.ajoberstar:gradle-git-publish", version = "3.0.0" }
+gradleplugin-git-publish = { module = "org.ajoberstar.git-publish", version = "3.0.1" }
 
 ########################################################################################################################
 
