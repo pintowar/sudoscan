@@ -1,0 +1,66 @@
+[versions]
+kotlin = "1.7.20"
+kotlin-coroutines = "1.6.4"
+micronaut-gradle = "3.1.1"
+kotest-gradle = "0.3.9"
+git-gradle = "2.4.0"
+
+ojalgo = "50.0.1"
+choco = "4.10.6"
+djl = "0.13.0"
+tensorflow = "2.4.1"
+nd4j = "1.0.0-M1.1"
+hdf5 = "1.12.1-1.5.6"
+
+javacv = "1.5.6"
+opencv = "4.5.3-1.5.6"
+ffmpeg = "4.4-1.5.6"
+
+caffeine = "3.0.4"
+awt-color-factory = "1.0.2"
+
+[libraries]
+gradleplugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+gradleplugin-kotlin-allopen = { module = "org.jetbrains.kotlin:kotlin-allopen", version.ref = "kotlin" }
+gradleplugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "kotlin" }
+gradleplugin-micronaut = { module = "io.micronaut.gradle:micronaut-gradle-plugin", version.ref = "micronaut-gradle" }
+gradleplugin-shadow = { module = "gradle.plugin.com.github.johnrengelman:shadow", version = "7.1.2" }
+gradleplugin-kotest = { module = "io.kotest:kotest-gradle-plugin", version.ref = "kotest-gradle" }
+gradleplugin-release = { module = "net.researchgate:gradle-release", version = "2.8.1" }
+gradleplugin-ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version = "10.2.1" }
+gradleplugin-sonarqube = { module = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin", version = "3.3" }
+gradleplugin-javacpp = { module = "org.bytedeco.gradle-javacpp-platform:org.bytedeco.gradle-javacpp-platform.gradle.plugin", version.ref = "javacv" }
+
+gradleplugin-jbake = { module = "org.jbake:jbake-gradle-plugin", version = "5.5.0" }
+gradleplugin-asciidoctorj-diagram = { module = "org.asciidoctor:asciidoctorj-diagram", version = "2.2.1" }
+gradleplugin-git-publish = { module = "org.ajoberstar:gradle-git-publish", version = "3.0.0" }
+
+########################################################################################################################
+
+awt-color-factory = { module = "org.beryx:awt-color-factory", version.ref = "awt-color-factory" }
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+picocli = { module = "info.picocli:picocli-codegen" }
+micronaut-picocli = { module = "io.micronaut.picocli:micronaut-picocli" }
+micronaut-kotlin = { module = "io.micronaut.kotlin:micronaut-kotlin-runtime" }
+graalvm = { module = "org.graalvm.nativeimage:svm" }
+
+javacv = { module = "org.bytedeco:javacv", version.ref = "javacv" }
+opencv-platform = { module = "org.bytedeco:opencv-platform", version.ref = "opencv" }
+ffmpeg-platform = { module = "org.bytedeco:ffmpeg-platform", version.ref = "ffmpeg" }
+
+solver-ojalgo = { module = "org.ojalgo:ojalgo", version.ref = "ojalgo" }
+solver-choco = { module = "org.choco-solver:choco-solver", version.ref = "choco" }
+
+recognizer-djl-zoo = { module = "ai.djl.tensorflow:tensorflow-model-zoo", version.ref = "djl" }
+recognizer-djl-native = { module = "ai.djl.tensorflow:tensorflow-native-auto", version.ref = "tensorflow" }
+recognizer-dl4j-nd4j = { module = "org.nd4j:nd4j-native-platform", version.ref = "nd4j" }
+recognizer-dl4j-deeplearning4j = { module = "org.deeplearning4j:deeplearning4j-modelimport", version.ref = "nd4j" }
+recognizer-dl4j-hdf5 = { module = "org.bytedeco:hdf5-platform", version.ref = "hdf5" }
+
+[bundles]
+#micronaut-kapt = ["micronaut-http-validation", "micronaut-data-processor", "micronaut-security-annotations"]
+#micronaut = [
+#    "micronaut-http-client", "micronaut-jackson", "micronaut-management", "micronaut-runtime", "micronaut-validation",
+#    "micronaut-kotlin-runtime", "micronaut-data-r2dbc", "micronaut-jdbc-hikari", "micronaut-liquibase",
+#    "micronaut-micrometer-core", "jakarta-annotation-api", "jakarta-persistence-api", "micronaut-security-jwt"
+#]
