@@ -1,9 +1,3 @@
-import Libs.AwtColorFactory.implementAwtColorFactory
-import Libs.JavaCv.implementFfmpeg
-import Libs.JavaCv.implementJavaCv
-import Libs.JavaCv.implementOpenCv
-import Libs.Micronaut.implementMicronautPicocli
-
 plugins {
     id("sudoscan.kotlin-app")
     id("io.micronaut.application")
@@ -26,12 +20,31 @@ val hasOjalgo = project.hasProperty("ojalgo")
 dependencies {
     implementation(if (hasOjalgo) projects.sudoscanSolverOjalgo else projects.sudoscanSolverChoco)
     implementation(if (hasDjl) projects.sudoscanRecognizerDjl else projects.sudoscanRecognizerDl4j)
-    implementJavaCv()
-    implementOpenCv()
-    implementFfmpeg()
 
-    implementMicronautPicocli()
-    implementAwtColorFactory()
+    implementation(libs.javacv) {
+        exclude(group = "org.bytedeco", module = "artoolkitplus")
+        exclude(group = "org.bytedeco", module = "flandmark")
+        exclude(group = "org.bytedeco", module = "flycapture")
+        exclude(group = "org.bytedeco", module = "leptonica")
+        exclude(group = "org.bytedeco", module = "libdc1394")
+        exclude(group = "org.bytedeco", module = "libfreenect")
+        exclude(group = "org.bytedeco", module = "libfreenect2")
+        exclude(group = "org.bytedeco", module = "librealsense")
+        exclude(group = "org.bytedeco", module = "librealsense2")
+        exclude(group = "org.bytedeco", module = "tesseract")
+        exclude(group = "org.bytedeco", module = "videoinput")
+        exclude(group = "org.bytedeco", module = "openblas")
+        exclude(group = "org.bytedeco", module = "ffmpeg")
+        exclude(group = "org.bytedeco", module = "opencv")
+    }
+    implementation(libs.opencv.platform)
+    implementation(libs.ffmpeg.platform)
+
+    kapt(libs.picocli)
+    implementation(libs.micronaut.picocli)
+    implementation(libs.micronaut.kotlin)
+    compileOnly(libs.graalvm)
+    implementation(libs.awt.color.factory)
 }
 
 application {

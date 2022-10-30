@@ -1,6 +1,3 @@
-import Libs.Caffeine.implementCaffeine
-import Libs.JavaCv.implementOpenCv
-
 plugins {
     id("sudoscan.kotlin-publish")
     id("java-library")
@@ -9,6 +6,6 @@ plugins {
 description = "Sudoscan Core"
 
 dependencies {
-    implementCaffeine()
-    implementOpenCv()
+    implementation(libs.caffeine)
+    implementation(libs.opencv.platform)
 }
