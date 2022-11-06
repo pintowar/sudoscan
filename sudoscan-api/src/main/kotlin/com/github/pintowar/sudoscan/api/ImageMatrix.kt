@@ -1,8 +1,6 @@
 package com.github.pintowar.sudoscan.api
 
-import com.github.pintowar.sudoscan.api.cv.Area
-import com.github.pintowar.sudoscan.api.cv.BBox
-import com.github.pintowar.sudoscan.api.cv.CellIndex
+import com.github.pintowar.sudoscan.api.cv.*
 import com.github.pintowar.sudoscan.api.spi.ImageProvider
 
 interface ImageMatrix {
@@ -42,6 +40,31 @@ interface ImageMatrix {
      */
     fun toGrayScale(): ImageMatrix
 
+    /**
+     * Pre-process a gray scale image. Basically uses a gaussian blur + adaptive threshold.
+     * It also can dilate the image (true by default).
+     *
+     * @param dilate dilate flag (true by default).
+     * @return preprocessed image.
+     */
+    fun preProcessGrayImage(dilate: Boolean = true): ImageMatrix
+
+    /**
+     * Find corners of the biggest square found in the image.
+     * The input image must be in grayscale.
+     *
+     * @return the biggest square coordinates.
+     */
+    fun findCorners(): RectangleCorners
+
+    /**
+     * This function changes an image perspective to a frontal view given a square corners coordinates.
+     *
+     * @param corners square coordinates of the desired object.
+     * @return img with a frontal view.
+     */
+    fun frontalPerspective(corners: RectangleCorners): FrontalPerspective<ImageMatrix>
+
     fun getPerspectiveTransform(dst: ImageMatrix): ImageMatrix
 
     fun warpPerspective(m: ImageMatrix, area: Area): ImageMatrix
@@ -52,6 +75,17 @@ interface ImageMatrix {
      * Transform image from black-white to white-black.
      */
     fun revertColors(): ImageMatrix
+
+    fun clone(): ImageMatrix
+
+    fun findLargestFeature(bBox: BBox): RectangleCorners
+
+    /**
+     * This function has the responsibility to remove (or at least try) the grids of the pre-processed frontal image.
+     *
+     * @return frontal image without the images, or [sudokuGrayImg] case it fails.
+     */
+    fun removeGrid(): ImageMatrix
 
     fun copyMakeBorder(top: Int, bottom: Int, left: Int, right: Int, background: Int): ImageMatrix
 

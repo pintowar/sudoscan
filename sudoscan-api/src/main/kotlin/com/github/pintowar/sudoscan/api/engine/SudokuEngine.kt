@@ -171,8 +171,8 @@ class SudokuEngine(
     ): List<ImageMatrix> {
         val prePhases = extractor.preProcessPhases(image)
         val cropped = prePhases.frontal
-        val processedCrop = extractor.preProcessGrayImage(cropped.img, false)
-        val noGrid = extractor.removeGrid(processedCrop)
+        val processedCrop = cropped.img.preProcessGrayImage(false)
+        val noGrid = processedCrop.removeGrid()
 
         val puzzleCells = extractor.extractPuzzleCells(noGrid)
         val cleanImage = puzzleCells.toMat(debug)

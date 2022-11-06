@@ -10,7 +10,7 @@ import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.opencv_core.*
 import org.opencv.imgcodecs.Imgcodecs
 
-internal val isNotAndroid: Boolean = !Loader.getPlatform().startsWith("android")
+internal val isNotAndroid: Boolean = !Loader.getPlatform().lowercase().startsWith("android")
 
 internal fun zeros(area: Area, type: Int = CV_8U): Mat = Mat.zeros(Size(area.width, area.height), type).asMat()
 

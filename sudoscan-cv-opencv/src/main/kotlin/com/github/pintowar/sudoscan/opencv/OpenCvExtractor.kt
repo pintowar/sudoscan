@@ -4,72 +4,8 @@ import com.github.pintowar.sudoscan.api.ImageMatrix
 import com.github.pintowar.sudoscan.api.PuzzleCells
 import com.github.pintowar.sudoscan.api.SudokuCell
 import com.github.pintowar.sudoscan.api.cv.*
-import org.bytedeco.javacpp.indexer.FloatIndexer
-import org.bytedeco.javacpp.indexer.IntIndexer
-import org.bytedeco.javacpp.indexer.UByteIndexer
-import org.bytedeco.opencv.global.opencv_core.CV_32FC1
-import org.bytedeco.opencv.global.opencv_imgproc
-import org.bytedeco.opencv.opencv_core.Mat
-import org.bytedeco.opencv.opencv_core.Size
-import kotlin.math.max
-import kotlin.math.min
 
 object OpenCvExtractor : Extractor<ImageMatrix> {
-
-    /**
-     * Pre-process a gray scale image. Basically uses a gaussian blur + adaptive threshold.
-     * It also can dilate the image (true by default).
-     *
-     * @param img image to pre-process.
-     * @param dilate dilate flag (true by default).
-     * @return preprocessed image (Mat).
-     */
-    fun preProcessGrayImage(img: Mat, dilate: Boolean = true): Mat {
-        assert(img.channels() == 1) { "Image must be in gray scale." }
-        val proc = img.gaussianBlur(Area(9), 0.0)
-
-        val threshold = proc.adaptiveThreshold(
-            255.0, opencv_imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, opencv_imgproc.THRESH_BINARY, 11, 2.0
-        )
-
-        val thresholdNot = threshold.bitwiseNot()
-
-        return if (dilate) {
-            val kernel = getStructuringElement(opencv_imgproc.MORPH_DILATE, Area(3))
-            thresholdNot.dilate(kernel)
-        } else thresholdNot
-    }
-
-    /**
-     * Find corners of the biggest square found in the image.
-     * The input image must be in grayscale.
-     *
-     * @param img gray scale image to find the biggest square corners.
-     * @return the biggest square coordinates.
-     */
-    fun findCorners(img: Mat): RectangleCorners {
-        assert(img.channels() == 1) { "Image must be in gray scale." }
-
-        val polygons = img.findContours(Mat(), opencv_imgproc.RETR_EXTERNAL, opencv_imgproc.CHAIN_APPROX_SIMPLE)
-
-        return if (polygons.isNotEmpty()) {
-            try {
-                val polygon = polygons.maxByOrNull { it.contourArea() }!!
-                val points = polygon.createIndexer<IntIndexer>(isNotAndroid).use { idx ->
-                    (0 until idx.size(0)).map { Coordinate(idx.get(it, 0, 0), idx.get(it, 0, 1)) }
-                }
-
-                RectangleCorners(
-                    bottomRight = points.maxByOrNull { it.x + it.y }!!,
-                    topLeft = points.minByOrNull { it.x + it.y }!!,
-                    bottomLeft = points.minByOrNull { it.x - it.y }!!,
-                    topRight = points.maxByOrNull { it.x - it.y }!!
-                )
-            } catch (e: RuntimeException) {
-                RectangleCorners.EMPTY_CORNERS
-            }
-        } else RectangleCorners.EMPTY_CORNERS
-    }
 
     /**
      * Splits the image into a 9x9 (81) grid. Assuming an image with a frontal perspective of a Sudoku is provided,
@@ -78,7 +14,7 @@ object OpenCvExtractor : Extractor<ImageMatrix> {
      * @param img original image (for better function, assume an image with a frontal perspective of a Sudoku puzzle).
      * @return list of bounding boxes of every sudoku piece (cell).
      */
-    fun splitSquares(img: ImageMatrix): List<BBox> {
+    private fun splitSquares(img: ImageMatrix): List<BBox> {
         assert(img.height() == img.width())
 
         val numPieces = 9
@@ -89,31 +25,6 @@ object OpenCvExtractor : Extractor<ImageMatrix> {
                 BBox((j * side).toInt(), (i * side).toInt(), side.toInt(), side.toInt())
             }
         }
-    }
-
-    /**
-     * This function changes an image perspective to a frontal view given a square corners coordinates.
-     *
-     * @param img original image.
-     * @param corners square coordinates of the desired object.
-     * @return img with a frontal view.
-     */
-    private fun frontalPerspective(img: Mat, corners: RectangleCorners): FrontalPerspective<ImageMatrix> {
-        val sides = corners.sides()
-        val side = sides.maxOrNull()!!.toFloat()
-
-        val src = floatToMat(corners.toFloatArray())
-        val dst = floatToMat(
-            arrayOf(
-                floatArrayOf(0.0f, 0.0f),
-                floatArrayOf(side - 1, 0.0f),
-                floatArrayOf(side - 1, side - 1),
-                floatArrayOf(0.0f, side - 1)
-            )
-        )
-        val m = src.getPerspectiveTransform(dst)
-        val result = img.warpPerspective(m, Area(side.toInt()))
-        return FrontalPerspective(OpenCvMatrix(result), OpenCvMatrix(src), OpenCvMatrix(dst))
     }
 
     /**
@@ -134,42 +45,9 @@ object OpenCvExtractor : Extractor<ImageMatrix> {
      * @param margin margin of the initial bounding box with a safe margin from the borders.
      * @return a square containing the bounds of an object (number on sudoku context).
      */
-    fun findLargestFeature(inputImg: ImageMatrix, margin: Int): RectangleCorners {
+    private fun findLargestFeature(inputImg: ImageMatrix, margin: Int): RectangleCorners {
         val bBox = BBox(margin, margin, inputImg.width() - 2 * margin, inputImg.height() - 2 * margin)
-        val img = (inputImg as OpenCvMatrix).mat.clone()
-        val (black, gray, white) = listOf(0, 64, 255)
-        return img.createIndexer<UByteIndexer>(isNotAndroid).use { indexer ->
-            val size = img.size()
-
-            (bBox.origin.x until min(bBox.origin.x + bBox.width, size.width())).forEach { x ->
-                (bBox.origin.y until min(bBox.origin.y + bBox.height, size.height())).forEach { y ->
-                    if (indexer[y.toLong(), x.toLong()] == white) {
-                        img.floodFill(Coordinate(x, y), gray.toDouble())
-                    }
-                }
-            }
-
-            var (top, bottom, left, right) = listOf(size.height(), 0, size.width(), 0).map { it.toLong() }
-            val (width, height) = listOf(size.width(), size.height()).map { it.toLong() }
-
-            (0 until width).forEach { x ->
-                (0 until height).forEach { y ->
-                    val color = if (indexer[y, x] != gray) black else white
-                    indexer.put(y, x, color)
-
-                    if (indexer[y, x] == white) {
-                        top = min(x, top)
-                        bottom = max(x, bottom)
-                        left = min(y, left)
-                        right = max(y, right)
-                    }
-                }
-            }
-
-            RectangleCorners(
-                Coordinate(top, left), Coordinate(top, right), Coordinate(bottom, right), Coordinate(bottom, left)
-            )
-        }
+        return inputImg.clone().findLargestFeature(bBox)
     }
 
     /**
@@ -180,7 +58,7 @@ object OpenCvExtractor : Extractor<ImageMatrix> {
      * @param bBox bounding box of the area to be extracted from the original image.
      * @return an object with the image extracted and additional information about the cell.
      */
-    fun extractCell(img: ImageMatrix, bBox: BBox): SudokuCell = try {
+    private fun extractCell(img: ImageMatrix, bBox: BBox): SudokuCell = try {
         val cell = img.crop(bBox)
         val margin = ((cell.width() + cell.height()) / 5.0).toInt()
         val rect = findLargestFeature(cell, margin)
@@ -189,22 +67,6 @@ object OpenCvExtractor : Extractor<ImageMatrix> {
         SudokuCell(noBorder)
     } catch (e: RuntimeException) {
         SudokuCell.EMPTY
-    }
-
-    /**
-     * Convert a 2d array into an image.
-     * @param data original 2d array.
-     * @return converted matrix.
-     */
-    private fun floatToMat(data: Array<FloatArray>): Mat {
-        val mat = Mat(data.size, data[0].size, CV_32FC1)
-        mat.createIndexer<FloatIndexer>(isNotAndroid).use { idx ->
-            data.forEachIndexed { i, it ->
-                idx.put(longArrayOf(i.toLong(), 0, 0), it[0])
-                idx.put(longArrayOf(i.toLong(), 1, 0), it[1])
-            }
-        }
-        return mat
     }
 
     /**
@@ -218,83 +80,12 @@ object OpenCvExtractor : Extractor<ImageMatrix> {
      * @return original image with a frontal view.
      */
     override fun preProcessPhases(img: ImageMatrix): PreProcessPhases<ImageMatrix> {
-        val gray = (img.toGrayScale() as OpenCvMatrix).mat
-        val proc = preProcessGrayImage(gray)
-        val corners = findCorners(proc)
-        val frontal = frontalPerspective(gray, corners)
+        val gray = img.toGrayScale()
+        val proc = gray.preProcessGrayImage()
+        val corners = proc.findCorners()
+        val frontal = gray.frontalPerspective(corners)
 
-        return PreProcessPhases(OpenCvMatrix(gray), OpenCvMatrix(proc), frontal)
-    }
-
-    /**
-     * Pre-process a gray scale image. Basically uses a gaussian blur + adaptive threshold.
-     * It also can dilate the image (true by default).
-     *
-     * @param img image to pre-process.
-     * @param dilate dilate flag (true by default).
-     * @return preprocessed image (Mat).
-     */
-    override fun preProcessGrayImage(img: ImageMatrix, dilate: Boolean): ImageMatrix {
-        assert(img.channels() == 1) { "Image must be in gray scale." }
-        val proc = when (img) {
-            is OpenCvMatrix -> img.mat.gaussianBlur(Area(9), 0.0)
-            else -> throw InvalidImageInstance()
-        }
-
-        val threshold = proc.adaptiveThreshold(
-            255.0, opencv_imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, opencv_imgproc.THRESH_BINARY, 11, 2.0
-        )
-
-        val thresholdNot = threshold.bitwiseNot()
-
-        return OpenCvMatrix(
-            if (dilate) {
-                val kernel = getStructuringElement(opencv_imgproc.MORPH_DILATE, Area(3))
-                thresholdNot.dilate(kernel)
-            } else thresholdNot
-        )
-    }
-
-    /**
-     * This function has the responsibility to remove (or at least try) the grids of the pre-processed frontal image.
-     *
-     * @param sudokuGrayImg Sudoku pre-processed frontal image
-     * @return frontal image without the images, or [sudokuGrayImg] case it fails.
-     */
-    override fun removeGrid(sudokuGrayImg: ImageMatrix): ImageMatrix {
-        fun onlyLines(img: Mat, horizontal: Boolean = true): Mat {
-            val size = if (horizontal) Area(img.arrayHeight() / 9, 1) else Area(1, img.arrayWidth() / 9)
-            val struct = opencv_imgproc.getStructuringElement(opencv_imgproc.MORPH_RECT, Size(size.width, size.height))
-            val grids = img.erode(struct).dilate(struct)
-
-            grids.findContours(Mat(), opencv_imgproc.RETR_TREE, opencv_imgproc.CHAIN_APPROX_SIMPLE).forEach {
-                val poly = Mat().also { rect -> opencv_imgproc.approxPolyDP(it, rect, 3.0, true) }
-                val rect = opencv_imgproc.boundingRect(poly)
-                val extRect = if (horizontal)
-                    BBox(0, max(0, rect.y() - 2), grids.arrayWidth(), rect.height() + 4)
-                else
-                    BBox(max(0, rect.x() - 2), 0, rect.width() + 4, grids.arrayHeight())
-
-                grids.floodRect(extRect)
-            }
-
-            return grids
-        }
-
-        return when (sudokuGrayImg) {
-            is OpenCvMatrix -> {
-                try {
-                    OpenCvMatrix(
-                        sudokuGrayImg.mat.subtract(onlyLines(sudokuGrayImg.mat, true))
-                            .subtract(onlyLines(sudokuGrayImg.mat, false))
-                    )
-                } catch (e: RuntimeException) {
-                    sudokuGrayImg
-                }
-            }
-
-            else -> throw InvalidImageInstance()
-        }
+        return PreProcessPhases(gray, proc, frontal)
     }
 
     /**
