@@ -42,6 +42,12 @@ interface ImageMatrix {
      */
     fun toGrayScale(): ImageMatrix
 
+    fun getPerspectiveTransform(dst: ImageMatrix): ImageMatrix
+
+    fun warpPerspective(m: ImageMatrix, area: Area): ImageMatrix
+
+    fun bitwiseAnd(that: ImageMatrix): ImageMatrix
+
     /**
      * Transform image from black-white to white-black.
      */

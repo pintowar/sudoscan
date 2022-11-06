@@ -35,7 +35,7 @@ object OpenCvPlotter : Plotter<ImageMatrix>, KLogging() {
         val base = image.img
         val squareImage = zeros(Area(base.width(), base.height()), CV_8UC3)
 
-        val factor = (base as OpenCvMatrix).mat.size(0) / 9
+        val factor = base.width() / 9
         val fSize = base.height() / 350.0
 
         val font = FONT_HERSHEY_DUPLEX
@@ -73,10 +73,10 @@ object OpenCvPlotter : Plotter<ImageMatrix>, KLogging() {
         frontal: FrontalPerspective<ImageMatrix>,
         sudokuResult: ImageMatrix,
         originalArea: Area
-    ): OpenCvMatrix {
-        val m = (frontal.dst as OpenCvMatrix).mat.getPerspectiveTransform((frontal.src as OpenCvMatrix).mat)
-        val img = (sudokuResult as OpenCvMatrix).mat.warpPerspective(m, originalArea)
-        return OpenCvMatrix(img.bitwiseNot())
+    ): ImageMatrix {
+        val m = frontal.dst.getPerspectiveTransform(frontal.src)
+        val img = sudokuResult.warpPerspective(m, originalArea)
+        return img.revertColors()
     }
 
     /**
@@ -87,7 +87,6 @@ object OpenCvPlotter : Plotter<ImageMatrix>, KLogging() {
      * @param solution the solution image on the original perspective.
      * @return the final solution plotted on the original image.
      */
-    override fun combineSolutionToOriginal(original: ImageMatrix, solution: ImageMatrix): OpenCvMatrix {
-        return OpenCvMatrix((solution as OpenCvMatrix).mat.bitwiseAnd((original as OpenCvMatrix).mat))
-    }
+    override fun combineSolutionToOriginal(original: ImageMatrix, solution: ImageMatrix): ImageMatrix =
+        solution.bitwiseAnd(original)
 }
