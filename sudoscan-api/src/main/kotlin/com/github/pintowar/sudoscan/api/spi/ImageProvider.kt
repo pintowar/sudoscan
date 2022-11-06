@@ -15,7 +15,5 @@ interface ImageProvider {
 
     fun fromBytes(image: ByteArray): ImageMatrix
 
-    fun fromFile(src: String, mono: Boolean = true): ImageMatrix
-
     fun empty(area: Area, mono: Boolean = true): ImageMatrix
 }

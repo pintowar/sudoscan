@@ -14,11 +14,6 @@ data class Area(val width: Int, val height: Int) {
 
     constructor(size: Int) : this(size, size)
 
-    /**
-     * Converts to OpenCV Size object.
-     */
-//    fun toSize() = Size(width, height)
-
     fun value() = width * height
 
     operator fun times(scale: Double) = Area((width * scale).toInt(), (height * scale).toInt())
@@ -33,11 +28,6 @@ data class Area(val width: Int, val height: Int) {
 data class Coordinate(val x: Int, val y: Int) {
 
     constructor(x: Long, y: Long) : this(x.toInt(), y.toInt())
-
-    /**
-     * Converts to OpenCV Point object (x, y).
-     */
-//    fun toPoint() = Point(x, y)
 
     /**
      * Convert this coordinate to a float array (x, y).
@@ -60,11 +50,6 @@ data class BBox(val origin: Coordinate, val width: Int, val height: Int) {
      * Checks if bounding box is not empty.
      */
     fun isNotEmpty() = width > 0 || height > 0
-
-    /**
-     * Converts to OpnCV Rect.
-     */
-//    fun toRect() = Rect(origin.x, origin.y, width, height)
 }
 
 /**

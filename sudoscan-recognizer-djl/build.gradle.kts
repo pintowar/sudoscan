@@ -10,4 +10,5 @@ dependencies {
     implementation(libs.recognizer.djl.zoo)
     runtimeOnly(libs.recognizer.djl.native)
     testImplementation(projects.sudoscanCvOpencv)
+    testImplementation(testFixtures(projects.sudoscanApi))
 }

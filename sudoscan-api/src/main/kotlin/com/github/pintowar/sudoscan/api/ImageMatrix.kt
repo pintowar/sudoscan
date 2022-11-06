@@ -11,8 +11,6 @@ interface ImageMatrix {
 
         fun fromBytes(bytes: ByteArray): ImageMatrix = provider.fromBytes(bytes)
 
-        fun fromFile(src: String, mono: Boolean = true): ImageMatrix = provider.fromFile(src, mono)
-
         fun empty(area: Area, mono: Boolean = true): ImageMatrix = provider.empty(area, mono)
     }
 

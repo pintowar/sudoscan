@@ -15,4 +15,5 @@ dependencies {
     }
     implementation(libs.recognizer.dl4j.hdf5)
     testImplementation(projects.sudoscanCvOpencv)
+    testImplementation(testFixtures(projects.sudoscanApi))
 }

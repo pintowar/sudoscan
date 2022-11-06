@@ -13,7 +13,7 @@ object Extractor {
      * @param img original image (for better function, assume an image with a frontal perspective of a Sudoku puzzle).
      * @return list of bounding boxes of every sudoku piece (cell).
      */
-    private fun splitSquares(img: ImageMatrix): List<BBox> {
+    fun splitSquares(img: ImageMatrix): List<BBox> {
         assert(img.height() == img.width())
 
         val numPieces = 9
@@ -44,7 +44,7 @@ object Extractor {
      * @param margin margin of the initial bounding box with a safe margin from the borders.
      * @return a square containing the bounds of an object (number on sudoku context).
      */
-    private fun findLargestFeature(inputImg: ImageMatrix, margin: Int): RectangleCorners {
+    fun findLargestFeature(inputImg: ImageMatrix, margin: Int): RectangleCorners {
         val bBox = BBox(margin, margin, inputImg.width() - 2 * margin, inputImg.height() - 2 * margin)
         return inputImg.clone().findLargestFeature(bBox)
     }
@@ -57,7 +57,7 @@ object Extractor {
      * @param bBox bounding box of the area to be extracted from the original image.
      * @return an object with the image extracted and additional information about the cell.
      */
-    private fun extractCell(img: ImageMatrix, bBox: BBox): SudokuCell = try {
+    fun extractCell(img: ImageMatrix, bBox: BBox): SudokuCell = try {
         val cell = img.crop(bBox)
         val margin = ((cell.width() + cell.height()) / 5.0).toInt()
         val rect = findLargestFeature(cell, margin)
