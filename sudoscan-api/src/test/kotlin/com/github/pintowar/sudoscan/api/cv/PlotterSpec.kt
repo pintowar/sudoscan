@@ -1,4 +1,4 @@
-/* package com.github.pintowar.sudoscan.api.cv
+package com.github.pintowar.sudoscan.api.cv
 
 import com.github.pintowar.sudoscan.api.Puzzle
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.sudoku
@@ -18,8 +18,8 @@ class PlotterSpec : StringSpec({
         )
         val result = Plotter.plotSolution(frontal, sol)
 
-        result.arrayWidth() shouldBe sudokuSolution.arrayWidth()
-        result.arrayHeight() shouldBe sudokuSolution.arrayHeight()
+        result.width() shouldBe sudokuSolution.width()
+        result.height() shouldBe sudokuSolution.height()
         result.channels() shouldBe sudokuSolution.channels()
     }
 
@@ -27,16 +27,16 @@ class PlotterSpec : StringSpec({
         val frontal = Extractor.preProcessPhases(sudoku).frontal
         val result = Plotter.changePerspectiveToOriginalSize(frontal, sudokuSolution, sudoku.area())
 
-        result.arrayWidth() shouldBe sudokuPerspectiveSolution.arrayWidth()
-        result.arrayHeight() shouldBe sudokuPerspectiveSolution.arrayHeight()
+        result.width() shouldBe sudokuPerspectiveSolution.width()
+        result.height() shouldBe sudokuPerspectiveSolution.height()
         result.channels() shouldBe sudokuPerspectiveSolution.channels()
     }
 
     "test combine solution to original" {
         val result = Plotter.combineSolutionToOriginal(sudoku, sudokuPerspectiveSolution)
 
-        result.arrayWidth() shouldBe sudokuFinalSolution.arrayWidth()
-        result.arrayHeight() shouldBe sudokuFinalSolution.arrayHeight()
+        result.width() shouldBe sudokuFinalSolution.width()
+        result.height() shouldBe sudokuFinalSolution.height()
         result.channels() shouldBe sudokuFinalSolution.channels()
     }
-}) */
+})

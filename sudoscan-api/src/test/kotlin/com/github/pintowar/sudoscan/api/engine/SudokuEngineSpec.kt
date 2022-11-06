@@ -6,8 +6,6 @@ import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.sudoku
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.sudokuFinalSolution
 import com.github.pintowar.sudoscan.api.spi.Recognizer
 import com.github.pintowar.sudoscan.api.spi.Solver
-import com.github.pintowar.sudoscan.opencv.OpenCvExtractor
-import com.github.pintowar.sudoscan.opencv.OpenCvPlotter
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -21,7 +19,7 @@ class SudokuEngineSpec : StringSpec({
 
     val recognizer = mockk<Recognizer>()
     val solver = mockk<Solver>()
-    val engine = SudokuEngine(recognizer, solver, OpenCvExtractor, OpenCvPlotter)
+    val engine = SudokuEngine(recognizer, solver)
 
     val digits = "800010009050807010004090700060701020508060107010502090007040600080309040300050008"
         .map { Digit.Valid(it.digitToInt(), 1.0) }

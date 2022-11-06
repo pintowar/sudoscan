@@ -1,5 +1,6 @@
 package com.github.pintowar.sudoscan.opencv
 
+import com.github.pintowar.sudoscan.api.Digit
 import com.github.pintowar.sudoscan.api.ImageMatrix
 import com.github.pintowar.sudoscan.api.cv.*
 import org.bytedeco.javacpp.indexer.FloatIndexer
@@ -9,9 +10,14 @@ import org.bytedeco.opencv.global.opencv_core
 import org.bytedeco.opencv.global.opencv_core.BORDER_CONSTANT
 import org.bytedeco.opencv.global.opencv_imgcodecs
 import org.bytedeco.opencv.global.opencv_imgproc
+import org.bytedeco.opencv.global.opencv_imgproc.FONT_HERSHEY_DUPLEX
+import org.bytedeco.opencv.global.opencv_imgproc.putText
 import org.bytedeco.opencv.opencv_core.Mat
+import org.bytedeco.opencv.opencv_core.Point
+import org.bytedeco.opencv.opencv_core.Scalar
 import org.bytedeco.opencv.opencv_core.Size
 import org.opencv.imgcodecs.Imgcodecs
+import java.awt.Color
 import kotlin.math.max
 import kotlin.math.min
 
@@ -173,6 +179,12 @@ internal value class OpenCvMatrix(private val mat: Mat) : ImageMatrix {
 
     override fun copyMakeBorder(top: Int, bottom: Int, left: Int, right: Int, background: Int): ImageMatrix =
         OpenCvMatrix(mat.copyMakeBorder(top, bottom, left, right, BORDER_CONSTANT, background.toDouble()))
+
+    override fun putText(digit: Digit, coord: Coordinate, fSize: Double, color: Color) {
+        val font = FONT_HERSHEY_DUPLEX
+        val scalar = Scalar(color.blue.toDouble(), color.green.toDouble(), color.red.toDouble(), color.alpha.toDouble())
+        putText(mat, "${digit.value}", Point(coord.x, coord.y), font, fSize, scalar)
+    }
 
     override fun scanMatrix(callBack: (idx: CellIndex, value: Int) -> Unit) {
         mat.createIndexer<UByteIndexer>(isNotAndroid).use { idx ->

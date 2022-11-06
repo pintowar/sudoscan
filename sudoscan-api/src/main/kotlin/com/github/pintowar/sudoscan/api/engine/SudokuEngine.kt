@@ -3,8 +3,11 @@ package com.github.pintowar.sudoscan.api.engine
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.pintowar.sudoscan.api.ImageMatrix
 import com.github.pintowar.sudoscan.api.Puzzle
-import com.github.pintowar.sudoscan.api.cv.Extractor
-import com.github.pintowar.sudoscan.api.cv.Plotter
+import com.github.pintowar.sudoscan.api.cv.Extractor.extractPuzzleCells
+import com.github.pintowar.sudoscan.api.cv.Extractor.preProcessPhases
+import com.github.pintowar.sudoscan.api.cv.Plotter.changePerspectiveToOriginalSize
+import com.github.pintowar.sudoscan.api.cv.Plotter.combineSolutionToOriginal
+import com.github.pintowar.sudoscan.api.cv.Plotter.plotSolution
 import com.github.pintowar.sudoscan.api.spi.Recognizer
 import com.github.pintowar.sudoscan.api.spi.Solver
 import mu.KLogging
@@ -23,12 +26,7 @@ import javax.imageio.ImageIO
  * @property recognizer recognizer implementation to be used on the pipe.
  * @property solver solver implementation to be used on the pipe.
  */
-class SudokuEngine(
-    private val recognizer: Recognizer,
-    private val solver: Solver,
-    private val extractor: Extractor<ImageMatrix>,
-    private val plotter: Plotter<ImageMatrix>
-) : KLogging() {
+class SudokuEngine(private val recognizer: Recognizer, private val solver: Solver) : KLogging() {
 
     /**
      * Cache to maintain a solution already solved. This cache expires in 5 minutes.
@@ -169,12 +167,12 @@ class SudokuEngine(
         recognizedColor: Color = Color.RED,
         debug: Boolean = false
     ): List<ImageMatrix> {
-        val prePhases = extractor.preProcessPhases(image)
+        val prePhases = preProcessPhases(image)
         val cropped = prePhases.frontal
         val processedCrop = cropped.img.preProcessGrayImage(false)
         val noGrid = processedCrop.removeGrid()
 
-        val puzzleCells = extractor.extractPuzzleCells(noGrid)
+        val puzzleCells = extractPuzzleCells(noGrid)
         val cleanImage = puzzleCells.toMat(debug)
 
         return try {
@@ -182,9 +180,9 @@ class SudokuEngine(
             val finalSolution = when (val solution = solveWithCache(puzzle)) {
                 is Puzzle.Unsolved -> image
                 is Puzzle.Solved -> {
-                    val result = plotter.plotSolution(cropped, solution, solutionColor, recognizedColor)
-                    val sol = plotter.changePerspectiveToOriginalSize(cropped, result, image.area())
-                    plotter.combineSolutionToOriginal(image, sol)
+                    val result = plotSolution(cropped, solution, solutionColor, recognizedColor)
+                    val sol = changePerspectiveToOriginalSize(cropped, result, image.area())
+                    combineSolutionToOriginal(image, sol)
                 }
             }
 

@@ -2,6 +2,7 @@ package com.github.pintowar.sudoscan.api
 
 import com.github.pintowar.sudoscan.api.cv.*
 import com.github.pintowar.sudoscan.api.spi.ImageProvider
+import java.awt.Color
 
 interface ImageMatrix {
 
@@ -88,6 +89,8 @@ interface ImageMatrix {
     fun removeGrid(): ImageMatrix
 
     fun copyMakeBorder(top: Int, bottom: Int, left: Int, right: Int, background: Int): ImageMatrix
+
+    fun putText(digit: Digit, coord: Coordinate, fSize: Double, color: Color)
 
     fun scanMatrix(callBack: (idx: CellIndex, value: Int) -> Unit)
 
