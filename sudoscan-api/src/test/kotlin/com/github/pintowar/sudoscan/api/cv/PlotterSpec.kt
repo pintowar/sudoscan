@@ -1,4 +1,4 @@
-package com.github.pintowar.sudoscan.api.cv
+/* package com.github.pintowar.sudoscan.api.cv
 
 import com.github.pintowar.sudoscan.api.Puzzle
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.sudoku
@@ -39,4 +39,4 @@ class PlotterSpec : StringSpec({
         result.arrayHeight() shouldBe sudokuFinalSolution.arrayHeight()
         result.channels() shouldBe sudokuFinalSolution.channels()
     }
-})
+}) */

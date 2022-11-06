@@ -1,15 +1,13 @@
 package com.github.pintowar.sudoscan.api.cv
 
-import org.bytedeco.opencv.global.opencv_imgcodecs
-import org.bytedeco.opencv.opencv_core.Mat
+import com.github.pintowar.sudoscan.api.ImageMatrix
 import java.io.File
 
 object CvSpecHelpers {
-    fun cvRead(path: String, gray: Boolean = false): Mat {
-        val flag = if (gray) opencv_imgcodecs.IMREAD_GRAYSCALE else opencv_imgcodecs.IMREAD_COLOR
+    fun cvRead(path: String, gray: Boolean = false): ImageMatrix {
         val cl = Thread.currentThread().contextClassLoader
         val filename = File(cl.getResource(path)!!.toURI()).absolutePath
-        return opencv_imgcodecs.imread(filename, flag)
+        return ImageMatrix.fromFile(filename, gray)
     }
 
     val sudoku = cvRead("imgs/sudoku01.jpg")

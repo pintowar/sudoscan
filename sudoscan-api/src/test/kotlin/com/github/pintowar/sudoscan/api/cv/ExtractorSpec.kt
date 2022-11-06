@@ -1,4 +1,4 @@
-package com.github.pintowar.sudoscan.api.cv
+/* package com.github.pintowar.sudoscan.api.cv
 
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.croppedSudoku
 import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.dirtyEight
@@ -93,4 +93,4 @@ class ExtractorSpec : StringSpec({
         result.width shouldBe 28
         result.height shouldBe 28
     }
-})
+}) */

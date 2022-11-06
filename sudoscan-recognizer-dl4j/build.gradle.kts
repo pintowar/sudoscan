@@ -14,5 +14,5 @@ dependencies {
         exclude(group = "org.bytedeco", module = "hdf5-platform")
     }
     implementation(libs.recognizer.dl4j.hdf5)
-    testImplementation(libs.opencv.platform)
+    testImplementation(projects.sudoscanCvOpencv)
 }

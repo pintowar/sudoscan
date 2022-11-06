@@ -18,6 +18,7 @@ micronaut {
 val hasDjl = project.hasProperty("djl")
 val hasOjalgo = project.hasProperty("ojalgo")
 dependencies {
+    implementation(projects.sudoscanCvOpencv)
     implementation(if (hasOjalgo) projects.sudoscanSolverOjalgo else projects.sudoscanSolverChoco)
     implementation(if (hasDjl) projects.sudoscanRecognizerDjl else projects.sudoscanRecognizerDl4j)
 

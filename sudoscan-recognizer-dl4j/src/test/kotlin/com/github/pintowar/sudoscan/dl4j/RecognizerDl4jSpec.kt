@@ -1,12 +1,12 @@
 package com.github.pintowar.sudoscan.dl4j
 
 import com.github.pintowar.sudoscan.api.Digit
+import com.github.pintowar.sudoscan.api.ImageMatrix
 import com.github.pintowar.sudoscan.api.SudokuCell
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
-import org.bytedeco.opencv.global.opencv_imgcodecs
 import java.io.File
 
 class RecognizerDl4jSpec : StringSpec({
@@ -15,8 +15,7 @@ class RecognizerDl4jSpec : StringSpec({
     fun cvRead(path: String): SudokuCell {
         val cl = Thread.currentThread().contextClassLoader
         val filename = File(cl.getResource(path)!!.toURI()).absolutePath
-        val mat = opencv_imgcodecs.imread(filename, opencv_imgcodecs.IMREAD_GRAYSCALE)
-        return SudokuCell(mat)
+        return SudokuCell(ImageMatrix.fromFile(filename))
     }
 
     "should recognize sample digits" {

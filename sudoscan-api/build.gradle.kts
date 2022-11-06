@@ -7,5 +7,5 @@ description = "Sudoscan Core"
 
 dependencies {
     implementation(libs.caffeine)
-    implementation(libs.opencv.platform)
+    testImplementation(projects.sudoscanCvOpencv)
 }

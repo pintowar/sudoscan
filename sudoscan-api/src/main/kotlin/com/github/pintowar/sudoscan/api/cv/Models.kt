@@ -1,9 +1,6 @@
 package com.github.pintowar.sudoscan.api.cv
 
-import org.bytedeco.opencv.opencv_core.Mat
-import org.bytedeco.opencv.opencv_core.Point
-import org.bytedeco.opencv.opencv_core.Rect
-import org.bytedeco.opencv.opencv_core.Size
+import com.github.pintowar.sudoscan.api.ImageMatrix
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -13,14 +10,14 @@ import kotlin.math.sqrt
  * @property width
  * @property height
  */
-internal data class Area(val width: Int, val height: Int) {
+data class Area(val width: Int, val height: Int) {
 
     constructor(size: Int) : this(size, size)
 
     /**
      * Converts to OpenCV Size object.
      */
-    fun toSize() = Size(width, height)
+//    fun toSize() = Size(width, height)
 
     fun value() = width * height
 
@@ -33,14 +30,14 @@ internal data class Area(val width: Int, val height: Int) {
  * @property x
  * @property y
  */
-internal data class Coordinate(val x: Int, val y: Int) {
+data class Coordinate(val x: Int, val y: Int) {
 
     constructor(x: Long, y: Long) : this(x.toInt(), y.toInt())
 
     /**
      * Converts to OpenCV Point object (x, y).
      */
-    fun toPoint() = Point(x, y)
+//    fun toPoint() = Point(x, y)
 
     /**
      * Convert this coordinate to a float array (x, y).
@@ -55,7 +52,7 @@ internal data class Coordinate(val x: Int, val y: Int) {
  * @property width
  * @property height
  */
-internal data class BBox(val origin: Coordinate, val width: Int, val height: Int) {
+data class BBox(val origin: Coordinate, val width: Int, val height: Int) {
 
     constructor(x: Int, y: Int, width: Int, height: Int) : this(Coordinate(x, y), width, height)
 
@@ -67,14 +64,14 @@ internal data class BBox(val origin: Coordinate, val width: Int, val height: Int
     /**
      * Converts to OpnCV Rect.
      */
-    fun toRect() = Rect(origin.x, origin.y, width, height)
+//    fun toRect() = Rect(origin.x, origin.y, width, height)
 }
 
 /**
  * Represents the four coordinates that forms a selected rectangle of an image.
  * This rectangle is usually the bounds of a detected object.
  */
-internal data class RectangleCorners(
+data class RectangleCorners(
     val topLeft: Coordinate,
     val topRight: Coordinate,
     val bottomRight: Coordinate,
@@ -107,9 +104,15 @@ internal data class RectangleCorners(
 /**
  * Represents an image from a frontal perspective.
  */
-internal class FrontalPerspective(val img: Mat, val src: Mat, val dst: Mat)
+class FrontalPerspective<T : ImageMatrix>(val img: T, val src: T, val dst: T)
 
 /**
  * Stores image versions on the pre-processing phase
  */
-internal class PreProcessPhases(val grayScale: Mat, val preProcessedGrayImage: Mat, val frontal: FrontalPerspective)
+class PreProcessPhases<T : ImageMatrix>(
+    val grayScale: T,
+    val preProcessedGrayImage: T,
+    val frontal: FrontalPerspective<T>
+)
+
+data class CellIndex(val width: Long, val height: Long, val channels: Long)

@@ -3,6 +3,8 @@ package com.github.pintowar.sudoscan.cli.factory
 import com.github.pintowar.sudoscan.api.engine.SudokuEngine
 import com.github.pintowar.sudoscan.api.spi.Recognizer
 import com.github.pintowar.sudoscan.api.spi.Solver
+import com.github.pintowar.sudoscan.opencv.OpenCvExtractor
+import com.github.pintowar.sudoscan.opencv.OpenCvPlotter
 import io.micronaut.context.annotation.Factory
 import jakarta.inject.Singleton
 
@@ -17,5 +19,5 @@ class SudoscanComponents {
 
     @Singleton
     fun engine(recognizer: Recognizer, solver: Solver): SudokuEngine =
-        SudokuEngine(recognizer, solver)
+        SudokuEngine(recognizer, solver, OpenCvExtractor, OpenCvPlotter)
 }
