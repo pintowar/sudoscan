@@ -34,7 +34,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           gradle-version: wrapper
-          arguments: clean assembleCliApp codeCoverageReport sonarqube
+          arguments: clean assembleCliApp codeCoverageReport sonar
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2

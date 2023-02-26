@@ -33,7 +33,7 @@ gradleplugin-shadow = { module = "gradle.plugin.com.github.johnrengelman:shadow"
 gradleplugin-kotest = { module = "io.kotest:kotest-gradle-plugin", version.ref = "kotest-gradle" }
 gradleplugin-release = { module = "net.researchgate:gradle-release", version = "2.8.1" }
 gradleplugin-ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version = "10.2.1" }
-gradleplugin-sonarqube = { module = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin", version = "3.3" }
+gradleplugin-sonarqube = { module = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin", version = "4.0.0.2929" }
 gradleplugin-javacpp = { module = "org.bytedeco.gradle-javacpp-platform:org.bytedeco.gradle-javacpp-platform.gradle.plugin", version.ref = "javacv" }
 
 gradleplugin-jbake = { module = "org.jbake:jbake-gradle-plugin", version = "5.5.0" }
