@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.gradleplugin.ktlint)
     implementation(libs.gradleplugin.release)
 
+    implementation(libs.gradleplugin.jmh)
     implementation(libs.gradleplugin.jbake)
     implementation(libs.gradleplugin.asciidoctorj.diagram)
     implementation(libs.gradleplugin.git.publish)
