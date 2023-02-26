@@ -1,9 +1,10 @@
 [versions]
-micronaut-gradle = "3.1.1"
+micronaut-gradle = "3.7.2"
 kotest-gradle = "0.3.9"
 git-gradle = "2.4.0"
 
-kotlin = "1.7.20"
+kotlin = "1.8.10"
+dokka = "1.7.20"
 kotlin-logging = "2.0.10"
 kotest = "4.6.4"
 mockk = "1.12.0"
@@ -26,7 +27,7 @@ awt-color-factory = "1.0.2"
 [libraries]
 gradleplugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 gradleplugin-kotlin-allopen = { module = "org.jetbrains.kotlin:kotlin-allopen", version.ref = "kotlin" }
-gradleplugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "kotlin" }
+gradleplugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 gradleplugin-micronaut = { module = "io.micronaut.gradle:micronaut-gradle-plugin", version.ref = "micronaut-gradle" }
 gradleplugin-shadow = { module = "gradle.plugin.com.github.johnrengelman:shadow", version = "7.1.2" }
 gradleplugin-kotest = { module = "io.kotest:kotest-gradle-plugin", version.ref = "kotest-gradle" }
