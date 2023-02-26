@@ -1,17 +1,18 @@
-package com.github.pintowar.sudoscan.api.cv
+package com.github.pintowar.sudoscan.opencv
 
+import com.github.pintowar.sudoscan.api.cv.Area
+import com.github.pintowar.sudoscan.api.cv.BBox
+import com.github.pintowar.sudoscan.api.cv.Coordinate
 import org.bytedeco.javacpp.Loader
 import org.bytedeco.opencv.global.opencv_core.*
 import org.bytedeco.opencv.global.opencv_imgcodecs
 import org.bytedeco.opencv.global.opencv_imgproc
-import org.bytedeco.opencv.opencv_core.Mat
-import org.bytedeco.opencv.opencv_core.MatVector
-import org.bytedeco.opencv.opencv_core.Scalar
+import org.bytedeco.opencv.opencv_core.*
 import org.opencv.imgcodecs.Imgcodecs
 
-internal val isNotAndroid: Boolean = !Loader.getPlatform().startsWith("android")
+internal val isNotAndroid: Boolean = !Loader.getPlatform().lowercase().startsWith("android")
 
-internal fun zeros(area: Area, type: Int = CV_8U): Mat = Mat.zeros(area.toSize(), type).asMat()
+internal fun zeros(area: Area, type: Int = CV_8U): Mat = Mat.zeros(Size(area.width, area.height), type).asMat()
 
 internal fun ByteArray.bytesToMat(): Mat {
     return opencv_imgcodecs.imdecode(Mat(*this), Imgcodecs.IMREAD_UNCHANGED)
@@ -28,13 +29,15 @@ internal fun Mat.cvtColor(code: Int): Mat = Mat().also { dst ->
 }
 
 internal fun Mat.concat(mat: Mat, horizontal: Boolean = true): Mat = Mat().also { dst ->
-    val a = if (this.channels() < 3) Mat().also { merge(MatVector(this, this, this), it) } else this
-    val b = if (mat.channels() < 3) Mat().also { merge(MatVector(mat, mat, mat), it) } else mat
-    if (horizontal) hconcat(a, b, dst) else vconcat(a, b, dst)
+    if (horizontal) hconcat(this, mat, dst) else vconcat(this, mat, dst)
 }
 
+internal fun Mat.colored(): Mat = if (this.channels() == 1) Mat().also {
+    merge(MatVector(this, this, this), it)
+} else this
+
 internal fun Mat.gaussianBlur(area: Area, sigmaX: Double): Mat = Mat().also { dst ->
-    opencv_imgproc.GaussianBlur(this, dst, area.toSize(), sigmaX)
+    opencv_imgproc.GaussianBlur(this, dst, Size(area.width, area.height), sigmaX)
 }
 
 internal fun Mat.adaptiveThreshold(
@@ -48,17 +51,19 @@ internal fun Mat.adaptiveThreshold(
 }
 
 internal fun Mat.floodFill(seed: Coordinate, newVal: Double): Int =
-    opencv_imgproc.floodFill(this, seed.toPoint(), Scalar(newVal))
+    opencv_imgproc.floodFill(this, Point(seed.x, seed.y), Scalar(newVal))
 
 internal fun Mat.floodRect(extRect: BBox, scalar: Double = 255.0): Unit =
-    opencv_imgproc.rectangle(this, extRect.toRect(), Scalar(scalar), -1, opencv_imgproc.LINE_8, 0)
+    Rect(extRect.origin.x, extRect.origin.y, extRect.width, extRect.height).let { rect ->
+        opencv_imgproc.rectangle(this, rect, Scalar(scalar), -1, opencv_imgproc.LINE_8, 0)
+    }
 
 internal fun Mat.bitwiseNot(): Mat = Mat().also { dst -> bitwise_not(this, dst) }
 
 internal fun Mat.bitwiseAnd(that: Mat): Mat = Mat().also { dst -> bitwise_and(this, that, dst) }
 
 internal fun getStructuringElement(shape: Int, area: Area): Mat {
-    return opencv_imgproc.getStructuringElement(shape, area.toSize())
+    return opencv_imgproc.getStructuringElement(shape, Size(area.width, area.height))
 }
 
 internal fun Mat.subtract(other: Mat): Mat = Mat().also { dst -> subtract(this, other, dst) }
@@ -76,11 +81,11 @@ internal fun Mat.contourArea(): Double = opencv_imgproc.contourArea(this)
 internal fun Mat.getPerspectiveTransform(dst: Mat): Mat = opencv_imgproc.getPerspectiveTransform(this, dst)
 
 internal fun Mat.warpPerspective(m: Mat, area: Area): Mat = Mat().also { dst ->
-    opencv_imgproc.warpPerspective(this, dst, m, area.toSize())
+    opencv_imgproc.warpPerspective(this, dst, m, Size(area.width, area.height))
 }
 
 internal fun Mat.resize(area: Area): Mat = Mat().also { dst ->
-    opencv_imgproc.resize(this, dst, area.toSize())
+    opencv_imgproc.resize(this, dst, Size(area.width, area.height))
 }
 
 internal fun Mat.copyMakeBorder(top: Int, bottom: Int, left: Int, right: Int, borderType: Int, value: Double): Mat {
@@ -91,7 +96,7 @@ internal fun Mat.copyMakeBorder(top: Int, bottom: Int, left: Int, right: Int, bo
 
 internal fun Mat.crop(bBox: BBox): Mat {
     return if (bBox.isNotEmpty())
-        Mat(this, bBox.toRect())
+        Mat(this, Rect(bBox.origin.x, bBox.origin.y, bBox.width, bBox.height))
     else
         throw IllegalArgumentException("Bounding Box is empty.")
 }

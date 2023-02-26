@@ -9,5 +9,6 @@ dependencies {
     api(projects.sudoscanApi)
     implementation(libs.recognizer.djl.zoo)
     runtimeOnly(libs.recognizer.djl.native)
-    testImplementation(libs.opencv.platform)
+    testImplementation(projects.sudoscanCvOpencv)
+    testImplementation(testFixtures(projects.sudoscanApi))
 }

@@ -1,19 +1,16 @@
 package com.github.pintowar.sudoscan.api.engine
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.pintowar.sudoscan.api.ImageMatrix
 import com.github.pintowar.sudoscan.api.Puzzle
-import com.github.pintowar.sudoscan.api.cv.*
 import com.github.pintowar.sudoscan.api.cv.Extractor.extractPuzzleCells
-import com.github.pintowar.sudoscan.api.cv.Extractor.preProcessGrayImage
 import com.github.pintowar.sudoscan.api.cv.Extractor.preProcessPhases
-import com.github.pintowar.sudoscan.api.cv.Extractor.removeGrid
 import com.github.pintowar.sudoscan.api.cv.Plotter.changePerspectiveToOriginalSize
 import com.github.pintowar.sudoscan.api.cv.Plotter.combineSolutionToOriginal
 import com.github.pintowar.sudoscan.api.cv.Plotter.plotSolution
 import com.github.pintowar.sudoscan.api.spi.Recognizer
 import com.github.pintowar.sudoscan.api.spi.Solver
 import mu.KLogging
-import org.bytedeco.opencv.opencv_core.Mat
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
@@ -83,9 +80,9 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
         ext: String = "jpg",
         debugScale: Double = 1.0
     ): ByteArray {
-        val mat = image.bytesToMat()
+        val mat = ImageMatrix.fromBytes(image)
         val sol = solveAndCombineSolution(mat, solutionColor, recognizedColor, debugScale)
-        return sol.matToBytes(ext)
+        return sol.toBytes(ext)
     }
 
     /**
@@ -134,11 +131,11 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
      * @return final solution as Mat.
      */
     private fun solveAndCombineSolution(
-        image: Mat,
+        image: ImageMatrix,
         solutionColor: Color = Color.GREEN,
         recognizedColor: Color = Color.RED,
         debugScale: Double = 1.0
-    ): Mat {
+    ): ImageMatrix {
         val isDebug = debugScale > 1.0
         val solution = solve(image, solutionColor, recognizedColor, isDebug)
         return if (!isDebug) solution.last() else {
@@ -165,15 +162,15 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
      * @return a list of images from different phases during the solution process.
      */
     private fun solve(
-        image: Mat,
+        image: ImageMatrix,
         solutionColor: Color = Color.GREEN,
         recognizedColor: Color = Color.RED,
         debug: Boolean = false
-    ): List<Mat> {
+    ): List<ImageMatrix> {
         val prePhases = preProcessPhases(image)
         val cropped = prePhases.frontal
-        val processedCrop = preProcessGrayImage(cropped.img, false)
-        val noGrid = removeGrid(processedCrop)
+        val processedCrop = cropped.img.preProcessGrayImage(false)
+        val noGrid = processedCrop.removeGrid()
 
         val puzzleCells = extractPuzzleCells(noGrid)
         val cleanImage = puzzleCells.toMat(debug)
@@ -183,7 +180,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
             val finalSolution = when (val solution = solveWithCache(puzzle)) {
                 is Puzzle.Unsolved -> image
                 is Puzzle.Solved -> {
-                    val result = plotSolution(cropped, solution, solutionColor, recognizedColor)
+                    val result = plotSolution(cropped.frontalArea(), solution, solutionColor, recognizedColor)
                     val sol = changePerspectiveToOriginalSize(cropped, result, image.area())
                     combineSolutionToOriginal(image, sol)
                 }

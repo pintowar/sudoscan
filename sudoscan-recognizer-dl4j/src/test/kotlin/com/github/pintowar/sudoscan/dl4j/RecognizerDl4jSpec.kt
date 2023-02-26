@@ -2,22 +2,14 @@ package com.github.pintowar.sudoscan.dl4j
 
 import com.github.pintowar.sudoscan.api.Digit
 import com.github.pintowar.sudoscan.api.SudokuCell
+import com.github.pintowar.sudoscan.api.cv.CvSpecHelpers.cvRead
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.data.forAll
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
-import org.bytedeco.opencv.global.opencv_imgcodecs
-import java.io.File
 
 class RecognizerDl4jSpec : StringSpec({
     val recognizer = RecognizerDl4j()
-
-    fun cvRead(path: String): SudokuCell {
-        val cl = Thread.currentThread().contextClassLoader
-        val filename = File(cl.getResource(path)!!.toURI()).absolutePath
-        val mat = opencv_imgcodecs.imread(filename, opencv_imgcodecs.IMREAD_GRAYSCALE)
-        return SudokuCell(mat)
-    }
 
     "should recognize sample digits" {
         forAll(
@@ -31,7 +23,7 @@ class RecognizerDl4jSpec : StringSpec({
             row("eight", 8),
             row("nine", 9)
         ) { file: String, digit: Int ->
-            val img = cvRead("imgs/digits/$file.png")
+            val img = SudokuCell(cvRead("imgs/digits/$file.png").toGrayScale())
             val predicted = recognizer.predict(listOf(img)).first()
             predicted.value shouldBe digit
         }

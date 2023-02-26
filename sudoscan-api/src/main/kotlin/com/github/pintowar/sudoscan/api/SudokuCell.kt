@@ -1,11 +1,7 @@
 package com.github.pintowar.sudoscan.api
 
-import com.github.pintowar.sudoscan.api.cv.*
-import com.github.pintowar.sudoscan.api.cv.Extractor.scaleAndCenter
-import com.github.pintowar.sudoscan.api.cv.Extractor.toGrayScale
-import org.bytedeco.javacpp.indexer.UByteIndexer
-import org.bytedeco.opencv.global.opencv_core
-import org.bytedeco.opencv.opencv_core.Mat
+import com.github.pintowar.sudoscan.api.cv.Area
+import com.github.pintowar.sudoscan.api.cv.CellIndex
 
 /**
  * This class represents the image (and shape metadata) of a Sudoku cell.
@@ -13,38 +9,31 @@ import org.bytedeco.opencv.opencv_core.Mat
  *
  * @param mat image in Mat (OpenCV) format.
  */
-class SudokuCell(mat: Mat) {
+class SudokuCell(mat: GrayMatrix) {
     private val centeredEmpty = scaleAndCenter(mat)
-    internal val data = revertColors(centeredEmpty.first)
+    internal val data: ImageMatrix = centeredEmpty.first.revertColors()
 
     val isEmpty = centeredEmpty.second
-    val width = data.arrayWidth().toLong()
-    val height = data.arrayHeight().toLong()
+    val width = data.width().toLong()
+    val height = data.height().toLong()
     val channels = data.channels().toLong()
 
     companion object {
         const val CELL_SIZE = 28
-        val EMPTY = SudokuCell(zeros(Area(CELL_SIZE), opencv_core.CV_8UC1))
+        val EMPTY = SudokuCell(ImageMatrix.empty(Area(CELL_SIZE)))
     }
 
     /**
      * Checks if the informed image has more than 10% of data or else it assumes it's an empty cell.
      */
-    private fun scaleAndCenter(cleanedImage: Mat): Pair<Mat, Boolean> {
+    private fun scaleAndCenter(cleanedImage: GrayMatrix): Pair<GrayMatrix, Boolean> {
         val area = cleanedImage.area().value().toDouble()
         val percentFill = if (area > 0) cleanedImage.countNonZero() / area else 0.0
 
         return if (percentFill > 0.1)
-            scaleAndCenter(cleanedImage, CELL_SIZE, CELL_SIZE / 7) to false
+            cleanedImage.scaleAndCenter(CELL_SIZE, CELL_SIZE / 7) to false
         else
-            zeros(Area(CELL_SIZE), opencv_core.CV_8UC1) to true
-    }
-
-    /**
-     * Transform image from black-white to white-black.
-     */
-    private fun revertColors(mat: Mat): Mat {
-        return (if (mat.channels() > 1) toGrayScale(mat) else mat).bitwiseNot()
+            ImageMatrix.empty(Area(CELL_SIZE)) to true
     }
 
     /**
@@ -54,16 +43,6 @@ class SudokuCell(mat: Mat) {
      * @param callBack the void function to process every data of the image.
      */
     fun scanMatrix(callBack: (idx: CellIndex, value: Int) -> Unit) {
-        data.createIndexer<UByteIndexer>(isNotAndroid).use { idx ->
-            for (c in 0 until channels) {
-                for (h in 0 until height) {
-                    for (w in 0 until width) {
-                        callBack(CellIndex(w, h, c), idx.get(h, w, c))
-                    }
-                }
-            }
-        }
+        data.scanMatrix(callBack)
     }
-
-    data class CellIndex(val width: Long, val height: Long, val channels: Long)
 }

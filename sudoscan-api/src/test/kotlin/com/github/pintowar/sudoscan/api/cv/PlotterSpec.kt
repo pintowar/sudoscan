@@ -16,10 +16,10 @@ class PlotterSpec : StringSpec({
             "800010009050807010004090700060701020508060107010502090007040600080309040300050008",
             "072403560906020304130605082409030805020904030703080406290108053605070201041206970"
         )
-        val result = Plotter.plotSolution(frontal, sol)
+        val result = Plotter.plotSolution(frontal.frontalArea(), sol)
 
-        result.arrayWidth() shouldBe sudokuSolution.arrayWidth()
-        result.arrayHeight() shouldBe sudokuSolution.arrayHeight()
+        result.width() shouldBe sudokuSolution.width()
+        result.height() shouldBe sudokuSolution.height()
         result.channels() shouldBe sudokuSolution.channels()
     }
 
@@ -27,16 +27,16 @@ class PlotterSpec : StringSpec({
         val frontal = Extractor.preProcessPhases(sudoku).frontal
         val result = Plotter.changePerspectiveToOriginalSize(frontal, sudokuSolution, sudoku.area())
 
-        result.arrayWidth() shouldBe sudokuPerspectiveSolution.arrayWidth()
-        result.arrayHeight() shouldBe sudokuPerspectiveSolution.arrayHeight()
+        result.width() shouldBe sudokuPerspectiveSolution.width()
+        result.height() shouldBe sudokuPerspectiveSolution.height()
         result.channels() shouldBe sudokuPerspectiveSolution.channels()
     }
 
     "test combine solution to original" {
         val result = Plotter.combineSolutionToOriginal(sudoku, sudokuPerspectiveSolution)
 
-        result.arrayWidth() shouldBe sudokuFinalSolution.arrayWidth()
-        result.arrayHeight() shouldBe sudokuFinalSolution.arrayHeight()
+        result.width() shouldBe sudokuFinalSolution.width()
+        result.height() shouldBe sudokuFinalSolution.height()
         result.channels() shouldBe sudokuFinalSolution.channels()
     }
 })

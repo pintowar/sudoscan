@@ -16,6 +16,5 @@ class SudoscanComponents {
     fun recognizer(): Recognizer = Recognizer.provider()
 
     @Singleton
-    fun engine(recognizer: Recognizer, solver: Solver): SudokuEngine =
-        SudokuEngine(recognizer, solver)
+    fun engine(recognizer: Recognizer, solver: Solver): SudokuEngine = SudokuEngine(recognizer, solver)
 }
