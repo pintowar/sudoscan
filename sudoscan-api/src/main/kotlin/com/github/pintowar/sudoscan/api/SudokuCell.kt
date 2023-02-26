@@ -9,9 +9,9 @@ import com.github.pintowar.sudoscan.api.cv.CellIndex
  *
  * @param mat image in Mat (OpenCV) format.
  */
-class SudokuCell(mat: ImageMatrix) {
+class SudokuCell(mat: GrayMatrix) {
     private val centeredEmpty = scaleAndCenter(mat)
-    internal val data = centeredEmpty.first.revertColors()
+    internal val data: ImageMatrix = centeredEmpty.first.revertColors()
 
     val isEmpty = centeredEmpty.second
     val width = data.width().toLong()
@@ -26,7 +26,7 @@ class SudokuCell(mat: ImageMatrix) {
     /**
      * Checks if the informed image has more than 10% of data or else it assumes it's an empty cell.
      */
-    private fun scaleAndCenter(cleanedImage: ImageMatrix): Pair<ImageMatrix, Boolean> {
+    private fun scaleAndCenter(cleanedImage: GrayMatrix): Pair<GrayMatrix, Boolean> {
         val area = cleanedImage.area().value().toDouble()
         val percentFill = if (area > 0) cleanedImage.countNonZero() / area else 0.0
 

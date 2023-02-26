@@ -9,9 +9,9 @@ interface ImageMatrix {
     companion object {
         private val provider: ImageProvider = ImageProvider.provider()
 
-        fun fromBytes(bytes: ByteArray): ImageMatrix = provider.fromBytes(bytes)
+        fun fromBytes(bytes: ByteArray, grayscale: Boolean = false): ImageMatrix = provider.fromBytes(bytes, grayscale)
 
-        fun empty(area: Area, mono: Boolean = true): ImageMatrix = provider.empty(area, mono)
+        fun empty(area: Area): GrayMatrix = provider.emptyGray(area)
     }
 
     fun height(): Int
@@ -20,24 +20,52 @@ interface ImageMatrix {
 
     fun channels(): Int
 
+    fun area(): Area = Area(width(), height())
+
+    fun validate()
+
     fun toBytes(ext: String): ByteArray
 
     fun concat(img: ImageMatrix, horizontal: Boolean = true): ImageMatrix
 
     fun resize(area: Area): ImageMatrix
 
-    fun crop(bBox: BBox): ImageMatrix
+    fun clone(): ImageMatrix
 
-    fun area(): Area
+    fun bitwiseAnd(that: ImageMatrix): ImageMatrix
+
+    fun revertColors(): ImageMatrix
 
     fun countNonZero(): Int
+
+    fun findLargestFeature(bBox: BBox): RectangleCorners
+
+    fun scanMatrix(callBack: (idx: CellIndex, value: Int) -> Unit)
 
     /**
      * Convert image to gray scale.
      *
      * @return gray scale image.
      */
-    fun toGrayScale(): ImageMatrix
+    fun toGrayScale(): GrayMatrix
+
+    fun colored(): ColorMatrix
+}
+
+interface GrayMatrix : ImageMatrix {
+
+    override fun resize(area: Area): GrayMatrix
+
+    override fun clone(): GrayMatrix
+
+    override fun bitwiseAnd(that: ImageMatrix): GrayMatrix
+
+    /**
+     * Transform image from black-white to white-black.
+     */
+    override fun revertColors(): GrayMatrix
+
+    fun crop(bBox: BBox): GrayMatrix
 
     /**
      * Pre-process a gray scale image. Basically uses a gaussian blur + adaptive threshold.
@@ -46,7 +74,7 @@ interface ImageMatrix {
      * @param dilate dilate flag (true by default).
      * @return preprocessed image.
      */
-    fun preProcessGrayImage(dilate: Boolean = true): ImageMatrix
+    fun preProcessGrayImage(dilate: Boolean = true): GrayMatrix
 
     /**
      * Find corners of the biggest square found in the image.
@@ -62,35 +90,18 @@ interface ImageMatrix {
      * @param corners square coordinates of the desired object.
      * @return img with a frontal view.
      */
-    fun frontalPerspective(corners: RectangleCorners): FrontalPerspective<ImageMatrix>
+    fun frontalPerspective(corners: RectangleCorners): FrontalPerspective
 
-    fun getPerspectiveTransform(dst: ImageMatrix): ImageMatrix
-
-    fun warpPerspective(m: ImageMatrix, area: Area): ImageMatrix
-
-    fun bitwiseAnd(that: ImageMatrix): ImageMatrix
-
-    /**
-     * Transform image from black-white to white-black.
-     */
-    fun revertColors(): ImageMatrix
-
-    fun clone(): ImageMatrix
-
-    fun findLargestFeature(bBox: BBox): RectangleCorners
+    fun getPerspectiveTransform(dst: GrayMatrix): GrayMatrix
 
     /**
      * This function has the responsibility to remove (or at least try) the grids of the pre-processed frontal image.
      *
      * @return frontal image without the images, or [sudokuGrayImg] case it fails.
      */
-    fun removeGrid(): ImageMatrix
+    fun removeGrid(): GrayMatrix
 
-    fun copyMakeBorder(top: Int, bottom: Int, left: Int, right: Int, background: Int): ImageMatrix
-
-    fun putText(digit: Digit, coord: Coordinate, fSize: Double, color: Color)
-
-    fun scanMatrix(callBack: (idx: CellIndex, value: Int) -> Unit)
+    fun copyMakeBorder(top: Int, bottom: Int, left: Int, right: Int, background: Int): GrayMatrix
 
     /**
      * Rescale image given a new size and centralize the middle object (number).
@@ -100,7 +111,7 @@ interface ImageMatrix {
      * @param background background color.
      * @return transformed image.
      */
-    fun scaleAndCenter(size: Int, margin: Int = 0, background: Int = 0): ImageMatrix {
+    fun scaleAndCenter(size: Int, margin: Int = 0, background: Int = 0): GrayMatrix {
         fun centrePad(length: Int): Pair<Int, Int> {
             val side = (size - length) / 2
             return if (length % 2 == 0) side to side else side to (side + 1)
@@ -124,4 +135,19 @@ interface ImageMatrix {
         val aux2 = aux.copyMakeBorder(tPad, bPad, lPad, rPad, background)
         return aux2.resize(Area(size))
     }
+}
+
+interface ColorMatrix : ImageMatrix {
+
+    override fun resize(area: Area): ColorMatrix
+
+    override fun clone(): ColorMatrix
+
+    override fun bitwiseAnd(that: ImageMatrix): ColorMatrix
+
+    override fun revertColors(): ColorMatrix
+
+    fun warpPerspective(m: GrayMatrix, area: Area): ColorMatrix
+
+    fun putText(digit: Digit, coord: Coordinate, fSize: Double, color: Color)
 }

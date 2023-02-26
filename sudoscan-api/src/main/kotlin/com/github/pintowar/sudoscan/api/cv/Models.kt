@@ -1,6 +1,6 @@
 package com.github.pintowar.sudoscan.api.cv
 
-import com.github.pintowar.sudoscan.api.ImageMatrix
+import com.github.pintowar.sudoscan.api.GrayMatrix
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -89,15 +89,20 @@ data class RectangleCorners(
 /**
  * Represents an image from a frontal perspective.
  */
-class FrontalPerspective<T : ImageMatrix>(val img: T, val src: T, val dst: T)
+class FrontalPerspective(val img: GrayMatrix, private val src: GrayMatrix, private val dst: GrayMatrix) {
+
+    fun perspectiveMatrix(): GrayMatrix = dst.getPerspectiveTransform(src)
+
+    fun frontalArea(): Area = img.area()
+}
 
 /**
  * Stores image versions on the pre-processing phase
  */
-class PreProcessPhases<T : ImageMatrix>(
-    val grayScale: T,
-    val preProcessedGrayImage: T,
-    val frontal: FrontalPerspective<T>
+class PreProcessPhases(
+    val grayScale: GrayMatrix,
+    val preProcessedGrayImage: GrayMatrix,
+    val frontal: FrontalPerspective
 )
 
 data class CellIndex(val width: Long, val height: Long, val channels: Long)

@@ -10,12 +10,12 @@ object CvSpecHelpers {
     }
 
     val sudoku = cvRead("imgs/sudoku01.jpg")
-    val preProcessedSudoku = cvRead("imgs/pre-processed-sudoku01.jpg")
-    val croppedSudoku = cvRead("imgs/cropped-sudoku-image01.jpg")
-    val frontalSudoku = cvRead("imgs/frontal-processed-sudoku01.jpg")
-    val dirtyEight = cvRead("imgs/dirty-eight.jpg")
+    val preProcessedSudoku = cvRead("imgs/pre-processed-sudoku01.jpg").toGrayScale()
+    val croppedSudoku = cvRead("imgs/cropped-sudoku-image01.jpg").toGrayScale()
+    val frontalSudoku = cvRead("imgs/frontal-processed-sudoku01.jpg").toGrayScale()
+    val dirtyEight = cvRead("imgs/dirty-eight.jpg").toGrayScale()
 
-    val sudokuSolution = cvRead("imgs/sudoku01-sol.jpg")
-    val sudokuPerspectiveSolution = cvRead("imgs/sudoku01-perspective-sol.jpg")
+    val sudokuSolution = cvRead("imgs/sudoku01-sol.jpg").colored()
+    val sudokuPerspectiveSolution = cvRead("imgs/sudoku01-perspective-sol.jpg").colored()
     val sudokuFinalSolution = cvRead("imgs/sudoku01-final-sol.jpg")
 }

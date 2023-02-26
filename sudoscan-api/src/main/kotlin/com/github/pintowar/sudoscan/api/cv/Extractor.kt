@@ -1,5 +1,6 @@
 package com.github.pintowar.sudoscan.api.cv
 
+import com.github.pintowar.sudoscan.api.GrayMatrix
 import com.github.pintowar.sudoscan.api.ImageMatrix
 import com.github.pintowar.sudoscan.api.PuzzleCells
 import com.github.pintowar.sudoscan.api.SudokuCell
@@ -13,7 +14,7 @@ object Extractor {
      * @param img original image (for better function, assume an image with a frontal perspective of a Sudoku puzzle).
      * @return list of bounding boxes of every sudoku piece (cell).
      */
-    fun splitSquares(img: ImageMatrix): List<BBox> {
+    internal fun splitSquares(img: ImageMatrix): List<BBox> {
         assert(img.height() == img.width())
 
         val numPieces = 9
@@ -44,7 +45,7 @@ object Extractor {
      * @param margin margin of the initial bounding box with a safe margin from the borders.
      * @return a square containing the bounds of an object (number on sudoku context).
      */
-    fun findLargestFeature(inputImg: ImageMatrix, margin: Int): RectangleCorners {
+    internal fun findLargestFeature(inputImg: GrayMatrix, margin: Int): RectangleCorners {
         val bBox = BBox(margin, margin, inputImg.width() - 2 * margin, inputImg.height() - 2 * margin)
         return inputImg.clone().findLargestFeature(bBox)
     }
@@ -57,7 +58,7 @@ object Extractor {
      * @param bBox bounding box of the area to be extracted from the original image.
      * @return an object with the image extracted and additional information about the cell.
      */
-    fun extractCell(img: ImageMatrix, bBox: BBox): SudokuCell = try {
+    internal fun extractCell(img: GrayMatrix, bBox: BBox): SudokuCell = try {
         val cell = img.crop(bBox)
         val margin = ((cell.width() + cell.height()) / 5.0).toInt()
         val rect = findLargestFeature(cell, margin)
@@ -72,13 +73,13 @@ object Extractor {
      * This function has the objective to find the "biggest square" in the image, crop it and changes its perspective
      * so that the view is frontal.
      *
-     * This function is a pipe the goes through other functions [toGrayScale] -> [preProcessGrayImage] -> [findCorners]
-     * -> [frontalPerspective].  This function returns an [PreProcessPhases], that stores some images of the pipe.
+     * This function is a pipe that "converts to grayscale" -> "pre process gray image" -> "find its corners" ->
+     * "get frontal perspective". This function returns an [PreProcessPhases], that stores some images of the pipe.
      *
      * @param img original image to be processed.
      * @return original image with a frontal view.
      */
-    fun preProcessPhases(img: ImageMatrix): PreProcessPhases<ImageMatrix> {
+    fun preProcessPhases(img: ImageMatrix): PreProcessPhases {
         val gray = img.toGrayScale()
         val proc = gray.preProcessGrayImage()
         val corners = proc.findCorners()
@@ -94,7 +95,7 @@ object Extractor {
      * @param img input image (for proper extraction, this must be a frontal view of the sudoku puzzle).
      * @return an object with the image extracted and additional information about the cell.
      */
-    fun extractPuzzleCells(img: ImageMatrix): PuzzleCells {
+    fun extractPuzzleCells(img: GrayMatrix): PuzzleCells {
         val squares = splitSquares(img)
         return PuzzleCells(squares.map { s -> extractCell(img, s) })
     }

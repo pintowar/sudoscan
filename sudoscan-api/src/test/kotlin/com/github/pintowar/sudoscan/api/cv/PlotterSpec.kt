@@ -16,7 +16,7 @@ class PlotterSpec : StringSpec({
             "800010009050807010004090700060701020508060107010502090007040600080309040300050008",
             "072403560906020304130605082409030805020904030703080406290108053605070201041206970"
         )
-        val result = Plotter.plotSolution(frontal, sol)
+        val result = Plotter.plotSolution(frontal.frontalArea(), sol)
 
         result.width() shouldBe sudokuSolution.width()
         result.height() shouldBe sudokuSolution.height()

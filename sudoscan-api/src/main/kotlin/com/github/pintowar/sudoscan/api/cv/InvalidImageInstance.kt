@@ -1,3 +1,3 @@
-package com.github.pintowar.sudoscan.opencv
+package com.github.pintowar.sudoscan.api.cv
 
 class InvalidImageInstance : IllegalArgumentException("Invalid image (expecting OpenCvMatrix instance)")

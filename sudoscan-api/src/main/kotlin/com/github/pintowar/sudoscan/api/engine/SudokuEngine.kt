@@ -180,7 +180,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
             val finalSolution = when (val solution = solveWithCache(puzzle)) {
                 is Puzzle.Unsolved -> image
                 is Puzzle.Solved -> {
-                    val result = plotSolution(cropped, solution, solutionColor, recognizedColor)
+                    val result = plotSolution(cropped.frontalArea(), solution, solutionColor, recognizedColor)
                     val sol = changePerspectiveToOriginalSize(cropped, result, image.area())
                     combineSolutionToOriginal(image, sol)
                 }

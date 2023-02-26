@@ -23,7 +23,7 @@ class RecognizerDjlSpec : StringSpec({
             row("eight", 8),
             row("nine", 9)
         ) { file: String, digit: Int ->
-            val img = SudokuCell(cvRead("imgs/digits/$file.png"))
+            val img = SudokuCell(cvRead("imgs/digits/$file.png").toGrayScale())
             val predicted = recognizer.predict(img)
             predicted.value shouldBe digit
         }

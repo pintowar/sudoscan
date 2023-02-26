@@ -1,5 +1,6 @@
 package com.github.pintowar.sudoscan.api.spi
 
+import com.github.pintowar.sudoscan.api.GrayMatrix
 import com.github.pintowar.sudoscan.api.ImageMatrix
 import com.github.pintowar.sudoscan.api.cv.Area
 import java.util.*
@@ -13,7 +14,7 @@ interface ImageProvider {
         }
     }
 
-    fun fromBytes(image: ByteArray): ImageMatrix
+    fun fromBytes(image: ByteArray, grayscale: Boolean = false): ImageMatrix
 
-    fun empty(area: Area, mono: Boolean = true): ImageMatrix
+    fun emptyGray(area: Area): GrayMatrix
 }

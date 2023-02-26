@@ -29,10 +29,12 @@ internal fun Mat.cvtColor(code: Int): Mat = Mat().also { dst ->
 }
 
 internal fun Mat.concat(mat: Mat, horizontal: Boolean = true): Mat = Mat().also { dst ->
-    val a = if (this.channels() < 3) Mat().also { merge(MatVector(this, this, this), it) } else this
-    val b = if (mat.channels() < 3) Mat().also { merge(MatVector(mat, mat, mat), it) } else mat
-    if (horizontal) hconcat(a, b, dst) else vconcat(a, b, dst)
+    if (horizontal) hconcat(this, mat, dst) else vconcat(this, mat, dst)
 }
+
+internal fun Mat.colored(): Mat = if (this.channels() == 1) Mat().also {
+    merge(MatVector(this, this, this), it)
+} else this
 
 internal fun Mat.gaussianBlur(area: Area, sigmaX: Double): Mat = Mat().also { dst ->
     opencv_imgproc.GaussianBlur(this, dst, Size(area.width, area.height), sigmaX)
