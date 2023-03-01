@@ -38,7 +38,6 @@ dependencies {
         exclude(group = "org.bytedeco", module = "ffmpeg")
         exclude(group = "org.bytedeco", module = "opencv")
     }
-    implementation(libs.opencv.platform)
     implementation(libs.ffmpeg.platform)
 
     kapt(libs.picocli)

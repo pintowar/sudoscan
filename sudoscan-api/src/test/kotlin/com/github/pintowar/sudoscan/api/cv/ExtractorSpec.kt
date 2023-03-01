@@ -13,6 +13,7 @@ class ExtractorSpec : StringSpec({
     "test crop image" {
         val frontal = Extractor.preProcessPhases(sudoku).frontal
 
+        frontal.img.similarity(croppedSudoku) shouldBe (1.0).plusOrMinus(0.1)
         frontal.img.height() shouldBe croppedSudoku.height()
         frontal.img.width() shouldBe croppedSudoku.width()
         frontal.img.channels() shouldBe croppedSudoku.channels()

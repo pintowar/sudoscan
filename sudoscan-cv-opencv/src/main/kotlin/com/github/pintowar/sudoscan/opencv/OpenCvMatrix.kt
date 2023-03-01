@@ -41,6 +41,19 @@ internal abstract class OpenCvMatrix(internal val mat: Mat) : ImageMatrix {
 
     override fun countNonZero(): Int = mat.countNonZero()
 
+    override fun similarity(other: ImageMatrix): Double {
+        return when (other) {
+            is OpenCvMatrix -> {
+                if (this.channels() == other.channels()) {
+                    val errorL2 = mat.norm(other.mat)
+                    1 - errorL2 / (height() * width())
+                } else 0.0
+            }
+
+            else -> 0.0
+        }
+    }
+
     override fun findLargestFeature(bBox: BBox): RectangleCorners {
         val (black, gray, white) = listOf(0, 64, 255)
 
@@ -264,6 +277,7 @@ internal class ColorCvMatrix(mat: Mat) : OpenCvMatrix(mat), ColorMatrix {
         is GrayCvMatrix -> ColorCvMatrix(
             Mat().also { dst -> opencv_imgproc.warpPerspective(mat, dst, m.mat, Size(area.width, area.height)) }
         )
+
         else -> throw InvalidImageInstance()
     }
 

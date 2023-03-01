@@ -10,9 +10,9 @@ kotest = "4.6.4"
 mockk = "1.12.0"
 logback = "1.2.3"
 
-ojalgo = "50.0.1"
-choco = "4.10.6"
-djl = "0.13.0"
+ojalgo = "52.0.1"
+choco = "4.10.11"
+djl = "0.21.0"
 tensorflow = "2.4.1"
 nd4j = "1.0.0-M1.1"
 hdf5 = "1.12.1-1.5.6"
@@ -35,6 +35,7 @@ gradleplugin-release = { module = "net.researchgate:gradle-release", version = "
 gradleplugin-ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version = "10.2.1" }
 gradleplugin-sonarqube = { module = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin", version = "4.0.0.2929" }
 gradleplugin-javacpp = { module = "org.bytedeco.gradle-javacpp-platform:org.bytedeco.gradle-javacpp-platform.gradle.plugin", version.ref = "javacv" }
+gradleplugin-jmh = { module = "me.champeau.jmh:jmh-gradle-plugin", version = "0.7.0" }
 
 gradleplugin-jbake = { module = "org.jbake:jbake-gradle-plugin", version = "5.5.0" }
 gradleplugin-asciidoctorj-diagram = { module = "org.asciidoctor:asciidoctorj-diagram", version = "2.2.1" }

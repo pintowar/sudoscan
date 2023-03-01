@@ -38,6 +38,8 @@ interface ImageMatrix {
 
     fun countNonZero(): Int
 
+    fun similarity(other: ImageMatrix): Double
+
     fun findLargestFeature(bBox: BBox): RectangleCorners
 
     fun scanMatrix(callBack: (idx: CellIndex, value: Int) -> Unit)
