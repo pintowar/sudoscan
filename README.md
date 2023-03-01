@@ -26,7 +26,7 @@ recognize the numbers, solve the problem and plot the solution back to the origi
 
 That been said, the project can be divided in concepts:
 
-* Parser/Plotter: computer vision components responsible the read/write information from/to an image;
+* Extractor/Plotter: computer vision components responsible the read/write information from/to an image;
 * Recognizer: responsible to recognize the number images and translate it into an integer;
 * Solver: responsible to effectively solve the sudoku puzzle;
 * Engine: a pipe that glues all above components together to achieve the main objective of the project.
@@ -35,7 +35,9 @@ That been said, the project can be divided in concepts:
 
 The project was broken into the following modules (using java SPI):
 
-* sudoscan-api: module containing domain classes, spi for solvers and recognizers and main engine.
+* sudoscan-api: module containing domain classes, spi for solvers and recognizers and main engine;
+* sudoscan-cv-opencv: module containing a spi implementation using [javacv](https://github.com/bytedeco/javacv)
+(computer vision wrapper around opencv) to work on the image processing pipe;
 * sudoscan-solver-choco: module containing a spi implementation using 
 [choco solver](https://github.com/chocoteam/choco-solver) (a CSP solver) to solve to find the sudoku solution;
 * sudoscan-solver-ojalgo: module containing a spi implementation using 

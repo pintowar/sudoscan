@@ -21,6 +21,7 @@ class OpenCvMatrixSpec : StringSpec({
         val graySudoku = sudoku.toGrayScale()
         val preProcessed = graySudoku.preProcessGrayImage()
 
+        preProcessed.similarity(preProcessedSudoku) shouldBe (1.0).plusOrMinus(0.1)
         preProcessed.height() shouldBe graySudoku.height()
         preProcessed.width() shouldBe graySudoku.width()
         preProcessed.channels() shouldBe 1

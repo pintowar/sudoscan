@@ -101,6 +101,8 @@ internal fun Mat.crop(bBox: BBox): Mat {
         throw IllegalArgumentException("Bounding Box is empty.")
 }
 
+internal fun Mat.norm(dst: Mat): Double = norm(this, dst)
+
 internal fun Mat.area(): Area = Area(this.arrayWidth(), this.arrayHeight())
 
 internal fun Mat.countNonZero(): Int = countNonZero(this)
