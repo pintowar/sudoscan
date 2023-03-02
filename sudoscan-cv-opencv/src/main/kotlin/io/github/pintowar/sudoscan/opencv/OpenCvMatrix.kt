@@ -23,7 +23,7 @@ import java.awt.Color
 import kotlin.math.max
 import kotlin.math.min
 
-internal abstract class OpenCvMatrix(internal val mat: Mat) : io.github.pintowar.sudoscan.api.ImageMatrix {
+internal abstract class OpenCvMatrix(internal val mat: Mat) : ImageMatrix {
 
     init {
         validate()
@@ -112,11 +112,11 @@ internal class GrayCvMatrix(mat: Mat) : OpenCvMatrix(mat), GrayMatrix {
 
     override fun concat(img: ImageMatrix, horizontal: Boolean): ImageMatrix = when (img) {
         is GrayCvMatrix -> GrayCvMatrix(mat.concat(img.mat, horizontal))
-        is ColorCvMatrix -> ColorCvMatrix(colored().mat.concat(img.mat, horizontal))
+        is ColorCvMatrix -> ColorCvMatrix(toColorMatrix().mat.concat(img.mat, horizontal))
         else -> throw InvalidImageInstance()
     }
 
-    override fun resize(area: Area): io.github.pintowar.sudoscan.api.GrayMatrix = GrayCvMatrix(
+    override fun resize(area: Area): GrayMatrix = GrayCvMatrix(
         Mat().also { dst -> opencv_imgproc.resize(mat, dst, Size(area.width, area.height)) }
     )
 
@@ -202,9 +202,9 @@ internal class GrayCvMatrix(mat: Mat) : OpenCvMatrix(mat), GrayMatrix {
         this
     }
 
-    override fun toGrayScale(): GrayMatrix = this
+    override fun toGrayMatrix(): GrayMatrix = this
 
-    override fun colored(): ColorCvMatrix = ColorCvMatrix(mat.colored())
+    override fun toColorMatrix(): ColorCvMatrix = ColorCvMatrix(mat.colored())
 
     /**
      * Convert a 2d array into an image.
@@ -252,7 +252,7 @@ internal class ColorCvMatrix(mat: Mat) : OpenCvMatrix(mat), ColorMatrix {
 
     override fun concat(img: ImageMatrix, horizontal: Boolean): ImageMatrix = when (img) {
         is ColorCvMatrix -> ColorCvMatrix(mat.concat(img.mat, horizontal))
-        is GrayCvMatrix -> ColorCvMatrix(mat.concat(img.colored().mat, horizontal))
+        is GrayCvMatrix -> ColorCvMatrix(mat.concat(img.toColorMatrix().mat, horizontal))
         else -> throw InvalidImageInstance()
     }
 
@@ -269,9 +269,9 @@ internal class ColorCvMatrix(mat: Mat) : OpenCvMatrix(mat), ColorMatrix {
 
     override fun revertColors(): ColorCvMatrix = ColorCvMatrix(mat.bitwiseNot())
 
-    override fun toGrayScale(): GrayMatrix = GrayCvMatrix(mat.cvtColor(opencv_imgproc.COLOR_RGB2GRAY))
+    override fun toGrayMatrix(): GrayMatrix = GrayCvMatrix(mat.cvtColor(opencv_imgproc.COLOR_RGB2GRAY))
 
-    override fun colored(): ColorCvMatrix = this
+    override fun toColorMatrix(): ColorCvMatrix = this
 
     override fun warpPerspective(m: GrayMatrix, area: Area): ColorMatrix = when (m) {
         is GrayCvMatrix -> ColorCvMatrix(

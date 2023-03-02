@@ -22,7 +22,7 @@ object Plotter : KLogging() {
         solutionColor: Color = Color.GREEN,
         recognizedColor: Color = Color.RED
     ): ColorMatrix {
-        val squareImage = ImageMatrix.empty(base).colored()
+        val squareImage = ImageMatrix.empty(base).toColorMatrix()
 
         val factor = base.width / 9
         val fSize = base.height / 350.0

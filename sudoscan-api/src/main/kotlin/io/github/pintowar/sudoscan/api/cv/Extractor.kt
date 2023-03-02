@@ -80,7 +80,7 @@ object Extractor {
      * @return original image with a frontal view.
      */
     fun preProcessPhases(img: ImageMatrix): PreProcessPhases {
-        val gray = img.toGrayScale()
+        val gray = img.toGrayMatrix()
         val proc = gray.preProcessGrayImage()
         val corners = proc.findCorners()
         val frontal = gray.frontalPerspective(corners)

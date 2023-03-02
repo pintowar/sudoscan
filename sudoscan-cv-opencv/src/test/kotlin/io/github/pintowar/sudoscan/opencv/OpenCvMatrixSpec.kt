@@ -10,7 +10,7 @@ import io.kotest.matchers.shouldBe
 class OpenCvMatrixSpec : StringSpec({
 
     "test grayscale" {
-        val graySudoku = sudoku.toGrayScale()
+        val graySudoku = sudoku.toGrayMatrix()
 
         graySudoku.height() shouldBe sudoku.height()
         graySudoku.width() shouldBe sudoku.width()
@@ -18,7 +18,7 @@ class OpenCvMatrixSpec : StringSpec({
     }
 
     "test pre process grayscale" {
-        val graySudoku = sudoku.toGrayScale()
+        val graySudoku = sudoku.toGrayMatrix()
         val preProcessed = graySudoku.preProcessGrayImage()
 
         preProcessed.similarity(preProcessedSudoku) shouldBe (1.0).plusOrMinus(0.1)

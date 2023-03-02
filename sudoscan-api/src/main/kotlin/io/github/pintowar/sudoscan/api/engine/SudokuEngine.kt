@@ -20,7 +20,7 @@ import javax.imageio.ImageIO
 
 /**
  * Main class responsible for the complete solution of the puzzle. This class is responsible for glue all components
- * (CV, Recognizer and Solver) to read an image, identify a Sudoku puzzle, recognize the visible  numbers, solve the
+ * (CV, Recognizer and Solver) to read an image, identify a Sudoku puzzle, recognize the visible numbers, solve the
  * puzzle and plot back the solution to the original image.
  *
  * @property recognizer recognizer implementation to be used on the pipe.
@@ -57,13 +57,13 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
     fun components() = "${recognizer.name} / ${solver.name}"
 
     /**
-     * The main function responsible to glue all components (CV, Recognizer and Solver) to read an image,
-     * identify a Sudoku puzzle, recognize the visible  numbers, solve the puzzle and plot back the solution
+     * The function responsible to glue all components (CV, Recognizer and Solver) to read an image,
+     * identify a Sudoku puzzle, recognize the visible numbers, solve the puzzle and plot back the solution
      * to the original image.
      *
      * This function throws no Exception, however in case of any failure it will return the original input image.
      *
-     * In case of debug, a [debugScale] value must be informed. This will generate a mosaic if images of different
+     * In case of debug, a [debugScale] value must be informed. This will generate a mosaic of images of different
      * phases of the solution and resize the final image with the scale provided.
      *
      * @param image ByteArray of the input image.
@@ -86,13 +86,13 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
     }
 
     /**
-     * The main function responsible to glue all components (CV, Recognizer and Solver) to read an image,
-     * identify a Sudoku puzzle, recognize the visible  numbers, solve the puzzle and plot back the solution
+     * The function responsible to glue all components (CV, Recognizer and Solver) to read an image,
+     * identify a Sudoku puzzle, recognize the visible numbers, solve the puzzle and plot back the solution
      * to the original image.
      *
      * This function throws no Exception, however in case of any failure it will return the original input image.
      *
-     * In case of debug, a [debugScale] value must be informed. This will generate a mosaic if images of different
+     * In case of debug, a [debugScale] value must be informed. This will generate a mosaic of images of different
      * phases of the solution and resize the final image with the scale provided.
      *
      * @param image BufferedImage of the input image.
@@ -115,13 +115,13 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
     }
 
     /**
-     * The main function responsible to glue all components (CV, Recognizer and Solver) to read an image,
-     * identify a Sudoku puzzle, recognize the visible  numbers, solve the puzzle and plot back the solution
+     * The function responsible to glue all components (CV, Recognizer and Solver) to read an image,
+     * identify a Sudoku puzzle, recognize the visible numbers, solve the puzzle and plot back the solution
      * to the original image.
      *
      * This function throws no Exception, however in case of any failure it will return the original input image.
      *
-     * In case of debug, a [debugScale] value must be informed. This will generate a mosaic if images of different
+     * In case of debug, a [debugScale] value must be informed. This will generate a mosaic of images of different
      * phases of the solution and resize the final image with the scale provided.
      *
      * @param image Mat of the input image.
@@ -149,7 +149,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
     }
 
     /**
-     * The main function responsible to glue all components (CV, Recognizer and Solver) to read an image,
+     * The function responsible to glue all components (CV, Recognizer and Solver) to read an image,
      * identify a Sudoku puzzle, recognize the visible numbers, solve the puzzle and plot back the solution
      * to the original image.
      *
@@ -159,6 +159,7 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
      * @param image Mat of the input image.
      * @param solutionColor the color of solution digits to be plotted on solution.
      * @param recognizedColor the color of recognized digits to be plotted on solution.
+     * @param debug to render a clean image.
      * @return a list of images from different phases during the solution process.
      */
     private fun solve(

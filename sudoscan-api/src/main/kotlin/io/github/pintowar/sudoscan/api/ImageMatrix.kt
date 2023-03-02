@@ -45,13 +45,18 @@ interface ImageMatrix {
     fun scanMatrix(callBack: (idx: CellIndex, value: Int) -> Unit)
 
     /**
-     * Convert image to gray scale.
+     * Convert image to gray matrix.
      *
      * @return gray scale image.
      */
-    fun toGrayScale(): GrayMatrix
+    fun toGrayMatrix(): GrayMatrix
 
-    fun colored(): ColorMatrix
+    /**
+     * Convert image to color matrix.
+     *
+     * @return colored image.
+     */
+    fun toColorMatrix(): ColorMatrix
 }
 
 interface GrayMatrix : ImageMatrix {
@@ -99,7 +104,7 @@ interface GrayMatrix : ImageMatrix {
     /**
      * This function has the responsibility to remove (or at least try) the grids of the pre-processed frontal image.
      *
-     * @return frontal image without the images, or [sudokuGrayImg] case it fails.
+     * @return frontal image without the grids, or it self case it fails.
      */
     fun removeGrid(): GrayMatrix
 
