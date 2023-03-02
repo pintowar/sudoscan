@@ -5,7 +5,7 @@ plugins {
 }
 
 allprojects {
-    group = "com.github.pintowar"
+    group = "io.github.pintowar"
 //    javacppPlatform = "linux-x86_64,macosx-x86_64,windows-x86_64"
 }
 
