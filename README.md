@@ -58,19 +58,11 @@ found on the following [Kaggle Notebook](https://www.kaggle.com/pintowar/sudosca
 
 ### Project Modules Usage
 
-Add the repository
-
-```kotlin
-maven {
-    name = "SudoscanLibs"
-    url = uri("https://pintowar.jfrog.io/artifactory/sudoscan-libs-release")
-}
-```
-
-Add api, solver and recognizer the dependencies
+Add api, cv, solver and recognizer the dependencies
 
 ```kotlin
 implementation("com.github.pintowar:sudoscan-api:x.y.z")
+implementation("com.github.pintowar:sudoscan-cv-opencv:x.y.z")
 implementation("com.github.pintowar:sudoscan-solver-choco:x.y.z") // or sudoscan-solver-ojalgo
 implementation("com.github.pintowar:sudoscan-recognizer-dl4j:x.y.z") // or sudoscan-recognizer-djl
 ```
