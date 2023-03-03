@@ -10,10 +10,7 @@ dependencies {
     implementation(libs.recognizer.dl4j.nd4j) {
         exclude(group = "org.bytedeco", module = "mkl-platform")
     }
-    implementation(libs.recognizer.dl4j.deeplearning4j) {
-        exclude(group = "org.bytedeco", module = "hdf5-platform")
-    }
-    implementation(libs.recognizer.dl4j.hdf5)
+    implementation(libs.recognizer.dl4j.deeplearning4j)
     testImplementation(projects.sudoscanCvOpencv)
     testImplementation(testFixtures(projects.sudoscanApi))
 }
