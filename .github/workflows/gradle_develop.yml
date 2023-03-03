@@ -30,6 +30,8 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
+          SONATYPE_PASS: ${{ secrets.SONATYPE_PASS }}
         with:
           gradle-version: wrapper
-          arguments: clean codeCoverageReport sonar
+          arguments: clean codeCoverageReport sonar publishAllPublicationsToSonatypeRepository
