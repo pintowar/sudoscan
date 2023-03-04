@@ -1,5 +1,5 @@
 [versions]
-micronaut-gradle = "3.7.2"
+micronaut-gradle = "3.7.3"
 kotest-gradle = "0.3.9"
 git-gradle = "2.4.0"
 

@@ -65,6 +65,8 @@ jobs:
         uses: gradle/gradle-build-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
+          SONATYPE_PASS: ${{ secrets.SONATYPE_PASS }}
         with:
           gradle-version: wrapper
           arguments: clean build release -x test -Prelease.useAutomaticVersion=true
