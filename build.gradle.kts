@@ -60,6 +60,7 @@ sonarqube {
         property("sonar.login", sonarToken)
         property("sonar.verbose", true)
         property("sonar.github.repository", "pintowar/sudoscan")
+        property("sonar.exclusions", "sudoscan-cli/**")
         property("sonar.coverage.jacoco.xmlReportPaths", "$jacocoReportPath/codeCoverageReport.xml")
     }
 }
