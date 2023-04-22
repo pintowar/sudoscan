@@ -25,7 +25,6 @@ dependencies {
     testImplementation(libs.kotest.junit) {
         exclude(group = "org.jetbrains.kotlin")
     }
-    testImplementation(libs.kotest.junit)
     testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.kotest.assertions.json)
     testImplementation(libs.mockk)
@@ -35,8 +34,6 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(11))
     }
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
 }
 
 ktlint {
