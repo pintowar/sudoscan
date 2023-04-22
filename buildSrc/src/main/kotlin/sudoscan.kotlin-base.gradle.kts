@@ -71,12 +71,16 @@ tasks {
         }
     }
 
-    test {
-        useJUnitPlatform()
-        finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
-    }
-
+    // Do not generate reports for individual projects
     jacocoTestReport {
-        dependsOn(tasks.test) // tests are required to run before generating the report
+        enabled = false
+    }
+}
+
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+        }
     }
 }

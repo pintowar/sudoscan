@@ -1,7 +1,8 @@
 import net.researchgate.release.ReleaseExtension
 
 plugins {
-    id("sudoscan.kotlin-base")
+    base
+    id("jacoco-report-aggregation")
     id("net.researchgate.release")
     id("org.sonarqube")
 }
@@ -11,38 +12,24 @@ allprojects {
 //    javacppPlatform = "linux-x86_64,macosx-x86_64,windows-x86_64"
 }
 
-tasks {
-    register<JacocoReport>("codeCoverageReport") {
-        group = "verification"
-        description = "Run tests and merge all jacoco reports"
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
 
-        val codeCoverageTask = this
-        // If a subproject applies the 'jacoco' plugin, add the result it to the report
-        subprojects {
-            val subproject = this
-            subproject.plugins.withType<JacocoPlugin>().configureEach {
-                val extensions = subproject.tasks.matching {
-                    val hasJacoco = it.extensions.findByType<JacocoTaskExtension>() != null
-                    hasJacoco && !it.name.contains("native", ignoreCase = true)
-                }
+dependencies {
+    rootProject.subprojects.forEach(::jacocoAggregation)
+}
 
-                extensions.forEach { codeCoverageTask.dependsOn(it) }
-
-                extensions.configureEach {
-                    val testTask = this
-                    sourceSets(subproject.sourceSets.main.get())
-                    executionData(testTask)
-                }
-            }
-        }
-
-        reports {
-            xml.required.set(true)
-            html.required.set(true)
-            csv.required.set(true)
+reporting {
+    reports {
+        val codeCoverageReport by creating(JacocoCoverageReport::class) {
+            testType.set(TestSuiteType.UNIT_TEST)
         }
     }
+}
 
+tasks {
     register("assembleCliApp") {
         dependsOn(":sudoscan-cli:shadowJar")
         group = "build"
