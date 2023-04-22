@@ -14,24 +14,21 @@ repositories {
     mavenCentral()
 }
 
-val catalogs = extensions.getByType<VersionCatalogsExtension>()
-val libs = catalogs.named("libs")
-
 dependencies {
-    implementation(platform(libs.findLibrary("kotlin.bom").get()))
-    implementation(libs.findLibrary("kotlin.reflect").get())
-    implementation(libs.findLibrary("kotlin.jdk8").get())
-    implementation(libs.findLibrary("kotlin.logging").get())
+    implementation(platform(libs.kotlin.bom))
+    implementation(libs.kotlin.reflect)
+    implementation(libs.kotlin.jdk8)
+    implementation(libs.kotlin.logging)
 
-    runtimeOnly(libs.findLibrary("logback.classic").get())
+    runtimeOnly(libs.logback.classic)
 
-    testImplementation(libs.findLibrary("kotest.junit").get()) {
+    testImplementation(libs.kotest.junit) {
         exclude(group = "org.jetbrains.kotlin")
     }
-    testImplementation(libs.findLibrary("kotest.junit").get())
-    testImplementation(libs.findLibrary("kotest.assertions.core").get())
-    testImplementation(libs.findLibrary("kotest.assertions.json").get())
-    testImplementation(libs.findLibrary("mockk").get())
+    testImplementation(libs.kotest.junit)
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.kotest.assertions.json)
+    testImplementation(libs.mockk)
 }
 
 java {

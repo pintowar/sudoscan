@@ -11,6 +11,8 @@ repositories {
 }
 
 dependencies {
+    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+
     implementation(libs.gradleplugin.kotlin)
     implementation(libs.gradleplugin.kotlin.allopen)
     implementation(libs.gradleplugin.dokka)

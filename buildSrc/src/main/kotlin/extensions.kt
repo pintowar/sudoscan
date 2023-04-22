@@ -1,4 +1,6 @@
-import net.researchgate.release.GitAdapter.GitConfig
-import net.researchgate.release.ReleaseExtension
+import org.gradle.accessors.dm.LibrariesForLibs
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.the
 
-fun ReleaseExtension.git(configure: GitConfig.() -> Unit) = (getProperty("git") as GitConfig).configure()
+val Project.libs: LibrariesForLibs
+    get() = the<LibrariesForLibs>()
