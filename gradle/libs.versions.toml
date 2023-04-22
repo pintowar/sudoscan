@@ -4,7 +4,7 @@ kotest-gradle = "0.4.10"
 git-gradle = "2.4.0"
 
 kotlin = "1.8.10"
-dokka = "1.7.20"
+dokka = "1.8.10"
 kotlin-logging = "2.0.10"
 kotest = "5.6.1"
 mockk = "1.12.0"

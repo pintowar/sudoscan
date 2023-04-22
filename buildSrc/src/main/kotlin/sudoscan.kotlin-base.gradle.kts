@@ -39,7 +39,6 @@ java {
 
 configure<KtlintExtension> {
     verbose.set(true)
-    debug.set(true)
     outputToConsole.set(true)
     coloredOutput.set(true)
     reporters {
