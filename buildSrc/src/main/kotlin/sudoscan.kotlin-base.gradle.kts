@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
+import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
 plugins {
     kotlin("jvm")
@@ -36,8 +37,9 @@ java {
     }
 }
 
-ktlint {
+configure<KtlintExtension> {
     verbose.set(true)
+    debug.set(true)
     outputToConsole.set(true)
     coloredOutput.set(true)
     reporters {

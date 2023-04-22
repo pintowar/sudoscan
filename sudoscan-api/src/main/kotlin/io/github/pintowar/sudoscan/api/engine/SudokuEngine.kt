@@ -188,7 +188,12 @@ class SudokuEngine(private val recognizer: Recognizer, private val solver: Solve
             }
 
             listOf(
-                image, prePhases.preProcessedGrayImage, processedCrop, noGrid, cleanImage, finalSolution
+                image,
+                prePhases.preProcessedGrayImage,
+                processedCrop,
+                noGrid,
+                cleanImage,
+                finalSolution
             )
         } catch (e: Exception) {
             logger.trace(e) { "Problem found during solution!" }

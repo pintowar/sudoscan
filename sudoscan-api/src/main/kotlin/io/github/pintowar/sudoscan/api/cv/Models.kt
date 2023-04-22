@@ -82,7 +82,10 @@ data class RectangleCorners(
      * Convert to a 2d float array.
      */
     fun toFloatArray() = arrayOf(
-        topLeft.toFloatArray(), topRight.toFloatArray(), bottomRight.toFloatArray(), bottomLeft.toFloatArray()
+        topLeft.toFloatArray(),
+        topRight.toFloatArray(),
+        bottomRight.toFloatArray(),
+        bottomLeft.toFloatArray()
     )
 }
 

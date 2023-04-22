@@ -84,7 +84,10 @@ internal abstract class OpenCvMatrix(internal val mat: Mat) : ImageMatrix {
             }
 
             RectangleCorners(
-                Coordinate(top, left), Coordinate(top, right), Coordinate(bottom, right), Coordinate(bottom, left)
+                Coordinate(top, left),
+                Coordinate(top, right),
+                Coordinate(bottom, right),
+                Coordinate(bottom, left)
             )
         }
     }
@@ -135,7 +138,11 @@ internal class GrayCvMatrix(mat: Mat) : OpenCvMatrix(mat), GrayMatrix {
         val blurred = mat.gaussianBlur(Area(9), 0.0)
 
         val threshold = blurred.adaptiveThreshold(
-            255.0, opencv_imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, opencv_imgproc.THRESH_BINARY, 11, 2.0
+            255.0,
+            opencv_imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,
+            opencv_imgproc.THRESH_BINARY,
+            11,
+            2.0
         )
 
         val thresholdNot = threshold.bitwiseNot()

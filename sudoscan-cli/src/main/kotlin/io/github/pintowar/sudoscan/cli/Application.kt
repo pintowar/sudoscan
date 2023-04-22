@@ -23,19 +23,22 @@ class Application : Runnable {
     @Option(
         names = ["-s", "--solution"],
         description = ["Solution color (An AWT color name or NONE to result solution numbers)"],
-        defaultValue = "BLUE", converter = [ColorConverter::class]
+        defaultValue = "BLUE",
+        converter = [ColorConverter::class]
     )
     lateinit var solutionColor: Color
 
     @Option(
         names = ["-r", "--recognized"],
         description = ["Recognized color (An AWT color name or NONE to result recognized numbers)"],
-        defaultValue = "NONE", converter = [ColorConverter::class]
+        defaultValue = "NONE",
+        converter = [ColorConverter::class]
     )
     lateinit var recognizedColor: Color
 
     @Option(
-        names = ["-v", "--video"], description = ["In case the solution must be recorded on a video file"],
+        names = ["-v", "--video"],
+        description = ["In case the solution must be recorded on a video file"],
         defaultValue = "false"
     )
     var record: Boolean = false
