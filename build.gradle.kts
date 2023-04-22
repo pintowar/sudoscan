@@ -1,3 +1,5 @@
+import net.researchgate.release.ReleaseExtension
+
 plugins {
     id("sudoscan.kotlin-base")
     id("net.researchgate.release")
@@ -75,11 +77,10 @@ sonarqube {
     }
 }
 
-release {
-    tagTemplate = "v\$version"
-
-    git {
-        requireBranch = "master"
+configure<ReleaseExtension> {
+    tagTemplate.set("v\$version")
+    with(git) {
+        requireBranch.set("master")
     }
 }
 

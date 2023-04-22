@@ -30,7 +30,7 @@ gradleplugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", versi
 gradleplugin-micronaut = { module = "io.micronaut.gradle:micronaut-gradle-plugin", version.ref = "micronaut-gradle" }
 gradleplugin-shadow = { module = "com.github.johnrengelman:shadow", version = "8.1.0" }
 gradleplugin-kotest = { module = "io.kotest:kotest-gradle-plugin", version.ref = "kotest-gradle" }
-gradleplugin-release = { module = "net.researchgate:gradle-release", version = "2.8.1" }
+gradleplugin-release = { module = "net.researchgate:gradle-release", version = "3.0.2" }
 gradleplugin-ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version = "10.2.1" }
 gradleplugin-sonarqube = { module = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin", version = "4.0.0.2929" }
 gradleplugin-javacpp = { module = "org.bytedeco.gradle-javacpp-platform:org.bytedeco.gradle-javacpp-platform.gradle.plugin", version.ref = "javacv" }
