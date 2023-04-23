@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
@@ -6,7 +7,6 @@ plugins {
     kotlin("jvm")
     id("org.jetbrains.dokka")
     id("jacoco")
-    id("idea")
     id("org.jlleitschuh.gradle.ktlint")
 }
 
@@ -63,9 +63,9 @@ tasks {
     }
 
     withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "11"
-            freeCompilerArgs = listOf("-Xjsr305=strict")
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+            freeCompilerArgs.set(listOf("-Xjsr305=strict"))
         }
     }
 

@@ -33,7 +33,6 @@ class SolverOjAlgo : Solver {
         (0 until puzzle.gridSize).forEach { i ->
             (0 until puzzle.gridSize).forEach { j ->
                 if (puzzle[i, j].value != 0) {
-//                    x[i][j][puzzle[i, j].value - 1].setValue(1)
                     model.addExpression().set(x[i][j][puzzle[i, j].value - 1], 1).level(1)
                 }
             }

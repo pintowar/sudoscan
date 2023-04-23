@@ -5,6 +5,7 @@ plugins {
     id("jacoco-report-aggregation")
     id("net.researchgate.release")
     id("org.sonarqube")
+    id("idea")
 }
 
 allprojects {
