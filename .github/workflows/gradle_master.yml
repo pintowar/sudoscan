@@ -28,7 +28,7 @@ jobs:
           java-version: 11
 
       - name: Running gradle task
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v2.4.2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -62,7 +62,7 @@ jobs:
           java-version: 11
 
       - name: Running gradle task
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v2.4.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
